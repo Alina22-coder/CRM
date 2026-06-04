@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Request, Response, NextFunction } from "express";
-import authRouter from "./auth.js";
+import authRouter from "./auth.router.js";
 import orderRouter from "./order.router.js";
 
 const router = Router();

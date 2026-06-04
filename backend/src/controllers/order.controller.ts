@@ -1,10 +1,11 @@
 import { orderService } from "../services/order.service";
 import { Request, Response, NextFunction } from "express";
+import StatusCodes from "../enums/status-codes.enum";
 
 class OrderController {
   public async getAllOrders(req: Request, res: Response, next: NextFunction) {
     const data = await orderService.getAllOrders();
-    res.json(data);
+    res.status(StatusCodes.OK).json(data);
     next();
   }
 }
