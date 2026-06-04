@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { Role } from "../enums/role.enum.js";
+import Role from "../enums/role.enum";
+import IUser from "../interfaces/IUser";
 
 const Schema = mongoose.Schema;
 const UserSchema = new Schema(
@@ -39,4 +40,4 @@ UserSchema.statics.findByEmail = function (email) {
   return this.findOne({ email });
 };
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model<IUser>("User", UserSchema);
