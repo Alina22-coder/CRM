@@ -3,7 +3,8 @@ import Role from "../enums/role.enum";
 import IUser from "../interfaces/IUser";
 
 const Schema = mongoose.Schema;
-const UserSchema = new Schema(
+
+const userSchema = new Schema(
   {
     email: {
       type: String,
@@ -36,8 +37,8 @@ const UserSchema = new Schema(
   { timestamps: true },
 );
 
-UserSchema.statics.findByEmail = function (email) {
+userSchema.statics.findByEmail = function (email) {
   return this.findOne({ email });
 };
 
-export default mongoose.model<IUser>("User", UserSchema);
+export const UserModel = mongoose.model<IUser>("user", userSchema);

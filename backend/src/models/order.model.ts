@@ -3,7 +3,7 @@ import IOrder from "../interfaces/IOrder";
 
 const Schema = mongoose.Schema;
 
-const OrderSchema = new Schema({
+const orderSchema = new Schema({
   name: {
     type: String,
   },
@@ -48,4 +48,4 @@ const OrderSchema = new Schema({
   },
 });
 
-export default mongoose.model<IOrder>("Order", OrderSchema);
+export const OrderModel = mongoose.model<IOrder>("order", orderSchema);
