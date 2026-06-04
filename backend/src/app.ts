@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import router from "./routes/api.router.js";
+import { Request, Response, NextFunction } from "express";
+import ApiError from "./errors/api.error";
 
 dotenv.config();
 connectDB();
@@ -17,6 +19,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", router);
 
+app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
+    const status = err.status || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ status, message });
+});
+
+process.on("uncaughtException", (err) => {
+    console.log("uncaughtException", err);
+    process.exit(1);
+});
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
