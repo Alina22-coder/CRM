@@ -6,8 +6,7 @@ import router from "./routes/api.router.js";
 import { Request, Response, NextFunction } from "express";
 import ApiError from "./errors/api.error";
 import config from "./config/config";
-
-connectDB();
+import createAdmin from "./seeds/admin.seed.js";
 
 const PORT = config.PORT;
 
@@ -30,6 +29,13 @@ process.on("uncaughtException", (err) => {
     process.exit(1);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const bootstrap = async () => {
+    await connectDB();
+    await createAdmin();
+
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+};
+
+bootstrap();
