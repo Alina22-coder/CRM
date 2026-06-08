@@ -1,5 +1,5 @@
 import IBase from "./IBase";
-import Role from "../enums/role.enum";
+import RoleEnum from "../enums/role.enum";
 
 interface IToken extends IBase {
     _id: string;
@@ -10,7 +10,7 @@ interface IToken extends IBase {
 
 interface ITokenPayload {
     userId: string;
-    role: Role;
+    role: RoleEnum;
 }
 
 type ITokenPair = Pick<IToken, "accessToken" | "refreshToken">;

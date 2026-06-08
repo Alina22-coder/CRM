@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Role from "../enums/role.enum";
 import IUser from "../interfaces/IUser";
+import RoleEnum from "../enums/role.enum";
 
 const Schema = mongoose.Schema;
 
@@ -22,8 +22,8 @@ const userSchema = new Schema(
         },
         role: {
             type: String,
-            enum: Role,
-            default: Role.Admin,
+            enum: RoleEnum,
+            default: RoleEnum.Admin,
         },
         is_active: {
             type: Boolean,

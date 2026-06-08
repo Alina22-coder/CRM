@@ -16,10 +16,6 @@ router.use("/users", userRouter);
 
 router.use("/orders", orderRouter);
 
-router.use(
-    "/auth",
-    commonMiddleware.validateBody(UserValidator.register),
-    authRouter,
-);
+router.use("/auth", authRouter);
 
 export default router;
