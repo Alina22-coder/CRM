@@ -5,40 +5,49 @@ import IUser from "../interfaces/IUser";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
-  {
-    email: {
-      type: String,
-      unique: true,
-      required: true,
+    {
+        email: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        password: {
+            type: String,
+        },
+        name: {
+            type: String,
+        },
+        surname: {
+            type: String,
+        },
+        role: {
+            type: String,
+            enum: Role,
+            default: Role.Admin,
+        },
+        is_active: {
+            type: Boolean,
+            default: false,
+        },
+        is_banned: {
+            type: Boolean,
+            default: false,
+        },
+        //
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
     },
-    password: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    surname: {
-      type: String,
-    },
-    role: {
-      type: String,
-      enum: Object.values(Role),
-      default: Role.Admin,
-    },
-    is_active: {
-      type: Boolean,
-      default: false,
-    },
-    is_banned: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  { timestamps: true },
+    { timestamps: true },
 );
 
 userSchema.statics.findByEmail = function (email) {
-  return this.findOne({ email });
+    return this.findOne({ email });
 };
 
 export const UserModel = mongoose.model<IUser>("user", userSchema);

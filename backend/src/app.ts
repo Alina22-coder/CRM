@@ -1,15 +1,15 @@
 import express from "express";
-import dotenv from "dotenv";
+import "dotenv/config";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import router from "./routes/api.router.js";
 import { Request, Response, NextFunction } from "express";
 import ApiError from "./errors/api.error";
+import config from "./config/config";
 
-dotenv.config();
 connectDB();
 
-const PORT = process.env.PORT || 5000;
+const PORT = config.PORT;
 
 const app = express();
 
