@@ -23,6 +23,16 @@ class UserService {
             throw new ApiError("User already exists!", StatusCodes.BAD_REQUEST);
         }
     }
+
+    public async updateUserById(userId: string, update: Partial<IUser>) {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        await userRepository.updateUserById(userId, update);
+    }
 }
 
 export const userService = new UserService();

@@ -23,7 +23,7 @@ const userSchema = new Schema(
         role: {
             type: String,
             enum: RoleEnum,
-            default: RoleEnum.Admin,
+            default: RoleEnum.Manager,
         },
         is_active: {
             type: Boolean,

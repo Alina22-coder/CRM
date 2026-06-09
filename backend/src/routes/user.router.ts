@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { userController } from "../controllers/user.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { commonMiddleware } from "../middleware/common.middleware";
-import { UserValidator } from "../validators/user.validator";
+import { roleMiddleware } from "../controllers/role.middleware";
+import RoleEnum from "../enums/role.enum";
 
 const userRouter = Router();
 
@@ -23,5 +23,19 @@ userRouter.get("/:id", userController.getUserById);
 //     commonMiddleware.isValidate("id"),
 //     userController.deleteById,
 // );
+
+userRouter.patch(
+    "/:id/ban",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    userController.banUser,
+);
+
+userRouter.patch(
+    "/:id/unban",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    userController.unBanUser,
+);
 
 export default userRouter;

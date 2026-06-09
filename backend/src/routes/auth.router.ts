@@ -6,18 +6,24 @@ import { authMiddleware } from "../middleware/auth.middleware";
 
 const authRouter = express.Router();
 
-authRouter.get("/", (req, res) => {
-    res.send("Auth route working");
-});
-
 authRouter.post(
     "/register",
     commonMiddleware.validateBody(UserValidator.register),
     authController.register,
 );
-authRouter.post("/login", authController.login, authController.refresh);
 
-authRouter.post("/refresh", authMiddleware.checkRefreshToken);
+authRouter.post("/login", authController.login);
+
+authRouter.post(
+    "/refresh",
+    authMiddleware.checkRefreshToken,
+    authController.refresh,
+);
+
+authRouter.delete(
+    "/logout",
+    authMiddleware.checkAccessToken,
+    authController.logout,
+);
 
 export default authRouter;
- 

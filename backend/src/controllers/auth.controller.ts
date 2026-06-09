@@ -44,6 +44,16 @@ class AuthController {
             next(e);
         }
     }
+
+    public async logout(req: Request, res: Response, next: NextFunction) {
+        try {
+            const accessToken = req.headers.authorization?.split(" ")[1];
+            await tokenRepository.deleteByParams({ accessToken });
+            res.status(StatusCodes.NO_CONTENT).send();
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 export const authController = new AuthController();

@@ -17,6 +17,13 @@ class UserRepository {
     public getUserByEmail(email: string): Promise<IUser | null> {
         return UserModel.findOne({ email });
     }
+
+    public updateUserById(
+        userId: string,
+        update: Partial<IUser>,
+    ): Promise<IUser | null> {
+        return UserModel.findByIdAndUpdate(userId, update, { new: true });
+    }
 }
 
 export const userRepository = new UserRepository();
