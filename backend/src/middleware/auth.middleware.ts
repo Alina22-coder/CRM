@@ -31,7 +31,10 @@ class AuthMiddleware {
                 "access",
             );
 
-            const isTokenExists = await tokenService.isTokenExists(accessToken);
+            const isTokenExists = await tokenService.isTokenExists(
+                accessToken,
+                "accessToken",
+            );
 
             if (!isTokenExists) {
                 throw new ApiError("Invalid token", StatusCodes.UNAUTHORIZED);
@@ -65,8 +68,10 @@ class AuthMiddleware {
                 "refresh",
             );
 
-            const isTokenExists =
-                await tokenService.isTokenExists(refreshToken);
+            const isTokenExists = await tokenService.isTokenExists(
+                refreshToken,
+                "refreshToken",
+            );
 
             if (!isTokenExists) {
                 throw new ApiError("Invalid token", StatusCodes.FORBIDDEN);
