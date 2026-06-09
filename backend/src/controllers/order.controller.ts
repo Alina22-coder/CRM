@@ -5,23 +5,32 @@ import { userService } from "../services/user.service";
 
 class OrderController {
     public async getAllOrders(req: Request, res: Response, next: NextFunction) {
-        const data = await orderService.getAllOrders();
-        res.status(StatusCodes.OK).json(data);
-        next();
+        try {
+            const data = await orderService.getAllOrders();
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 
     public async getOrderById(req: Request, res: Response, next: NextFunction) {
-        const id = req.params.id as string;
-        const data = await orderService.getOrderById(id);
-        res.status(StatusCodes.OK).json(data);
-        next();
+        try {
+            const id = req.params.id as string;
+            const data = await orderService.getOrderById(id);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 
     public async createUser(req: Request, res: Response, next: NextFunction) {
-        const user = req.body;
-        const data = await userService.createUser(user);
-        res.status(StatusCodes.CREATED).json(data);
-        next();
+        try {
+            const user = req.body;
+            const data = await userService.createUser(user);
+            res.status(StatusCodes.CREATED).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 }
 

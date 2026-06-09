@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
 import { authService } from "../services/auth.service";
 import StatusCodes from "../enums/status-codes.enum";
+import { ITokenPayload } from "../interfaces/IToken";
+import { tokenService } from "../services/token.service";
+import { tokenRepository } from "../repositories/token.repository";
 
 class AuthController {
     public async register(req: Request, res: Response, next: NextFunction) {
@@ -23,6 +26,19 @@ class AuthController {
             const data = await authService.login(dto);
 
             res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async refresh(req: Request, res: Response, next: NextFunction) {
+        try {
+            const payload = res.locals.tokenPayload as ITokenPayload;
+            const tokens = tokenService.generateToken(payload);
+            await tokenRepository.create({
+                ...tokens,
+                _userId: payload.userId,
+            });
         } catch (e) {
             next(e);
         }

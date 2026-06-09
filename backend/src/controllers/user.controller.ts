@@ -5,24 +5,32 @@ import { IUserRegisterDTO } from "../interfaces/IUser";
 
 class UserController {
     public async getAllUsers(req: Request, res: Response, next: NextFunction) {
-        const data = await userService.getAllUsers();
-        res.status(StatusCodes.OK).json(data);
-        next();
+        try {
+            const data = await userService.getAllUsers();
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 
     public async getUserById(req: Request, res: Response, next: NextFunction) {
-        const id = req.params.id as string;
-        const data = await userService.getUserById(id);
-
-        res.status(StatusCodes.OK).json(data);
-        next();
+        try {
+            const id = req.params.id as string;
+            const data = await userService.getUserById(id);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 
     public async createUser(req: Request, res: Response, next: NextFunction) {
-        const user = req.body as IUserRegisterDTO;
-        const data = await userService.createUser(user);
-        res.status(StatusCodes.CREATED).json(data);
-        next();
+        try {
+            const user = req.body as IUserRegisterDTO;
+            const data = await userService.createUser(user);
+            res.status(StatusCodes.CREATED).json(data);
+        } catch (e) {
+            next(e);
+        }
     }
 }
 

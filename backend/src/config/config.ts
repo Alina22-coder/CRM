@@ -1,5 +1,3 @@
-import { string } from "joi";
-
 interface IConfig {
     PORT: string;
     MONGODB_URI: string;
