@@ -14,7 +14,7 @@ interface IUser extends IBase {
     isVerified: boolean;
 }
 
-export type IUserDTO = Pick<IUser, "email" | "password">;
+export type IUserLoginDTO = Pick<IUser, "email" | "password">;
 export type IUserRegisterDTO = Pick<
     IUser,
     "email" | "password" | "name" | "surname"

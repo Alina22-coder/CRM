@@ -1,5 +1,5 @@
 import { ITokenPair } from "../interfaces/IToken";
-import IUser, { IUserDTO, IUserRegisterDTO } from "../interfaces/IUser";
+import IUser, { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
 import { userService } from "./user.service";
 import { passwordService } from "./password.service";
 import { userRepository } from "../repositories/user.repository";
@@ -29,7 +29,7 @@ class AuthService {
     }
 
     public async login(
-        dto: IUserDTO,
+        dto: IUserLoginDTO,
     ): Promise<{ user: IUser; tokens: ITokenPair }> {
         const user = await userRepository.getUserByEmail(dto.email);
 

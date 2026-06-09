@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/config";
 import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
+import { tokenRepository } from "../repositories/token.repository";
 
 class TokenService {
     public generateToken(payload: ITokenPayload): ITokenPair {
@@ -43,6 +44,15 @@ class TokenService {
             throw new ApiError("Invalid token", StatusCodes.UNAUTHORIZED);
         }
     }
+
+    public async isTokenExists(accessToken: string): Promise<boolean> {
+        const iTokenPromise = await tokenRepository.findByParams({
+            accessToken,
+        });
+        return !!iTokenPromise;
+    }
+
+    public generateActivateToken() {}
 }
 
 export const tokenService = new TokenService();

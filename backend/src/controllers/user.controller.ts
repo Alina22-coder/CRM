@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
 import { userService } from "../services/user.service";
+import { IUserRegisterDTO } from "../interfaces/IUser";
 
 class UserController {
     public async getAllUsers(req: Request, res: Response, next: NextFunction) {
@@ -14,6 +15,13 @@ class UserController {
         const data = await userService.getUserById(id);
 
         res.status(StatusCodes.OK).json(data);
+        next();
+    }
+
+    public async createUser(req: Request, res: Response, next: NextFunction) {
+        const user = req.body as IUserRegisterDTO;
+        const data = await userService.createUser(user);
+        res.status(StatusCodes.CREATED).json(data);
         next();
     }
 }

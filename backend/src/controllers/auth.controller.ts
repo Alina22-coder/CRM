@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { IUserDTO, IUserRegisterDTO } from "../interfaces/IUser";
+import { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
 import { authService } from "../services/auth.service";
 import StatusCodes from "../enums/status-codes.enum";
 
@@ -18,7 +18,7 @@ class AuthController {
 
     public async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const dto = req.body as IUserDTO;
+            const dto = req.body as IUserLoginDTO;
 
             const data = await authService.login(dto);
 
