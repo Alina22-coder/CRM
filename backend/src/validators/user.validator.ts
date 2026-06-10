@@ -10,7 +10,18 @@ export class UserValidator {
     public static register = joi.object({
         email: this.email.required(),
         password: this.password.required(),
-        firstName: this.firstName.required(),
+        name: this.firstName.required(),
+        surname: this.surname.required(),
+    });
+
+    public static create = joi.object({
+        email: this.email.required(),
+        name: this.firstName.required(),
+        surname: this.surname.required(),
+    });
+
+    public static update = joi.object({
+        name: this.firstName.required(),
         surname: this.surname.required(),
     });
 }

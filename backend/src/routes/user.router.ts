@@ -2,27 +2,40 @@ import { Router } from "express";
 import { userController } from "../controllers/user.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { roleMiddleware } from "../controllers/role.middleware";
+import { commonMiddleware } from "../middleware/common.middleware";
+import { UserValidator } from "../validators/user.validator";
 import RoleEnum from "../enums/role.enum";
 
 const userRouter = Router();
 
-userRouter.get("/", userController.getAllUsers);
-userRouter.get("/:id", userController.getUserById);
-// userRouter.post("/", userController.createUser);
+userRouter.get(
+    "/",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    userController.getAllUsers,
+);
 
-// userRouter.put(
-//     "/:id",
-//     authMiddleware.checkAccessToken,
-//     commonMiddleware.validateBody(UserValidator.update),
-//     userController.updateById,
-// );
+userRouter.get(
+    "/:id",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    userController.getUserById,
+);
 
-// userRouter.delete(
-//     "/:id",
-//     authMiddleware.checkAccessToken,
-//     commonMiddleware.isValidate("id"),
-//     userController.deleteById,
-// );
+userRouter.post(
+    "/",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.validateBody(UserValidator.create),
+    userController.createUser,
+);
+
+userRouter.put(
+    "/:id",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.validateBody(UserValidator.update),
+    userController.updateUserById,
+);
 
 userRouter.patch(
     "/:id/ban",
@@ -36,6 +49,14 @@ userRouter.patch(
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
     userController.unBanUser,
+);
+
+userRouter.delete(
+    "/:id",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("id"),
+    userController.deleteUserById,
 );
 
 export default userRouter;

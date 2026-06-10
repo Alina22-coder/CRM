@@ -14,15 +14,23 @@ class UserRepository {
         return UserModel.create(user);
     }
 
-    public getUserByEmail(email: string): Promise<IUser | null> {
-        return UserModel.findOne({ email });
-    }
+    // public updateUserById(userId: string): Promise<IUser | null> {
+    //     return UserModel.findByIdAndUpdate(userId);
+    // }
 
     public updateUserById(
         userId: string,
         update: Partial<IUser>,
     ): Promise<IUser | null> {
         return UserModel.findByIdAndUpdate(userId, update, { new: true });
+    }
+
+    public deleteUserById(userId: string): Promise<IUser | null> {
+        return UserModel.findByIdAndDelete(userId);
+    }
+
+    public getUserByEmail(email: string): Promise<IUser | null> {
+        return UserModel.findOne({ email });
     }
 }
 

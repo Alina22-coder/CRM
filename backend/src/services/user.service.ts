@@ -16,15 +16,11 @@ class UserService {
         return userRepository.createUser(user);
     }
 
-    public async isEmailUnique(email: string): Promise<void> {
-        const user = await userRepository.getUserByEmail(email);
-
-        if (user) {
-            throw new ApiError("User already exists!", StatusCodes.BAD_REQUEST);
-        }
+    public updateUserById(userId: string, update: Partial<IUser>) {
+        return userRepository.updateUserById(userId, update);
     }
 
-    public async updateUserById(userId: string, update: Partial<IUser>) {
+    public async updateUserBanById(userId: string, update: Partial<IUser>) {
         const user = await userRepository.getUserById(userId);
 
         if (!user) {
@@ -32,6 +28,18 @@ class UserService {
         }
 
         await userRepository.updateUserById(userId, update);
+    }
+
+    public deleteUserById(userId: string) {
+        return userRepository.deleteUserById(userId);
+    }
+
+    public async isEmailUnique(email: string): Promise<void> {
+        const user = await userRepository.getUserByEmail(email);
+
+        if (user) {
+            throw new ApiError("User already exists!", StatusCodes.BAD_REQUEST);
+        }
     }
 }
 

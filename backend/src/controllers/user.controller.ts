@@ -34,6 +34,20 @@ class UserController {
         }
     }
 
+    public async updateUserById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const id = req.params.id as string;
+            const data = await userService.updateUserById(id, req.body);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async banUser(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id as string;
@@ -49,6 +63,20 @@ class UserController {
             const id = req.params.id as string;
             await userService.updateUserById(id, { is_banned: false });
             res.status(StatusCodes.OK).json({ message: "User unbanned" });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async deleteUserById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const id = req.params.id as string;
+            await userService.deleteUserById(id);
+            res.status(StatusCodes.OK).json({ message: "User deleted" });
         } catch (e) {
             next(e);
         }
