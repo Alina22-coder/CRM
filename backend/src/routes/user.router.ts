@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { userController } from "../controllers/user.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { roleMiddleware } from "../controllers/role.middleware";
+import { roleMiddleware } from "../middleware/role.middleware";
 import { commonMiddleware } from "../middleware/common.middleware";
 import { UserValidator } from "../validators/user.validator";
 import RoleEnum from "../enums/role.enum";

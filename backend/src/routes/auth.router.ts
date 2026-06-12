@@ -3,7 +3,7 @@ import { authController } from "../controllers/auth.controller";
 import { commonMiddleware } from "../middleware/common.middleware";
 import { UserValidator } from "../validators/user.validator";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { roleMiddleware } from "../controllers/role.middleware";
+import { roleMiddleware } from "../middleware/role.middleware";
 import RoleEnum from "../enums/role.enum";
 const authRouter = express.Router();
 

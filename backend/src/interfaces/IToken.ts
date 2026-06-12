@@ -11,6 +11,7 @@ interface IToken extends IBase {
 interface ITokenPayload {
     userId: string;
     role: RoleEnum;
+    isActivation?: boolean;
 }
 
 type ITokenPair = Pick<IToken, "accessToken" | "refreshToken">;

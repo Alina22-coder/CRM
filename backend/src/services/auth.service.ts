@@ -90,6 +90,7 @@ class AuthService {
         const token = tokenService.generateActivateToken({
             userId: user._id,
             role: user.role,
+            isActivation: true,
         });
 
         return token;
@@ -101,7 +102,7 @@ class AuthService {
 
         await userRepository.updateUserById(payload.userId, {
             password: hashedPassword,
-            is_active: true,
+            ...(payload.isActivation && { is_active: true }),
         });
     }
 
