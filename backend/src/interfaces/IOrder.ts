@@ -15,4 +15,11 @@ interface IOrder {
   status: string;
 }
 
+export interface IOrderQuery {
+    pageSize: number;
+    page: number;
+    search?: string;
+    order?: string;
+}
+
 export default IOrder;

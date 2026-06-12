@@ -12,6 +12,7 @@ userRouter.get(
     "/",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.query(UserValidator.query),
     userController.getAllUsers,
 );
 

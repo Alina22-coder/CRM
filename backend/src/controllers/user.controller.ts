@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
 import { userService } from "../services/user.service";
-import { IUserRegisterDTO } from "../interfaces/IUser";
+import { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserController {
     public async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
-            const data = await userService.getAllUsers();
+            const query = res.locals.query as IUserQuery;
+            const data = await userService.getAllUsers(query);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

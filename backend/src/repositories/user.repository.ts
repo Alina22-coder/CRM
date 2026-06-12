@@ -1,9 +1,17 @@
-import IUser from "../interfaces/IUser";
+import IUser, { IUserQuery } from "../interfaces/IUser";
 import { UserModel } from "../models/user.model";
 
 class UserRepository {
-    public getAllUsers(): Promise<IUser[]> {
-        return UserModel.find();
+    public async getAllUsers(query: IUserQuery): Promise<IUser[]> {
+        const { page, pageSize, search, order } = query;
+        const filter = search
+            ? { $or: [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }] }
+            : {};
+        const sortField = order?.startsWith("-") ? order.slice(1) : order;
+        const sortDir = order?.startsWith("-") ? -1 : 1;
+        const q = UserModel.find(filter);
+        if (sortField) q.sort({ [sortField]: sortDir });
+        return q.skip((page - 1) * pageSize).limit(pageSize);
     }
 
     public getUserById(userId: string): Promise<IUser | null> {

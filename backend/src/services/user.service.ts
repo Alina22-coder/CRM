@@ -1,11 +1,11 @@
 import StatusCodes from "../enums/status-codes.enum";
 import ApiError from "../errors/api.error";
-import IUser from "../interfaces/IUser";
+import IUser, { IUserQuery } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
-    public getAllUsers() {
-        return userRepository.getAllUsers();
+    public getAllUsers(query: IUserQuery) {
+        return userRepository.getAllUsers(query);
     }
 
     public getUserById(userId: string) {

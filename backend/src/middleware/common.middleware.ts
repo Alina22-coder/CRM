@@ -3,11 +3,12 @@ import { isObjectIdOrHexString } from "mongoose";
 import ApiError from "../errors/api.error";
 
 import { ObjectSchema } from "joi";
+import StatusCodes from "../enums/status-codes.enum";
 class CommonMiddleware {
     public isValidate(key: string) {
         return (req: Request, res: Response, next: NextFunction) => {
             try {
-                const { id } = req.params;
+                const id = req.params[key];
 
                 if (!isObjectIdOrHexString(id)) {
                     throw new ApiError(`Invalid id [${key}]`, 400);
@@ -26,6 +27,20 @@ class CommonMiddleware {
                 next();
             } catch (e: any) {
                 next(new ApiError(e.details[0].message, 400));
+            }
+        };
+    }
+
+    public query(validator: ObjectSchema) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                res.locals.query = await validator.validateAsync(req.query);
+                next();
+            } catch (e: any) {
+                const message =
+                    e.details?.[0]?.message ?? e.message ?? "Validation error";
+
+                next(new ApiError(message, StatusCodes.BAD_REQUEST));
             }
         };
     }
