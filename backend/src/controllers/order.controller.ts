@@ -36,7 +36,7 @@ class OrderController {
     ) {
         try {
             const id = req.params.id as string;
-            const data = await orderService.updateOrderById(id);
+            const data = await orderService.updateOrderById(id, req.body);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

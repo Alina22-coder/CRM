@@ -1,4 +1,5 @@
 interface IOrder {
+    _id: string;
     name: string;
     surname: string;
     email: string;
@@ -13,6 +14,8 @@ interface IOrder {
     utm: string;
     msg: string;
     status: string;
+    manager?: string;
+    group?: string;
 }
 
 export interface IOrderQuery {

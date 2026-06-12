@@ -24,8 +24,11 @@ class OrderRepository {
         return OrderModel.findById(orderId);
     }
 
-    public updateOrderById(orderId: string) {
-        return OrderModel.findByIdAndUpdate(orderId);
+    public updateOrderById(
+        orderId: string,
+        update: Partial<IOrder>,
+    ): Promise<IOrder | null> {
+        return OrderModel.findByIdAndUpdate(orderId, update, { new: true });
     }
 }
 export const orderRepository = new OrderRepository();
