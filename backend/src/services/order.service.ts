@@ -9,5 +9,9 @@ class OrderService {
     public getOrderById(orderId: string) {
         return orderRepository.getOrderById(orderId);
     }
+
+    public updateOrderById(orderId: string) {
+        return orderRepository.updateOrderById(orderId);
+    }
 }
 export const orderService = new OrderService();

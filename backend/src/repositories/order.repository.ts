@@ -23,5 +23,9 @@ class OrderRepository {
     public getOrderById(orderId: string) {
         return OrderModel.findById(orderId);
     }
+
+    public updateOrderById(orderId: string) {
+        return OrderModel.findByIdAndUpdate(orderId);
+    }
 }
 export const orderRepository = new OrderRepository();

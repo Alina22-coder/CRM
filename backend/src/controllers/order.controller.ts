@@ -5,7 +5,11 @@ import { userService } from "../services/user.service";
 import { IOrderQuery } from "../interfaces/IOrder";
 
 class OrderController {
-    public async getAllOrders(_req: Request, res: Response, next: NextFunction) {
+    public async getAllOrders(
+        _req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         try {
             const query = res.locals.query as IOrderQuery;
             const data = await orderService.getAllOrders(query);
@@ -25,11 +29,15 @@ class OrderController {
         }
     }
 
-    public async createUser(req: Request, res: Response, next: NextFunction) {
+    public async updateOrderById(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         try {
-            const user = req.body;
-            const data = await userService.createUser(user);
-            res.status(StatusCodes.CREATED).json(data);
+            const id = req.params.id as string;
+            const data = await orderService.updateOrderById(id);
+            res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);
         }

@@ -6,7 +6,23 @@ import { OrderValidator } from "../validators/order.validator.js";
 
 const orderRouter = Router();
 
-orderRouter.get("/", authMiddleware.checkAccessToken, commonMiddleware.query(OrderValidator.query), orderController.getAllOrders);
-orderRouter.get("/:id", authMiddleware.checkAccessToken, orderController.getOrderById);
+orderRouter.get(
+    "/",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.query(OrderValidator.query),
+    orderController.getAllOrders,
+);
+
+orderRouter.get(
+    "/:id",
+    authMiddleware.checkAccessToken,
+    orderController.getOrderById,
+);
+
+orderRouter.put(
+    "/:id",
+    authMiddleware.checkAccessToken,
+    orderController.updateOrderById,
+);
 
 export default orderRouter;
