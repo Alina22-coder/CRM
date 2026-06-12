@@ -55,7 +55,28 @@ class TokenService {
         return !!iTokenPromise;
     }
 
-    public generateActivateToken() {}
+    public generateActivateToken(payload: ITokenPayload): string {
+        const activateToken = jwt.sign(payload, config.JWT_ACTIVATE_SECRET, {
+            expiresIn: config.JWT_ACTIVATE_LIFETIME,
+        });
+
+        console.log(activateToken);
+        return activateToken;
+    }
+
+    public verifyActivateToken(token: string): ITokenPayload {
+        try {
+            return jwt.verify(
+                token,
+                config.JWT_ACTIVATE_SECRET,
+            ) as ITokenPayload;
+        } catch (e) {
+            throw new ApiError(
+                "Invalid or expired token",
+                StatusCodes.UNAUTHORIZED,
+            );
+        }
+    }
 }
 
 export const tokenService = new TokenService();

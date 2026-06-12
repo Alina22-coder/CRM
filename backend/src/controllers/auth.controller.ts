@@ -3,8 +3,6 @@ import { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
 import { authService } from "../services/auth.service";
 import StatusCodes from "../enums/status-codes.enum";
 import { ITokenPayload } from "../interfaces/IToken";
-import { tokenService } from "../services/token.service";
-import { tokenRepository } from "../repositories/token.repository";
 
 class AuthController {
     public async register(req: Request, res: Response, next: NextFunction) {
@@ -34,11 +32,9 @@ class AuthController {
     public async refresh(req: Request, res: Response, next: NextFunction) {
         try {
             const { role, userId } = res.locals.tokenPayload as ITokenPayload;
-            const tokens = tokenService.generateToken({ role, userId });
-            await tokenRepository.create({
-                ...tokens,
-                _userId: userId,
-            });
+
+            const tokens = await authService.refresh(userId, role);
+
             res.status(StatusCodes.OK).json(tokens);
         } catch (e) {
             next(e);
@@ -47,9 +43,55 @@ class AuthController {
 
     public async logout(req: Request, res: Response, next: NextFunction) {
         try {
-            const accessToken = req.headers.authorization?.split(" ")[1];
-            await tokenRepository.deleteByParams({ accessToken });
+            const accessToken = req.headers.authorization?.split(
+                " ",
+            )[1] as string;
+
+            await authService.logout(accessToken);
+
             res.status(StatusCodes.NO_CONTENT).send();
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async activate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.params.userId as string;
+
+            const token = await authService.activate(userId);
+
+            res.status(StatusCodes.OK).json({ token });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async setPassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { token, password } = req.body;
+
+            await authService.setPassword(token, password);
+
+            res.status(StatusCodes.OK).json({
+                message: "Password set successfully",
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async recoveryPassword(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const userId = req.params.userId as string;
+
+            const token = await authService.recoveryPassword(userId);
+
+            res.status(StatusCodes.OK).json({ token });
         } catch (e) {
             next(e);
         }

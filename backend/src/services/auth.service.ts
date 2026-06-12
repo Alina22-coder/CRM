@@ -1,5 +1,6 @@
 import { ITokenPair } from "../interfaces/IToken";
 import IUser, { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
+import RoleEnum from "../enums/role.enum";
 import { userService } from "./user.service";
 import { passwordService } from "./password.service";
 import { userRepository } from "../repositories/user.repository";
@@ -40,6 +41,13 @@ class AuthService {
             );
         }
 
+        if (user.is_banned) {
+            throw new ApiError("User is banned", StatusCodes.FORBIDDEN);
+        }
+        if (!user.is_active) {
+            throw new ApiError("User is not activate", StatusCodes.FORBIDDEN);
+        }
+
         const isValidPassword = await passwordService.comparePassword(
             dto.password,
             user.password,
@@ -60,6 +68,56 @@ class AuthService {
         await tokenRepository.create({ ...tokens, _userId: user?._id });
 
         return { user, tokens };
+    }
+
+    public async refresh(userId: string, role: RoleEnum): Promise<ITokenPair> {
+        const tokens = tokenService.generateToken({ userId, role });
+        await tokenRepository.create({ ...tokens, _userId: userId });
+        return tokens;
+    }
+
+    public async logout(accessToken: string): Promise<void> {
+        await tokenRepository.deleteByParams({ accessToken });
+    }
+
+    public async activate(userId: string): Promise<string> {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        const token = tokenService.generateActivateToken({
+            userId: user._id,
+            role: user.role,
+        });
+
+        return token;
+    }
+
+    public async setPassword(token: string, password: string): Promise<void> {
+        const payload = tokenService.verifyActivateToken(token);
+        const hashedPassword = await passwordService.hashPassword(password);
+
+        await userRepository.updateUserById(payload.userId, {
+            password: hashedPassword,
+            is_active: true,
+        });
+    }
+
+    public async recoveryPassword(userId: string): Promise<string> {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        const token = tokenService.generateActivateToken({
+            userId: user._id,
+            role: user.role,
+        });
+
+        return token;
     }
 }
 
