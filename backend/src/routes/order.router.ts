@@ -3,6 +3,7 @@ import { orderController } from "../controllers/order.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { commonMiddleware } from "../middleware/common.middleware.js";
 import { OrderValidator } from "../validators/order.validator.js";
+import { commentController } from "../controllers/comment.controller.js";
 
 const orderRouter = Router();
 
@@ -24,6 +25,12 @@ orderRouter.put(
     authMiddleware.checkAccessToken,
     commonMiddleware.validateBody(OrderValidator.update),
     orderController.updateOrderById,
+);
+
+orderRouter.post(
+    "/:id/comments",
+    authMiddleware.checkAccessToken,
+    commentController.createCommentToOrderById,
 );
 
 export default orderRouter;
