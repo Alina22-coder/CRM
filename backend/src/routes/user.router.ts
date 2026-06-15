@@ -5,6 +5,7 @@ import { roleMiddleware } from "../middleware/role.middleware";
 import { commonMiddleware } from "../middleware/common.middleware";
 import { UserValidator } from "../validators/user.validator";
 import RoleEnum from "../enums/role.enum";
+import { orderController } from "../controllers/order.controller";
 
 const userRouter = Router();
 
@@ -14,6 +15,12 @@ userRouter.get(
     roleMiddleware.checkRole(RoleEnum.Admin),
     commonMiddleware.query(UserValidator.query),
     userController.getAllUsers,
+);
+
+userRouter.get(
+    "/:id/statistic",
+    authMiddleware.checkAccessToken,
+    orderController.getStatisticByManager,
 );
 
 userRouter.get(

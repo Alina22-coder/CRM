@@ -4,6 +4,7 @@ import { userRepository } from "../repositories/user.repository";
 import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
 import Status from "../enums/status.enum";
+import IUser from "../interfaces/IUser";
 
 class OrderService {
     public getAllOrders(query: IOrderQuery) {
@@ -49,6 +50,20 @@ class OrderService {
         }
 
         return orderRepository.updateOrderById(orderId, updatedFields);
+    }
+
+    public async getStatistic() {
+        return orderRepository.getStatistic();
+    }
+
+    public async getStatisticByManager(userId: string) {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        return orderRepository.getStatisticByManager(user.surname);
     }
 }
 export const orderService = new OrderService();

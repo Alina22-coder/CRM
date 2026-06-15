@@ -47,6 +47,29 @@ class OrderController {
             next(e);
         }
     }
+
+    public async getStatistic(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await orderService.getStatistic();
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async getStatisticByManager(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const userId = req.params.id as string;
+            const data = await orderService.getStatisticByManager(userId);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
 }
 
 export const orderController = new OrderController();

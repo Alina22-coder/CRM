@@ -39,5 +39,30 @@ class OrderRepository {
     ): Promise<IOrder | null> {
         return OrderModel.findByIdAndUpdate(orderId, update, { new: true });
     }
+
+    public async getStatistic() {
+        const [total, byStatus] = await Promise.all([
+            OrderModel.countDocuments(),
+            OrderModel.aggregate([
+                { $group: { _id: "$status", count: { $sum: 1 } } },
+            ]),
+        ]);
+        return { total, byStatus };
+    }
+
+    public async getStatisticByManager(managerSurname: string) {
+        const [total, byStatus] = await Promise.all([
+            OrderModel.countDocuments({ manager: managerSurname }),
+            OrderModel.aggregate([
+                {
+                    $match: { manager: managerSurname },
+                },
+                {
+                    $group: { _id: "$status", count: { $sum: 1 } },
+                },
+            ]),
+        ]);
+        return { total, byStatus };
+    }
 }
 export const orderRepository = new OrderRepository();

@@ -4,6 +4,8 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 import { commonMiddleware } from "../middleware/common.middleware.js";
 import { OrderValidator } from "../validators/order.validator.js";
 import { commentController } from "../controllers/comment.controller.js";
+import { roleMiddleware } from "../middleware/role.middleware.js";
+import RoleEnum from "../enums/role.enum.js";
 
 const orderRouter = Router();
 
@@ -12,6 +14,13 @@ orderRouter.get(
     authMiddleware.checkAccessToken,
     commonMiddleware.query(OrderValidator.query),
     orderController.getAllOrders,
+);
+
+orderRouter.get(
+    "/statistic",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    orderController.getStatistic,
 );
 
 orderRouter.get(
