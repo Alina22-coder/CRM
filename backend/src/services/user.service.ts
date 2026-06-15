@@ -1,6 +1,6 @@
 import StatusCodes from "../enums/status-codes.enum";
 import ApiError from "../errors/api.error";
-import IUser, { IUserQuery } from "../interfaces/IUser";
+import IUser, { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -12,7 +12,8 @@ class UserService {
         return userRepository.getUserById(userId);
     }
 
-    public createUser(user: Partial<IUser>) {
+    public async createUser(user: IUserRegisterDTO) {
+        await this.isEmailUnique(user.email);
         return userRepository.createUser(user);
     }
 

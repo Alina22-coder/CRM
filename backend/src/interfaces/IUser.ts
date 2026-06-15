@@ -12,6 +12,7 @@ interface IUser extends IBase {
     is_banned: boolean;
     isDeleted: boolean;
     isVerified: boolean;
+    last_login: Date | null;
 }
 
 export interface IUserQuery {
@@ -22,9 +23,6 @@ export interface IUserQuery {
 }
 
 export type IUserLoginDTO = Pick<IUser, "email" | "password">;
-export type IUserRegisterDTO = Pick<
-    IUser,
-    "email" | "password" | "name" | "surname"
->;
+export type IUserRegisterDTO = Pick<IUser, "email" | "name" | "surname">;
 
 export default IUser;

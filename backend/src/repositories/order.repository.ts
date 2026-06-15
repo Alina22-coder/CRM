@@ -2,7 +2,9 @@ import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 
 class OrderRepository {
-    public async getAllOrders(query: IOrderQuery): Promise<IOrder[]> {
+    public async getAllOrders(
+        query: IOrderQuery,
+    ): Promise<{ data: IOrder[]; total: number }> {
         const { page, pageSize, search, order } = query;
         const filter = search
             ? {
@@ -15,9 +17,16 @@ class OrderRepository {
             : {};
         const sortField = order?.startsWith("-") ? order.slice(1) : order;
         const sortDir = order?.startsWith("-") ? -1 : 1;
-        const q = OrderModel.find(filter);
-        q.sort(sortField ? { [sortField]: sortDir } : { _id: -1 });
-        return q.skip((page - 1) * pageSize).limit(pageSize);
+
+        const [data, total] = await Promise.all([
+            OrderModel.find(filter)
+                .sort(sortField ? { [sortField]: sortDir } : { _id: -1 })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize),
+            OrderModel.countDocuments(filter),
+        ]);
+
+        return { data, total };
     }
 
     public getOrderById(orderId: string) {

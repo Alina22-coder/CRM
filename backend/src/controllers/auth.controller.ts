@@ -5,18 +5,6 @@ import StatusCodes from "../enums/status-codes.enum";
 import { ITokenPayload } from "../interfaces/IToken";
 
 class AuthController {
-    public async register(req: Request, res: Response, next: NextFunction) {
-        try {
-            const body = req.body as IUserRegisterDTO;
-
-            const data = await authService.register(body);
-
-            res.status(StatusCodes.CREATED).json(data);
-        } catch (e) {
-            next(e);
-        }
-    }
-
     public async login(req: Request, res: Response, next: NextFunction) {
         try {
             const dto = req.body as IUserLoginDTO;

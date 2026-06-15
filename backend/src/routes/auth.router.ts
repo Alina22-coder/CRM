@@ -7,12 +7,6 @@ import { roleMiddleware } from "../middleware/role.middleware";
 import RoleEnum from "../enums/role.enum";
 const authRouter = express.Router();
 
-authRouter.post(
-    "/register",
-    commonMiddleware.validateBody(UserValidator.register),
-    authController.register,
-);
-
 authRouter.post("/login", authController.login);
 
 authRouter.post(

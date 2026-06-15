@@ -33,7 +33,6 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
-        //
         isDeleted: {
             type: Boolean,
             default: false,
@@ -41,6 +40,10 @@ const userSchema = new Schema(
         isVerified: {
             type: Boolean,
             default: false,
+        },
+        last_login: {
+            type: Date,
+            default: null,
         },
     },
     { timestamps: true },

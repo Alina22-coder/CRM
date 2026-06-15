@@ -1,7 +1,6 @@
 import { ITokenPair } from "../interfaces/IToken";
-import IUser, { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
+import IUser, { IUserLoginDTO } from "../interfaces/IUser";
 import RoleEnum from "../enums/role.enum";
-import { userService } from "./user.service";
 import { passwordService } from "./password.service";
 import { userRepository } from "../repositories/user.repository";
 import { tokenService } from "./token.service";
@@ -10,25 +9,6 @@ import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
 
 class AuthService {
-    public async register(
-        user: IUserRegisterDTO,
-    ): Promise<{ user: IUser; tokens: ITokenPair }> {
-        await userService.isEmailUnique(user.email);
-
-        const password = await passwordService.hashPassword(user.password);
-
-        const newUser = await userRepository.createUser({ ...user, password });
-
-        const tokens = tokenService.generateToken({
-            userId: newUser._id,
-            role: newUser.role,
-        });
-
-        await tokenRepository.create({ ...tokens, _userId: newUser._id });
-
-        return { user: newUser, tokens };
-    }
-
     public async login(
         dto: IUserLoginDTO,
     ): Promise<{ user: IUser; tokens: ITokenPair }> {
@@ -65,7 +45,10 @@ class AuthService {
             role: user.role,
         });
 
-        await tokenRepository.create({ ...tokens, _userId: user?._id });
+        await Promise.all([
+            tokenRepository.create({ ...tokens, _userId: user._id }),
+            userRepository.updateUserById(user._id, { last_login: new Date() }),
+        ]);
 
         return { user, tokens };
     }

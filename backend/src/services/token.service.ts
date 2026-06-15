@@ -60,7 +60,6 @@ class TokenService {
             expiresIn: config.JWT_ACTIVATE_LIFETIME,
         });
 
-        console.log(activateToken);
         return activateToken;
     }
 

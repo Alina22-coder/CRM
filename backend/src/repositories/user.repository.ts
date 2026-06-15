@@ -2,16 +2,30 @@ import IUser, { IUserQuery } from "../interfaces/IUser";
 import { UserModel } from "../models/user.model";
 
 class UserRepository {
-    public async getAllUsers(query: IUserQuery): Promise<IUser[]> {
+    public async getAllUsers(
+        query: IUserQuery,
+    ): Promise<{ data: IUser[]; total: number }> {
         const { page, pageSize, search, order } = query;
         const filter = search
-            ? { $or: [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }] }
+            ? {
+                  $or: [
+                      { name: { $regex: search, $options: "i" } },
+                      { email: { $regex: search, $options: "i" } },
+                  ],
+              }
             : {};
         const sortField = order?.startsWith("-") ? order.slice(1) : order;
         const sortDir = order?.startsWith("-") ? -1 : 1;
-        const q = UserModel.find(filter);
-        if (sortField) q.sort({ [sortField]: sortDir });
-        return q.skip((page - 1) * pageSize).limit(pageSize);
+
+        const [data, total] = await Promise.all([
+            UserModel.find(filter)
+                .sort(sortField ? { [sortField]: sortDir } : { _id: -1 })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize),
+            UserModel.countDocuments(filter),
+        ]);
+
+        return { data, total };
     }
 
     public getUserById(userId: string): Promise<IUser | null> {
@@ -21,10 +35,6 @@ class UserRepository {
     public createUser(user: Partial<IUser>): Promise<IUser> {
         return UserModel.create(user);
     }
-
-    // public updateUserById(userId: string): Promise<IUser | null> {
-    //     return UserModel.findByIdAndUpdate(userId);
-    // }
 
     public updateUserById(
         userId: string,

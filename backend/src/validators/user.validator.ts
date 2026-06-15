@@ -8,12 +8,12 @@ export class UserValidator {
     private static firstName = joi.string().regex(RegexEnum.NAME);
     private static surname = joi.string().regex(RegexEnum.NAME);
 
-    public static register = joi.object({
-        email: this.email.required(),
-        password: this.password.required(),
-        name: this.firstName.required(),
-        surname: this.surname.required(),
-    });
+    // public static register = joi.object({
+    //     email: this.email.required(),
+    //     password: this.password.required(),
+    //     name: this.firstName.required(),
+    //     surname: this.surname.required(),
+    // });
 
     public static create = joi.object({
         email: this.email.required(),
