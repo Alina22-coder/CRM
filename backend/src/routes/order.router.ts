@@ -22,6 +22,7 @@ orderRouter.get(
 orderRouter.put(
     "/:id",
     authMiddleware.checkAccessToken,
+    commonMiddleware.validateBody(OrderValidator.update),
     orderController.updateOrderById,
 );
 

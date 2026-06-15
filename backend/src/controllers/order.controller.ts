@@ -1,8 +1,8 @@
 import { orderService } from "../services/order.service";
 import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
-import { userService } from "../services/user.service";
 import { IOrderQuery } from "../interfaces/IOrder";
+import { ITokenPayload } from "../interfaces/IToken";
 
 class OrderController {
     public async getAllOrders(
@@ -36,7 +36,12 @@ class OrderController {
     ) {
         try {
             const id = req.params.id as string;
-            const data = await orderService.updateOrderById(id, req.body);
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const data = await orderService.updateOrderById(
+                id,
+                req.body,
+                userId,
+            );
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

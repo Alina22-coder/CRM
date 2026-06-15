@@ -1,5 +1,9 @@
 import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { orderRepository } from "../repositories/order.repository";
+import { userRepository } from "../repositories/user.repository";
+import ApiError from "../errors/api.error";
+import StatusCodes from "../enums/status-codes.enum";
+import Status from "../enums/status.enum";
 
 class OrderService {
     public getAllOrders(query: IOrderQuery) {
@@ -10,8 +14,41 @@ class OrderService {
         return orderRepository.getOrderById(orderId);
     }
 
-    public updateOrderById(orderId: string, update: Partial<IOrder>) {
-        return orderRepository.updateOrderById(orderId, update);
+    public async updateOrderById(
+        orderId: string,
+        update: Partial<IOrder>,
+        userId: string,
+    ) {
+        const order = await orderRepository.getOrderById(orderId);
+
+        if (!order) {
+            throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
+        }
+
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        if (order.manager && order.manager !== user.surname) {
+            throw new ApiError(
+                "You can only edit your own orders",
+                StatusCodes.FORBIDDEN,
+            );
+        }
+
+        const updatedFields: Partial<IOrder> = { ...update };
+
+        if (!order.manager) {
+            updatedFields.manager = user.surname;
+        }
+
+        if (!order.status || order.status === Status.NEW) {
+            updatedFields.status = Status.IN_WORK;
+        }
+
+        return orderRepository.updateOrderById(orderId, updatedFields);
     }
 }
 export const orderService = new OrderService();
