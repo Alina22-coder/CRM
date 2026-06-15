@@ -40,7 +40,7 @@ class OrderRepository {
         return OrderModel.findByIdAndUpdate(orderId, update, { new: true });
     }
 
-    public async getStatistic() {
+    public async getOrderStatistic() {
         const [total, byStatus] = await Promise.all([
             OrderModel.countDocuments(),
             OrderModel.aggregate([
@@ -63,6 +63,27 @@ class OrderRepository {
             ]),
         ]);
         return { total, byStatus };
+    }
+
+    public async getAllOrdersForExcel(query: IOrderQuery): Promise<IOrder[]> {
+        const { search, order } = query;
+        const filter = search
+            ? {
+                  $or: [
+                      { name: { $regex: search, $options: "i" } },
+                      { email: { $regex: search, $options: "i" } },
+                      { surname: { $regex: search, $options: "i" } },
+                  ],
+              }
+            : {};
+        const sortField = order?.startsWith("-") ? order.slice(1) : order;
+        const sortDir = order?.startsWith("-") ? -1 : 1;
+
+        const data = await OrderModel.find(filter).sort(
+            sortField ? { [sortField]: sortDir } : { _id: -1 },
+        );
+
+        return data;
     }
 }
 export const orderRepository = new OrderRepository();

@@ -4,15 +4,21 @@ import { userRepository } from "../repositories/user.repository";
 import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
 import Status from "../enums/status.enum";
-import IUser from "../interfaces/IUser";
+import { commentRepository } from "../repositories/comment.repository";
+import { Workbook } from "exceljs";
 
 class OrderService {
     public getAllOrders(query: IOrderQuery) {
         return orderRepository.getAllOrders(query);
     }
 
-    public getOrderById(orderId: string) {
-        return orderRepository.getOrderById(orderId);
+    public async getOrderById(orderId: string) {
+        const [order, comments] = await Promise.all([
+            orderRepository.getOrderById(orderId),
+            commentRepository.getAllCommentsByOrderId(orderId),
+        ]);
+
+        return { ...order?.toObject(), comments };
     }
 
     public async updateOrderById(
@@ -52,8 +58,8 @@ class OrderService {
         return orderRepository.updateOrderById(orderId, updatedFields);
     }
 
-    public async getStatistic() {
-        return orderRepository.getStatistic();
+    public async getOrderStatistic() {
+        return orderRepository.getOrderStatistic();
     }
 
     public async getStatisticByManager(userId: string) {
@@ -64,6 +70,37 @@ class OrderService {
         }
 
         return orderRepository.getStatisticByManager(user.surname);
+    }
+
+    public async getAllOrdersForExcel(query: IOrderQuery) {
+        const orders = await orderRepository.getAllOrdersForExcel(query);
+
+        const workbook = new Workbook();
+
+        const worksheet = workbook.addWorksheet("Orders");
+
+        worksheet.columns = [
+            { header: "ID", key: "_id" },
+            { header: "Name", key: "name" },
+            { header: "Surname", key: "surname" },
+            { header: "Email", key: "email" },
+            { header: "Phone", key: "phone" },
+            { header: "Age", key: "age" },
+            { header: "Course", key: "course" },
+            { header: "Course format", key: "course_format" },
+            { header: "Course type", key: "course_type" },
+            { header: "Status", key: "status" },
+            { header: "Sum", key: "sum" },
+            { header: "Already paid", key: "already_paid" },
+            { header: "Created at", key: "created_at" },
+            { header: "Manager", key: "manager" },
+            { header: "Group", key: "group" },
+        ];
+
+        worksheet.addRows(orders);
+
+        console.log(workbook);
+        return workbook;
     }
 }
 export const orderService = new OrderService();

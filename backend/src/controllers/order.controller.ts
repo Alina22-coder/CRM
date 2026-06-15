@@ -48,9 +48,13 @@ class OrderController {
         }
     }
 
-    public async getStatistic(req: Request, res: Response, next: NextFunction) {
+    public async getOrderStatistic(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
         try {
-            const data = await orderService.getStatistic();
+            const data = await orderService.getOrderStatistic();
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);
@@ -66,6 +70,31 @@ class OrderController {
             const userId = req.params.id as string;
             const data = await orderService.getStatisticByManager(userId);
             res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async getAllOrdersForExcel(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const query = res.locals.query;
+            const workbook = await orderService.getAllOrdersForExcel(query);
+
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            );
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=orders.xlsx",
+            );
+
+            await workbook.xlsx.write(res);
+            res.end();
         } catch (e) {
             next(e);
         }

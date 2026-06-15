@@ -17,10 +17,12 @@ userRouter.get(
     userController.getAllUsers,
 );
 
-userRouter.get(
-    "/:id/statistic",
+userRouter.post(
+    "/",
     authMiddleware.checkAccessToken,
-    orderController.getStatisticByManager,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.validateBody(UserValidator.create),
+    userController.createUser,
 );
 
 userRouter.get(
@@ -28,14 +30,6 @@ userRouter.get(
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
     userController.getUserById,
-);
-
-userRouter.post(
-    "/",
-    authMiddleware.checkAccessToken,
-    roleMiddleware.checkRole(RoleEnum.Admin),
-    commonMiddleware.validateBody(UserValidator.create),
-    userController.createUser,
 );
 
 userRouter.put(
@@ -65,6 +59,12 @@ userRouter.delete(
     roleMiddleware.checkRole(RoleEnum.Admin),
     commonMiddleware.isValidate("id"),
     userController.deleteUserById,
+);
+
+userRouter.get(
+    "/:id/statistic",
+    authMiddleware.checkAccessToken,
+    orderController.getStatisticByManager,
 );
 
 export default userRouter;

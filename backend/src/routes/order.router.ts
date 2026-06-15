@@ -20,7 +20,14 @@ orderRouter.get(
     "/statistic",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
-    orderController.getStatistic,
+    orderController.getOrderStatistic,
+);
+
+orderRouter.get(
+    "/excel",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.query(OrderValidator.query),
+    orderController.getAllOrdersForExcel,
 );
 
 orderRouter.get(
