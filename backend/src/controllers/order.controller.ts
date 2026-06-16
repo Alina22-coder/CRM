@@ -12,7 +12,8 @@ class OrderController {
     ) {
         try {
             const query = res.locals.query as IOrderQuery;
-            const data = await orderService.getAllOrders(query);
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const data = await orderService.getAllOrders(query, userId);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);
@@ -49,7 +50,7 @@ class OrderController {
     }
 
     public async getOrderStatistic(
-        req: Request,
+        _req: Request,
         res: Response,
         next: NextFunction,
     ) {
@@ -76,13 +77,14 @@ class OrderController {
     }
 
     public async getAllOrdersForExcel(
-        req: Request,
+        _req: Request,
         res: Response,
         next: NextFunction,
     ) {
         try {
-            const query = res.locals.query;
-            const workbook = await orderService.getAllOrdersForExcel(query);
+            const query = res.locals.query as IOrderQuery;
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const workbook = await orderService.getAllOrdersForExcel(query, userId);
 
             res.setHeader(
                 "Content-Type",

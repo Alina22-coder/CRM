@@ -8,8 +8,13 @@ import { commentRepository } from "../repositories/comment.repository";
 import { Workbook } from "exceljs";
 
 class OrderService {
-    public getAllOrders(query: IOrderQuery) {
-        return orderRepository.getAllOrders(query);
+    public async getAllOrders(query: IOrderQuery, userId: string) {
+        let managerSurname: string | undefined;
+        if (query.my) {
+            const user = await userRepository.getUserById(userId);
+            managerSurname = user?.surname;
+        }
+        return orderRepository.getAllOrders(query, managerSurname);
     }
 
     public async getOrderById(orderId: string) {
@@ -48,7 +53,7 @@ class OrderService {
         const updatedFields: Partial<IOrder> = { ...update };
 
         if (!order.manager) {
-            updatedFields.manager = user.surname;
+            updatedFields.manager = user.surname || user.name || user.email;
         }
 
         if (!order.status || order.status === Status.NEW) {
@@ -72,8 +77,16 @@ class OrderService {
         return orderRepository.getStatisticByManager(user.surname);
     }
 
-    public async getAllOrdersForExcel(query: IOrderQuery) {
-        const orders = await orderRepository.getAllOrdersForExcel(query);
+    public async getAllOrdersForExcel(query: IOrderQuery, userId: string) {
+        let managerSurname: string | undefined;
+        if (query.my) {
+            const user = await userRepository.getUserById(userId);
+            managerSurname = user?.surname;
+        }
+        const orders = await orderRepository.getAllOrdersForExcel(
+            query,
+            managerSurname,
+        );
 
         const workbook = new Workbook();
 

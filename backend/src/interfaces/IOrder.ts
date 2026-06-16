@@ -21,8 +21,20 @@ interface IOrder {
 export interface IOrderQuery {
     pageSize: number;
     page: number;
-    search?: string;
     order?: string;
+    my?: boolean;
+    name?: string;
+    surname?: string;
+    email?: string;
+    phone?: string;
+    age?: number;
+    course?: string;
+    course_format?: string;
+    course_type?: string;
+    status?: string;
+    group?: string;
+    start_date?: string;
+    end_date?: string;
 }
 
 export default IOrder;

@@ -9,13 +9,37 @@ export class OrderValidator {
     public static query = joi.object({
         pageSize: joi.number().min(1).default(25),
         page: joi.number().min(1).default(1),
-        search: joi.string().trim(),
         order: joi
             .string()
             .valid(
                 ...Object.values(OrderQueryOrderEnum),
                 ...Object.values(OrderQueryOrderEnum).map((item) => `-${item}`),
             ),
+        my: joi.boolean(),
+        name: joi.string().trim().allow(""),
+        surname: joi.string().trim().allow(""),
+        email: joi.string().trim().allow(""),
+        phone: joi.string().trim().allow(""),
+        age: joi.number().min(0),
+        course: joi
+            .string()
+            .valid(...Object.values(Course))
+            .allow(""),
+        course_format: joi
+            .string()
+            .valid(...Object.values(CourseFormat))
+            .allow(""),
+        course_type: joi
+            .string()
+            .valid(...Object.values(CourseType))
+            .allow(""),
+        status: joi
+            .string()
+            .valid(...Object.values(Status))
+            .allow(""),
+        group: joi.string().trim().allow(""),
+        start_date: joi.string().isoDate(),
+        end_date: joi.string().isoDate(),
     });
 
     public static update = joi.object({
