@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import authRouter from "./auth.router.js";
 import orderRouter from "./order.router.js";
 import userRouter from "./user.router.js";
+import groupRouter from "./group.router.js";
 
 const router = Router();
 
@@ -15,5 +16,7 @@ router.use("/auth", authRouter);
 router.use("/users", userRouter);
 
 router.use("/orders", orderRouter);
+
+router.use("/groups", groupRouter);
 
 export default router;

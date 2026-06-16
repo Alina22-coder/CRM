@@ -8,4 +8,6 @@ interface IComment {
     createdAt: Date;
 }
 
+export type ICommentDto = Pick<IComment, "text">;
+
 export default IComment;
