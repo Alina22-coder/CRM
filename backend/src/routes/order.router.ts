@@ -4,6 +4,7 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 import { commonMiddleware } from "../middleware/common.middleware.js";
 import { OrderValidator } from "../validators/order.validator.js";
 import { commentController } from "../controllers/comment.controller.js";
+import { CommentValidator } from "../validators/comment.validator.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import RoleEnum from "../enums/role.enum.js";
 
@@ -46,6 +47,7 @@ orderRouter.put(
 orderRouter.post(
     "/:id/comments",
     authMiddleware.checkAccessToken,
+    commonMiddleware.validateBody(CommentValidator.create),
     commentController.createCommentToOrderById,
 );
 

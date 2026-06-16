@@ -39,7 +39,7 @@ class CommentService {
         const update: Partial<IOrder> = {};
 
         if (!order.manager) {
-            update.manager = user.surname || user.name || user.email;
+            update.manager = user.surname;
         }
         if (!order.status || order.status === Status.NEW) {
             update.status = Status.IN_WORK;

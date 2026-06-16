@@ -53,7 +53,7 @@ class OrderService {
         const updatedFields: Partial<IOrder> = { ...update };
 
         if (!order.manager) {
-            updatedFields.manager = user.surname || user.name || user.email;
+            updatedFields.manager = user.surname;
         }
 
         if (!order.status || order.status === Status.NEW) {
