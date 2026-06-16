@@ -53,7 +53,12 @@ class AuthService {
         return { user, tokens };
     }
 
-    public async refresh(userId: string, role: RoleEnum): Promise<ITokenPair> {
+    public async refresh(
+        userId: string,
+        role: RoleEnum,
+        refreshToken: string,
+    ): Promise<ITokenPair> {
+        await tokenRepository.deleteByParams({ refreshToken });
         const tokens = tokenService.generateToken({ userId, role });
         await tokenRepository.create({ ...tokens, _userId: userId });
         return tokens;

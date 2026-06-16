@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { IUserLoginDTO, IUserRegisterDTO } from "../interfaces/IUser";
+import { IUserLoginDTO } from "../interfaces/IUser";
 import { authService } from "../services/auth.service";
 import StatusCodes from "../enums/status-codes.enum";
 import { ITokenPayload } from "../interfaces/IToken";
@@ -21,7 +21,13 @@ class AuthController {
         try {
             const { role, userId } = res.locals.tokenPayload as ITokenPayload;
 
-            const tokens = await authService.refresh(userId, role);
+            const { refreshToken } = req.body;
+
+            const tokens = await authService.refresh(
+                userId,
+                role,
+                refreshToken,
+            );
 
             res.status(StatusCodes.OK).json(tokens);
         } catch (e) {

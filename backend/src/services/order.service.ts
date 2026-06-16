@@ -99,7 +99,6 @@ class OrderService {
 
         worksheet.addRows(orders);
 
-        console.log(workbook);
         return workbook;
     }
 }

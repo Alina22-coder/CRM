@@ -2,7 +2,9 @@ import { IToken } from "../interfaces/IToken";
 import { Token } from "../models/token.model";
 
 class TokenRepository {
-    public create(dto: IToken): Promise<IToken> {
+    public create(
+        dto: Pick<IToken, "accessToken" | "refreshToken" | "_userId">,
+    ): Promise<IToken> {
         return Token.create(dto);
     }
 

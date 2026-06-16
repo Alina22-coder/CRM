@@ -17,18 +17,14 @@ class UserService {
         return userRepository.createUser(user);
     }
 
-    public updateUserById(userId: string, update: Partial<IUser>) {
-        return userRepository.updateUserById(userId, update);
-    }
-
-    public async updateUserBanById(userId: string, update: Partial<IUser>) {
+    public async updateUserById(userId: string, update: Partial<IUser>) {
         const user = await userRepository.getUserById(userId);
 
         if (!user) {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        await userRepository.updateUserById(userId, update);
+        return userRepository.updateUserById(userId, update);
     }
 
     public deleteUserById(userId: string) {
