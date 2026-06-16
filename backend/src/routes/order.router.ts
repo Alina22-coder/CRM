@@ -37,7 +37,7 @@ orderRouter.get(
     orderController.getOrderById,
 );
 
-orderRouter.put(
+orderRouter.patch(
     "/:id",
     authMiddleware.checkAccessToken,
     commonMiddleware.validateBody(OrderValidator.update),
