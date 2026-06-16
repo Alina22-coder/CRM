@@ -21,7 +21,7 @@ class CommentController {
                 text,
             );
 
-            res.status(StatusCodes.OK).json(data);
+            res.status(StatusCodes.CREATED).json(data);
         } catch (e) {
             next(e);
         }

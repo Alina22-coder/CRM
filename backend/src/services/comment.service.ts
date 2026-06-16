@@ -5,6 +5,7 @@ import Status from "../enums/status.enum";
 import { commentRepository } from "../repositories/comment.repository";
 import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
+import IOrder from "../interfaces/IOrder";
 
 class CommentService {
     public async createCommentToOrderById(
@@ -35,7 +36,7 @@ class CommentService {
             _userId: userId,
         });
 
-        const update: Record<string, any> = {};
+        const update: Partial<IOrder> = {};
 
         if (!order.manager) {
             update.manager = user.surname;

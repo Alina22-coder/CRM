@@ -8,6 +8,9 @@ interface IComment {
     createdAt: Date;
 }
 
-export type ICommentDto = Pick<IComment, "text">;
+export type ICommentDto = Pick<IComment, "text"> & {
+    _orderId: string;
+    _userId: string;
+};
 
 export default IComment;
