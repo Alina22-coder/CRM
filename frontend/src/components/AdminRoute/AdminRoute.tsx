@@ -4,7 +4,7 @@ import type { ITokenPayload } from "../../interfaces/IToken";
 import RoleEnum from "../../enums/role.enum";
 import { Navigate } from "react-router-dom";
 
-function AdminRoute({ children }: { children: ReactNode }) {
+export const AdminRoute = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem("accessToken");
 
     if (!token) {
@@ -20,6 +20,4 @@ function AdminRoute({ children }: { children: ReactNode }) {
     }
 
     return children;
-}
-
-export default AdminRoute;
+};

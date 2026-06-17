@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "./Header.scss";
 
-function Header() {
+export const Header = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -19,6 +19,4 @@ function Header() {
             <button onClick={handleLogout}>LogOut</button>
         </div>
     );
-}
-
-export default Header;
+};

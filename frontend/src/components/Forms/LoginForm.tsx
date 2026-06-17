@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import type { ILoginForm } from "../../interfaces/ILoginForm";
 
-function LoginForm() {
+export const LoginForm = () => {
     const {
         register,
         handleSubmit,
@@ -26,8 +26,8 @@ function LoginForm() {
                 password: values.password,
             });
 
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("refreshToken", data.refreshToken);
+            localStorage.setItem("accessToken", data.tokens.accessToken);
+            localStorage.setItem("refreshToken", data.tokens.refreshToken);
 
             navigate("/orders");
         } catch (error) {
@@ -77,6 +77,4 @@ function LoginForm() {
             <button type="submit">Login</button>
         </form>
     );
-}
-
-export default LoginForm;
+};

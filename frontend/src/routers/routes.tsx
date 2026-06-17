@@ -3,9 +3,9 @@ import App from "../App";
 import UsersPage from "../pages/users/UsersPage";
 import OrdersPage from "../pages/orders/OrdersPage";
 import AuthPage from "../pages/auth/AuthPage";
-import PrivateRoute from "../components/PrivateRoute/PrivateRoute";
+import { PrivateRoute } from "../components/PrivateRoute/PrivateRoute";
 import LoginPage from "../pages/auth/LoginPage";
-import AdminRoute from "../components/AdminRoute/AdminRoute";
+import { AdminRoute } from "../components/AdminRoute/AdminRoute";
 
 const routes = createBrowserRouter([
     {
