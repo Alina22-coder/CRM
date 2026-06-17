@@ -12,8 +12,6 @@ api.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log(config);
-
     return config;
 });
 
@@ -40,14 +38,12 @@ api.interceptors.response.use(
             } catch {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
-                window.location.href = "/login";
+                window.location.href = "/auth/login";
             }
         }
 
         return Promise.reject(error);
     },
 );
-
-console.log(api);
 
 export default api;
