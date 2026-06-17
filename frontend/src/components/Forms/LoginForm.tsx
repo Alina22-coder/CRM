@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import RegexEnum from "../../enums/regex.enum";
 import { authService } from "../../services/auth.service";
-import "./LoginForm.scss";
+import styles from "./LoginForm.module.scss";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import type { ILoginForm } from "../../interfaces/ILoginForm";
@@ -36,7 +36,7 @@ export const LoginForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
             <div>
                 <label>
                     Email

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
 import { orderService } from "../../services/orders.service";
 import { Order } from "./Order.component";
-import "./Orders.scss";
+import styles from "./Orders.module.scss";
 
 export const Orders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
@@ -14,7 +14,7 @@ export const Orders = () => {
     }, []);
 
     return (
-        <div className="table">
+        <div className={styles.table}>
             <table>
                 <thead>
                     <tr>

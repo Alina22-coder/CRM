@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "./Header.scss";
+import styles from "./Header.module.scss";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ export const Header = () => {
     };
 
     return (
-        <div className="header">
+        <div className={styles.header}>
             <div>logo</div>
             <div>account</div>
 

@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
-import "./Order.scss";
 
 type OrderPropType = {
     order: IOrder;
