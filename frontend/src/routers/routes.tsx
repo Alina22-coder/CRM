@@ -4,6 +4,7 @@ import UsersPage from "../pages/users/UsersPage";
 import OrdersPage from "../pages/orders/OrdersPage";
 import AuthPage from "../pages/auth/AuthPage";
 import PrivateRoute from "../components/PrivateRoute";
+import LoginPage from "../pages/auth/LoginPage";
 
 const routes = createBrowserRouter([
     {
@@ -13,6 +14,12 @@ const routes = createBrowserRouter([
             {
                 path: "auth",
                 element: <AuthPage />,
+                children: [
+                    {
+                        path: "login",
+                        element: <LoginPage />,
+                    },
+                ],
             },
             {
                 path: "users",

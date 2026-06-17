@@ -1,6 +1,14 @@
 @use "./styles/variables/grobal" as *;
 @use "./styles/variables/typography" as *;
 
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: $font-family-primary;
     font-weight: $font-weight-regular;
