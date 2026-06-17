@@ -37,7 +37,7 @@ export const LoginForm = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            <div>
+            <div className={styles.group}>
                 <label>
                     Email
                     <input
@@ -54,7 +54,7 @@ export const LoginForm = () => {
                 </label>
                 {errors.email && <p>{errors.email.message}</p>}
             </div>
-            <div>
+            <div className={styles.group}>
                 <label>
                     Password
                     <input

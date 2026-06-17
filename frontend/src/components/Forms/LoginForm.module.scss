@@ -1,4 +1,14 @@
 .form {
     width: 400px;
     margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
