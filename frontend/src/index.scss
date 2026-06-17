@@ -1,0 +1,33 @@
+@use "./styles/variables/grobal" as *;
+@use "./styles/variables/typography" as *;
+
+body {
+    font-family: $font-family-primary;
+    font-weight: $font-weight-regular;
+    font-size: $font-size-base;
+}
+
+h1 {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-3xl;
+}
+
+h2 {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-2xl;
+}
+
+h3 {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-xl;
+}
+
+h4 {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-lg;
+}
+
+h5 {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-base;
+}
