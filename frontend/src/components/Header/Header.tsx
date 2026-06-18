@@ -25,6 +25,7 @@ export const Header = () => {
     return (
         <div className={styles.header}>
             <Logo />
+            
             <div>
                 {user?.name} {user?.surname}
                 {user?.role === RoleEnum.Admin && (

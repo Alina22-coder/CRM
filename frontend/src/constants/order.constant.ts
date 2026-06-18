@@ -1,0 +1,17 @@
+export const ORDER_COLUMNS = [
+    { label: "_id", field: "_id" },
+    { label: "name", field: "name" },
+    { label: "surname", field: "surname" },
+    { label: "email", field: "email" },
+    { label: "phone", field: "phone" },
+    { label: "age", field: "age" },
+    { label: "course", field: "course" },
+    { label: "course_format", field: "course_format" },
+    { label: "course_type", field: "course_type" },
+    { label: "status", field: "status" },
+    { label: "sum", field: "sum" },
+    { label: "alreadyPaid", field: "already_paid" },
+    { label: "created_at", field: "created_at" },
+    { label: "manager", field: "manager" },
+    { label: "group", field: "group" },
+];

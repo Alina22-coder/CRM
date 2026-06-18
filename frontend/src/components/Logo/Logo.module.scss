@@ -8,3 +8,25 @@
         display: block;
     }
 }
+
+@keyframes waveDraw {
+    0% { stroke-dashoffset: 200; opacity: 0.3; }
+    60% { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.logoLoader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        display: block;
+    }
+
+    .wave {
+        stroke-dasharray: 200;
+        stroke-dashoffset: 200;
+        animation: waveDraw 1.4s ease-in-out infinite;
+    }
+}
