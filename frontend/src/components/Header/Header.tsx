@@ -3,6 +3,7 @@ import styles from "./Header.module.scss";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { authService } from "../../services/auth.service";
 import RoleEnum from "../../enums/role.enum";
+import { Logo } from "../Logo/Logo";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ export const Header = () => {
 
     return (
         <div className={styles.header}>
-            <div>logo</div>
+            <Logo />
             <div>
                 {user?.name} {user?.surname}
                 {user?.role === RoleEnum.Admin && (

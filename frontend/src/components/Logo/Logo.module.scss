@@ -1,0 +1,10 @@
+.logo {
+    display: flex;
+    align-items: center;
+    cursor: default;
+    user-select: none;
+
+    svg {
+        display: block;
+    }
+}
