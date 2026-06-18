@@ -1,5 +1,12 @@
+import { Header } from "../../components/Header/Header";
+
 function UsersPage() {
-    return <div>Users page !</div>;
+    return (
+        <>
+            <Header />
+            <div>Users page !</div>
+        </>
+    );
 }
 
 export default UsersPage;

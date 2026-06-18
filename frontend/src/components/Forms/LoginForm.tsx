@@ -28,6 +28,7 @@ export const LoginForm = () => {
 
             localStorage.setItem("accessToken", data.tokens.accessToken);
             localStorage.setItem("refreshToken", data.tokens.refreshToken);
+            localStorage.setItem("user", JSON.stringify(data.user));
 
             navigate("/orders");
         } catch (error) {

@@ -1,12 +1,11 @@
-import { Outlet } from "react-router-dom";
 import { Orders } from "../../components/Orders/Orders.component";
+import { Header } from "../../components/Header/Header";
 
 function OrdersPage() {
     return (
         <>
-            <div>Orders Page !</div>
+            <Header />
             <Orders />
-            <Outlet />
         </>
     );
 }

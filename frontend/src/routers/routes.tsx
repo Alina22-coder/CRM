@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "../App";
 import UsersPage from "../pages/users/UsersPage";
 import OrdersPage from "../pages/orders/OrdersPage";
@@ -13,6 +13,10 @@ const routes = createBrowserRouter([
         element: <App />,
         children: [
             {
+                index: true,
+                element: <Navigate to="/auth/login" replace />,
+            },
+            {
                 path: "auth",
                 element: <AuthPage />,
                 children: [
@@ -23,7 +27,7 @@ const routes = createBrowserRouter([
                 ],
             },
             {
-                path: "users",
+                path: "admin",
                 element: (
                     <PrivateRoute>
                         <AdminRoute>

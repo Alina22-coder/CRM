@@ -1,12 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
+import { useCurrentUser } from "../../hooks/useCurrectUser";
+import { authService } from "../../services/auth.service";
+import RoleEnum from "../../enums/role.enum";
 
 export const Header = () => {
     const navigate = useNavigate();
+    const user = useCurrentUser();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await authService.logout();
+
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
 
         navigate("/auth/login");
     };
@@ -14,7 +21,12 @@ export const Header = () => {
     return (
         <div className={styles.header}>
             <div>logo</div>
-            <div>account</div>
+            <div>
+                {user?.name} {user?.surname}
+                {user?.role === RoleEnum.Admin && (
+                    <button onClick={() => navigate("/admin")}>Адмінка</button>
+                )}
+            </div>
 
             <button onClick={handleLogout}>LogOut</button>
         </div>
