@@ -39,6 +39,22 @@ export const Orders = () => {
         setSearchParams({ page: String(newPage), order: order });
     };
 
+    const handleExcel = () => {
+        orderService.getAllOrdersForExcel({ order }).then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+
+            link.href = url;
+
+            link.setAttribute("download", "orders.xlsx");
+
+            document.body.appendChild(link);
+
+            link.click();
+            link.remove();
+        });
+    };
+
     const totalPage = Math.ceil(total / 25);
 
     return (
@@ -47,6 +63,7 @@ export const Orders = () => {
                 <LogoLoader />
             ) : (
                 <>
+                    <button onClick={handleExcel}>Excel btn</button>
                     <table>
                         <thead>
                             <tr>

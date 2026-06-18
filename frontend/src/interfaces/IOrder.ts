@@ -19,8 +19,8 @@ export interface IOrder {
 }
 
 export interface IOrderQuery {
-    pageSize: number;
-    page: number;
+    pageSize?: number;
+    page?: number;
     order?: string;
     my?: boolean;
     name?: string;
