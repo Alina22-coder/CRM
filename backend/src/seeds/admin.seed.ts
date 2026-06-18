@@ -13,6 +13,8 @@ const createAdmin = async () => {
     await UserModel.create({
         email: config.ADMIN_EMAIL,
         password: hashedPassword,
+        name: "Admin",
+        surname: "",
         role: RoleEnum.Admin,
         is_active: true,
     });

@@ -9,13 +9,16 @@ export const Header = () => {
     const user = useCurrentUser();
 
     const handleLogout = async () => {
-        await authService.logout();
+        try {
+            await authService.logout();
+        } catch (error) {
+        } finally {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
 
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("user");
-
-        navigate("/auth/login");
+            navigate("/auth/login");
+        }
     };
 
     return (
