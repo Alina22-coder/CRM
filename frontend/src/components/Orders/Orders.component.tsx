@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
 import { orderService } from "../../services/orders.service";
-import { Order } from "./Order.component";
+import { OrderTable } from "./OrderTable.component";
 import styles from "./Orders.module.scss";
 import { ORDER_COLUMNS } from "../../constants/order.constant";
 import { useSearchParams } from "react-router-dom";
@@ -39,52 +39,40 @@ export const Orders = () => {
         setSearchParams({ page: String(newPage), order: order });
     };
 
-    const handleExcel = () => {
-        orderService.getAllOrdersForExcel({ order }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-
-            link.href = url;
-
-            link.setAttribute("download", "orders.xlsx");
-
-            document.body.appendChild(link);
-
-            link.click();
-            link.remove();
-        });
-    };
-
     const totalPage = Math.ceil(total / 25);
 
     return (
-        <div className={styles.table}>
+        <div>
             {loading ? (
                 <LogoLoader />
             ) : (
                 <>
-                    <button onClick={handleExcel}>Excel btn</button>
-                    <table>
-                        <thead>
-                            <tr>
-                                {ORDER_COLUMNS.map((col) => (
-                                    <th
-                                        key={col.field}
-                                        onClick={() => handleSort(col.field)}
-                                    >
-                                        {col.label}
-                                        {order === col.field && " ▲"}
-                                        {order === `-${col.field}` && " ▼"}
-                                    </th>
+                    <div className={styles.table}>
+                        <table>
+                            <thead className={styles.table__thead}>
+                                <tr className={styles.table__tr}>
+                                    {ORDER_COLUMNS.map((col) => (
+                                        <th
+                                            className={styles.table__th}
+                                            key={col.field}
+                                            onClick={() =>
+                                                handleSort(col.field)
+                                            }
+                                        >
+                                            {col.label}
+                                            {order === col.field && " ▲"}
+                                            {order === `-${col.field}` && " ▼"}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {orders.map((order) => (
+                                    <OrderTable key={order._id} order={order} />
                                 ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map((order) => (
-                                <Order key={order._id} order={order} />
-                            ))}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                     <Pagination
                         page={page}
                         totalPage={totalPage}

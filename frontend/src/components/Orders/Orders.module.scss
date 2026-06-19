@@ -1,8 +1,29 @@
-.table {
-    border: 1px solid rgb(59, 49, 255);
-}
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
 
-tr:nth-of-type(odd) {
-    background-color: rgb(245, 240, 240);
-    border: 1px solid lightsalmon;
+.table {
+    background: $white;
+    border-radius: $br-12;
+    overflow: hidden;
+    box-shadow: $shadow-card;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    &__tr {
+        padding: 0 14px;
+        height: 48px;
+        text-align: left;
+
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+
+        color: $grey;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        cursor: pointer;
+        white-space: nowrap;
+        user-select: none;
+    }
 }

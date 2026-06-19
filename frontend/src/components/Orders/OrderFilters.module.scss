@@ -1,0 +1,22 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.filters {
+    &_reset {
+        height: 36px;
+        padding: 0 16px;
+        border: 1.5px solid $outline;
+        background: transparent;
+        color: $dark;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+    }
+    &_excel {
+        height: 36px;
+        padding: 0 16px;
+        background: $green-light;
+        color: $green-dark;
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+    }
+}

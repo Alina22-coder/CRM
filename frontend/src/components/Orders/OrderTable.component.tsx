@@ -1,14 +1,15 @@
 import type { FC } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
+import styles from "./OrderTable.module.scss";
 
 type OrderPropType = {
     order: IOrder;
 };
 
-export const Order: FC<OrderPropType> = ({ order }) => {
+export const OrderTable: FC<OrderPropType> = ({ order }) => {
     return (
-        <tr>
-            <td>{order._id}</td>
+        <tr className={styles.order}>
+            <td className={styles.order__td}>{order._id}</td>
             <td>{order.name}</td>
             <td>{order.surname}</td>
             <td>{order.email}</td>
