@@ -5,6 +5,7 @@ import styles from "./LoginForm.module.scss";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import type { ILoginForm } from "../../interfaces/ILoginForm";
+import { Logo } from "../Logo/Logo";
 
 export const LoginForm = () => {
     const {
@@ -37,10 +38,20 @@ export const LoginForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            <div className={styles.group}>
-                <label>
-                    Email
+        <div className={styles.login}>
+            <div className={styles.login__logo}>
+                CRM<span>Pro</span>
+            </div>
+
+            <div className={styles.login__title}>Welcome back</div>
+            <p className={styles.login__text}>Sign in to your account</p>
+
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className={styles.login__form}
+            >
+                <div className={styles.form__group}>
+                    <label>Email</label>
                     <input
                         type="email"
                         placeholder="Email"
@@ -52,12 +63,12 @@ export const LoginForm = () => {
                             },
                         })}
                     />
-                </label>
-                {errors.email && <p>{errors.email.message}</p>}
-            </div>
-            <div className={styles.group}>
-                <label>
-                    Password
+                    {errors.email && (
+                        <p className={styles.error}>{errors.email.message}</p>
+                    )}
+                </div>
+                <div className={styles.form__group}>
+                    <label>Password</label>
                     <input
                         type="password"
                         placeholder="Password"
@@ -69,13 +80,19 @@ export const LoginForm = () => {
                             },
                         })}
                     />
-                </label>
-                {errors.password && <p>{errors.password.message}</p>}
-            </div>
+                    {errors.password && (
+                        <p className={styles.error}>
+                            {errors.password.message}
+                        </p>
+                    )}
+                </div>
 
-            {error && <p>{error}</p>}
+                {error && <p className={styles.error}>{error}</p>}
 
-            <button type="submit">Login</button>
-        </form>
+                <button className={styles.login__btn} type="submit">
+                    Login
+                </button>
+            </form>
+        </div>
     );
 };

@@ -1,21 +1,36 @@
 $primary: #5e81f4;
-$primary-dark: #1c1d21;
+$primary-dark: #4a6ed4;
+$primary-darker: #3d5dc7;
+
+$primary-light: rgba(94, 129, 244, 0.1);
+$primary-light2: rgba(94, 129, 244, 0.04);
+$primary-light3: rgba(94, 129, 244, 0.06);
+
+$white: #ffffff;
+$dark: #1c1d21;
+$grey: #8181a5;
 
 $outline: #f0f0f3;
+$background: #f6f6f6;
 $background-light: #f5f5fa;
 
-$button-hover: rgba(#1c1d21, 0.1);
-$primary-grey: #8181a5;
+$yellow: #f4be5e;
+$yellow-dark: #c9920a;
+$yellow-light: rgba(#f4be5e, 0.1);
 
-$background: #f6f6f6;
-$background-white: #ffffff;
+$green: #7ce7ac;
+$green-dark: #23a266;
+$green-light: rgba(#7ce7ac, 0.1);
 
-$secondary-yellow: #f4be5e;
-$secondary-green: #7ce7ac;
-$secondary-pink: #ff808b;
-$secondary-purple: #9698d6;
+$pink: #ff808b;
+$pink-dark: #d63048;
+$pink-light: rgba(#ff808b, 0.1);
 
-$secondary-yellow-light: rgba(#f4be5e, 0.1);
-$secondary-green-light: rgba(#7ce7ac, 0.1);
-$secondary-pink-light: rgba(#ff808b, 0.1);
-$secondary-purple-light: rgba(#9698d6, 0.1);
+$purple: #9698d6;
+$purple-dark: #6264b0;
+$purple-light: rgba(#9698d6, 0.1);
+
+$shadow-card: 0 2px 8px rgba(28, 29, 33, 0.06);
+$shadow-modal: 0 8px 32px rgba(28, 29, 33, 0.16);
+$shadow-dropdown: 0 4px 16px rgba(28, 29, 33, 0.12);
+$shadow-primary: 0 2px 8px rgba(94, 129, 244, 0.4);

@@ -1,5 +1,53 @@
+@use "../../styles/variables/_colors.scss" as *;
+@use "../../styles/variables/typography" as *;
+
 .header {
     display: flex;
     justify-content: space-between;
-    background-color: lightskyblue;
+    align-items: center;
+
+    height: 64px;
+    background: $white;
+    border-bottom: 1px solid $outline;
+    padding: 0 40px;
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__notification {
+        width: 36px;
+
+        color: $grey;
+        background: transparent;
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    &__user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__admin {
+        height: 36px;
+        padding: 0 16px;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        color: $primary;
+        background: $primary-light;
+        border: 1.5px solid rgba(94, 129, 244, 0.3);
+    }
+
+    &__logout {
+        width: 36px;
+        height: 36px;
+        color: $grey;
+        background: transparent;
+    }
 }

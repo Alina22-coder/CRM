@@ -1,20 +1,32 @@
 $font-family-primary: "Red Hat Display", sans-serif;
 
 // font weights
-$font-weight-light:     300;
-$font-weight-regular:   400;
-$font-weight-medium:    500;
-$font-weight-semibold:  600;
-$font-weight-bold:      700;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
 $font-weight-extrabold: 800;
-$font-weight-black:     900;
+$font-weight-black: 900;
 
 // font sizes
-$font-size-xs:   12px;
-$font-size-sm:   14px;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
 $font-size-base: 16px;
-$font-size-lg:   18px;
-$font-size-xl:   20px;
-$font-size-2xl:  24px;
-$font-size-3xl:  32px;
-$font-size-4xl:  40px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 32px;
+$font-size-4xl: 40px;
+
+// border radius
+$br-4: 4px;
+$br-8: 8px;
+$br-12: 12px;
+$br-16: 16px;
+$br-50: 50%;
+
+// box shadow
+$card-shadow: 0 2px 8px rgba(28, 29, 33, 0.06);
+$modal-shadow: 0 8px 32px rgba(28, 29, 33, 0.16);
+$dropdown-shadow: 0 4px 16px rgba(28, 29, 33, 0.12);

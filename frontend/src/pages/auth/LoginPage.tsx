@@ -1,9 +1,9 @@
 import { LoginForm } from "../../components/Forms/LoginForm";
+import styles from "./LoginPage.module.scss";
 
 function LoginPage() {
     return (
-        <div>
-            Login Page !
+        <div className={styles.login__page}>
             <LoginForm />
         </div>
     );

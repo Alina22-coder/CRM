@@ -1,14 +1,61 @@
-.form {
-    width: 400px;
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.login {
+    width: 440px;
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+
+    background: $white;
+    border-radius: $br-12;
+    padding: 48px 40px;
+    box-shadow: $shadow-modal;
+
+    &__logo {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-extrabold;
+        color: $primary;
+        text-align: center;
+        margin-bottom: 28px;
+
+        span {
+            color: $dark;
+        }
+    }
+
+    &__title {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        margin-bottom: 4px;
+    }
+
+    &__text {
+        font-size: $font-size-sm;
+        color: $grey;
+        margin-bottom: 32px;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    &__btn {
+        width: 100%;
+        height: 48px;
+        background: $primary;
+        color: $white;
+        font-size: $font-size-base;
+        font-weight: $font-weight-semibold;
+        text-transform: uppercase;
+    }
 }
 
-label {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.error {
+    font-size: $font-size-xs;
+    color: $pink-dark;
+    margin-top: 4px;
 }

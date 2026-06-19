@@ -1,32 +1,45 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
 .logo {
-    display: flex;
-    align-items: center;
-    cursor: default;
-    user-select: none;
-
-    svg {
-        display: block;
-    }
+    font-size: $font-size-xl;
+    font-weight: $font-weight-extrabold;
+    color: $primary;
+    letter-spacing: -0.5px;
+    cursor: pointer;
 }
 
-@keyframes waveDraw {
-    0% { stroke-dashoffset: 200; opacity: 0.3; }
-    60% { stroke-dashoffset: 0; opacity: 1; }
-    100% { stroke-dashoffset: 0; opacity: 1; }
+.logo__span {
+    color: $dark;
 }
 
-.logoLoader {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+// @keyframes waveDraw {
+//     0% {
+//         stroke-dashoffset: 200;
+//         opacity: 0.3;
+//     }
+//     60% {
+//         stroke-dashoffset: 0;
+//         opacity: 1;
+//     }
+//     100% {
+//         stroke-dashoffset: 0;
+//         opacity: 1;
+//     }
+// }
 
-    svg {
-        display: block;
-    }
+// .logoLoader {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
 
-    .wave {
-        stroke-dasharray: 200;
-        stroke-dashoffset: 200;
-        animation: waveDraw 1.4s ease-in-out infinite;
-    }
-}
+//     svg {
+//         display: block;
+//     }
+
+//     .wave {
+//         stroke-dasharray: 200;
+//         stroke-dashoffset: 200;
+//         animation: waveDraw 1.4s ease-in-out infinite;
+//     }
+// }
