@@ -17,6 +17,26 @@
         gap: 8px;
     }
 
+    &__search {
+        position: relative;
+        margin-right: 8px;
+        svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: $grey;
+        }
+
+        .search__input {
+            width: 280px;
+            height: 36px;
+            border-radius: $br-18;
+            padding: 0 16px 0 36px;
+            font-size: $font-size-xs;
+        }
+    }
+
     &__notification {
         width: 36px;
 
@@ -28,20 +48,50 @@
         }
     }
 
-    &__user {
+    &__account {
         display: flex;
         align-items: center;
         gap: 10px;
     }
 
-    &__admin {
-        height: 36px;
-        padding: 0 16px;
-        font-size: $font-size-sm;
-        font-weight: $font-weight-semibold;
-        color: $primary;
-        background: $primary-light;
-        border: 1.5px solid rgba(94, 129, 244, 0.3);
+    &__profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 8px;
+        border-radius: $br-8;
+        cursor: pointer;
+        transition: all 150ms;
+
+        .user__avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: $br-50;
+            background: $primary;
+            color: $white;
+            font-size: $font-size-xs;
+            font-weight: $font-weight-bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user__name {
+            font-size: $font-size-sm;
+            font-weight: $font-weight-semibold;
+        }
+    }
+
+    &__panel {
+        .panel__admin {
+            height: 36px;
+            padding: 0 16px;
+            font-size: $font-size-sm;
+            font-weight: $font-weight-semibold;
+            color: $primary;
+            background: $primary-light;
+            border: 1.5px solid rgba(94, 129, 244, 0.3);
+        }
     }
 
     &__logout {

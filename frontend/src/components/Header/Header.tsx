@@ -27,6 +27,25 @@ export const Header = () => {
             <Logo />
 
             <div className={styles.header__content}>
+                <div className={styles.header__search}>
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input
+                        className={styles.search__input}
+                        type="text"
+                        placeholder="Search orders, managers..."
+                    />
+                </div>
+
                 <button className={styles.header__notification}>
                     <svg
                         width="20"
@@ -41,16 +60,24 @@ export const Header = () => {
                     </svg>
                 </button>
 
-                <div className={styles.header__user}>
-                    {user?.name}
-                    {user?.role === RoleEnum.Admin && (
-                        <button
-                            className={styles.header__admin}
-                            onClick={() => navigate("/admin")}
-                        >
-                            Admin Panel
-                        </button>
-                    )}
+                <div className={styles.header__account}>
+                    <div className={styles.header__profile}>
+                        <div className={styles.user__avatar}>
+                            {user?.name?.charAt(0).toUpperCase()}
+                        </div>
+                        <div className={styles.user__name}>{user?.name}</div>
+                    </div>
+
+                    <div className={styles.header__panel}>
+                        {user?.role === RoleEnum.Admin && (
+                            <button
+                                className={styles.panel__admin}
+                                onClick={() => navigate("/admin")}
+                            >
+                                Admin Panel
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <button

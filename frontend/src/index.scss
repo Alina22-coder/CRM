@@ -54,6 +54,14 @@ button {
     transition: all 150ms;
 }
 
+button:hover {
+    background: $primary-dark;
+}
+
+button:active {
+    background: $primary-darker;
+}
+
 label {
     display: block;
     font-size: $font-size-xs;
@@ -81,4 +89,15 @@ input {
 input::placeholder {
     color: $grey;
     font-size: $font-size-sm;
+}
+
+input:focus {
+    border: $primary;
+    background: $white;
+    box-shadow: 0 0 0 3px rgba(94, 129, 244, 0.15);
+}
+
+input:invalid {
+    border: $pink;
+    background: #fff5f5;
 }
