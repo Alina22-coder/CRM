@@ -6,6 +6,7 @@ import AuthPage from "../pages/auth/AuthPage";
 import { PrivateRoute } from "../components/PrivateRoute/PrivateRoute";
 import LoginPage from "../pages/auth/LoginPage";
 import { AdminRoute } from "../components/AdminRoute/AdminRoute";
+import { EditOrderModal } from "../components/Modal/EditOrderModal.component";
 
 const routes = createBrowserRouter([
     {
@@ -32,6 +33,7 @@ const routes = createBrowserRouter([
                     <PrivateRoute>
                         <AdminRoute>
                             <UsersPage />
+                            <EditOrderModal />
                         </AdminRoute>
                     </PrivateRoute>
                 ),

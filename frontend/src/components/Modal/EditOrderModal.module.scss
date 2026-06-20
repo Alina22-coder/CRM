@@ -1,0 +1,65 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.modal__overlay {
+    background: rgba(28, 29, 33, 0.5);
+    padding: 48px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+
+    .modal {
+        width: 680px;
+        max-width: 100%;
+        background: $white;
+        border-radius: $br-12;
+        padding: 32px 40px;
+        box-shadow: $modal-shadow;
+
+        &__header {
+            .header__title {
+                font-size: $font-size-2xl;
+                font-weight: $font-weight-bold;
+            }
+            .header__btn {
+                width: 32px;
+                height: 32px;
+                background: transparent;
+                color: $grey;
+                font-size: $font-size-xl;
+            }
+        }
+
+        &__grid {
+        }
+
+        &__footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+
+            .footer__close {
+                height: 44px;
+                padding: 0 24px;
+
+                border: 1.5px solid $outline;
+                background: transparent;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-semibold;
+                color: $dark;
+            }
+
+            .footer__submit {
+                height: 44px;
+                padding: 0 32px;
+
+                background: $primary;
+                color: $white;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-semibold;
+            }
+        }
+    }
+}
