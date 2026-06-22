@@ -1,0 +1,23 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.admin__panel {
+    &__btn {
+        height: 40px;
+        padding: 0 20px;
+
+        background: $primary;
+        color: $white;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        margin-bottom: 20px;
+    }
+
+    .manager {
+        &__list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+}

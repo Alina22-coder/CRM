@@ -4,6 +4,7 @@ import userService from "../../services/users.service";
 import { useSearchParams } from "react-router-dom";
 import { LogoLoader } from "../Logo/Logo";
 import { User } from "./User.component";
+import styles from "./Users.module.scss";
 
 export const Users = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -30,12 +31,19 @@ export const Users = () => {
             {loading ? (
                 <LogoLoader />
             ) : (
-                <>
-                    <div>users component</div>
-                    {users.map((user) => (
-                        <User key={user._id} user={user} />
-                    ))}
-                </>
+                <div className={styles.admin__panel}>
+                    <button className={styles.admin__panel__btn}>
+                        + Create manager
+                    </button>
+
+                    <div className={styles.manager}>
+                        <div className={styles.manager__list}>
+                            {users.map((user) => (
+                                <User key={user._id} user={user} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

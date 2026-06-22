@@ -48,6 +48,7 @@ a {
     text-decoration: none;
 }
 
+// button
 button {
     display: flex;
     align-items: center;
@@ -67,6 +68,27 @@ button:active {
     background: $primary-darker;
 }
 
+.btn-activate {
+    background: $primary-light;
+    color: $primary;
+}
+
+.btn-recovery {
+    background: $yellow-light;
+    color: $yellow-dark;
+}
+
+.btn-ban {
+    background: $pink-light;
+    color: $pink-dark;
+}
+
+.btn-unban {
+    background: $green-light;
+    color: $green-dark;
+}
+
+// input
 label {
     display: block;
     font-size: $font-size-xs;
