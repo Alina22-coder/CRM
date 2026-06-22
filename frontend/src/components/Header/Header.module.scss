@@ -39,9 +39,14 @@
 
     &__notification {
         width: 36px;
-
+        height: 36px;
         color: $grey;
         background: transparent;
+
+        &:hover {
+            background: rgba(28, 29, 33, 0.06);
+        }
+
         svg {
             width: 20px;
             height: 20px;
@@ -62,6 +67,10 @@
         border-radius: $br-8;
         cursor: pointer;
         transition: all 150ms;
+
+        &:hover {
+            background: rgba(28, 29, 33, 0.06);
+        }
 
         .user__avatar {
             width: 32px;
@@ -91,6 +100,10 @@
             color: $primary;
             background: $primary-light;
             border: 1.5px solid rgba(94, 129, 244, 0.3);
+
+            &:hover {
+                background: rgba(94, 129, 244, 0.2);
+            }
         }
     }
 
@@ -99,5 +112,10 @@
         height: 36px;
         color: $grey;
         background: transparent;
+
+        &:hover {
+            background: $pink-light;
+            color: $pink;
+        }
     }
 }
