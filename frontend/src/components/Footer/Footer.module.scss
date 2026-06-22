@@ -1,5 +1,38 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
 .footer {
     display: flex;
-    justify-content: center;
-    background-color: lightskyblue;
+    align-items: center;
+    justify-content: space-between;
+    background: $dark;
+
+    color: rgba(255, 255, 255, 0.55);
+
+    padding: 0 40px;
+    height: 48px;
+
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.3px;
+
+    &__logo {
+        color: $white;
+        font-weight: $font-weight-extrabold;
+        letter-spacing: -0.2px;
+
+        span {
+            color: $primary;
+        }
+    }
+
+    &__version {
+        font-family: monospace;
+        font-size: 10px;
+        letter-spacing: 0;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: $br-4;
+        padding: 2px 7px;
+        color: rgba(255, 255, 255, 0.4);
+    }
 }

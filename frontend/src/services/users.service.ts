@@ -1,7 +1,7 @@
 import api from "../api/axios";
 import type { IUser, IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 
-const UserService = {
+const userService = {
     getAllUsers: (query: IUserQuery) => {
         return api.get("/users", { params: query });
     },
@@ -35,4 +35,4 @@ const UserService = {
     },
 };
 
-export default UserService;
+export default userService;

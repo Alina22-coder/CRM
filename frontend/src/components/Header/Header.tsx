@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { authService } from "../../services/auth.service";
@@ -24,7 +24,9 @@ export const Header = () => {
 
     return (
         <div className={styles.header}>
-            <Logo />
+            <Link to="/orders">
+                <Logo />
+            </Link>
 
             <div className={styles.header__content}>
                 <div className={styles.header__search}>

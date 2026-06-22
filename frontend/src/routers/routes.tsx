@@ -33,7 +33,7 @@ const routes = createBrowserRouter([
                     <PrivateRoute>
                         <AdminRoute>
                             <UsersPage />
-                            <EditOrderModal />
+                            {/* <EditOrderModal /> */}
                         </AdminRoute>
                     </PrivateRoute>
                 ),
