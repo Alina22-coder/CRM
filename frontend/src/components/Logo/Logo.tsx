@@ -38,44 +38,16 @@ export const Logo = () => {
 export const LogoLoader = () => {
     return (
         <div className={styles.logoLoader}>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="56"
-                height="32"
-                viewBox="0 0 56 32"
-                fill="none"
-                aria-label="Loading"
-            >
-                <defs>
-                    <linearGradient
-                        id="loaderLogoWave"
-                        x1="0"
-                        y1="0"
-                        x2="1"
-                        y2="0"
-                    >
-                        <stop
-                            offset="0%"
-                            stopColor="#5e81f4"
-                            stopOpacity="0.8"
-                        />
-                        <stop
-                            offset="100%"
-                            stopColor="#9698d6"
-                            stopOpacity="0.8"
-                        />
-                    </linearGradient>
-                </defs>
-
-                <path
-                    className={styles.wave}
-                    d="M16 16 C16 8 4 3 4 10 C4 17 16 24 28 16 C40 8 52 3 52 10 C52 17 40 24 28 16"
-                    stroke="url(#loaderLogoWave)"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"
-                />
-            </svg>
+            <div className={styles.loaderInner}>
+                <div className={styles.loaderText}>
+                    <span className={styles.loaderCrm}>CRM</span>
+                    <span className={styles.loaderPro}>Pro</span>
+                </div>
+                <div className={styles.loaderTrack}>
+                    <div className={styles.loaderFill} />
+                    <div className={styles.loaderShim} />
+                </div>
+            </div>
         </div>
     );
 };

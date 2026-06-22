@@ -13,33 +13,86 @@
     color: $dark;
 }
 
-// @keyframes waveDraw {
-//     0% {
-//         stroke-dashoffset: 200;
-//         opacity: 0.3;
-//     }
-//     60% {
-//         stroke-dashoffset: 0;
-//         opacity: 1;
-//     }
-//     100% {
-//         stroke-dashoffset: 0;
-//         opacity: 1;
-//     }
-// }
+@keyframes logoFadeIn {
+    from { opacity: 0; transform: scale(0.92); filter: blur(4px); }
+    to   { opacity: 1; transform: scale(1);    filter: blur(0); }
+}
 
-// .logoLoader {
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
+@keyframes trackFill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
 
-//     svg {
-//         display: block;
-//     }
+@keyframes shimSweep {
+    from { left: -80px; }
+    to   { left: 200px; }
+}
 
-//     .wave {
-//         stroke-dasharray: 200;
-//         stroke-dashoffset: 200;
-//         animation: waveDraw 1.4s ease-in-out infinite;
-//     }
-// }
+.logoLoader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $background-light;
+    z-index: 999;
+
+    .loaderInner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        animation: logoFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .loaderText {
+        display: flex;
+        align-items: baseline;
+    }
+
+    .loaderCrm {
+        font-size: 64px;
+        font-weight: $font-weight-black;
+        letter-spacing: -0.03em;
+        color: $dark;
+    }
+
+    .loaderPro {
+        font-size: 64px;
+        font-weight: $font-weight-black;
+        letter-spacing: -0.03em;
+        margin-left: 6px;
+        background: linear-gradient(118deg, $primary 10%, $purple 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .loaderTrack {
+        width: 200px;
+        height: 3px;
+        border-radius: 2px;
+        background: rgba($primary, 0.12);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .loaderFill {
+        position: absolute;
+        inset: 0;
+        border-radius: 2px;
+        background: linear-gradient(90deg, $primary, $purple);
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: trackFill 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+    }
+
+    .loaderShim {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 80px;
+        background: linear-gradient(90deg, transparent, rgba($white, 0.7), transparent);
+        animation: shimSweep 1.6s linear 0.3s forwards;
+    }
+}
