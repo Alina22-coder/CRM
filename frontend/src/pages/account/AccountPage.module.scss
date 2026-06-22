@@ -1,0 +1,9 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.account__page {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}

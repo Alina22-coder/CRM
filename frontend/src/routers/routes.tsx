@@ -6,8 +6,8 @@ import AuthPage from "../pages/auth/AuthPage";
 import { PrivateRoute } from "../components/PrivateRoute/PrivateRoute";
 import LoginPage from "../pages/auth/LoginPage";
 import { AdminRoute } from "../components/AdminRoute/AdminRoute";
-import { EditOrderModal } from "../components/Modal/EditOrderModal.component";
-import { SetPasswordForm } from "../components/Forms/SetPasswordForm";
+import SetPasswordPage from "../pages/auth/SetPasswordPage";
+import AccountPage from "../pages/account/AccountPage";
 
 const routes = createBrowserRouter([
     {
@@ -30,7 +30,7 @@ const routes = createBrowserRouter([
             },
             {
                 path: "set-password",
-                element: <SetPasswordForm />,
+                element: <SetPasswordPage />,
             },
             {
                 path: "admin",
@@ -48,6 +48,15 @@ const routes = createBrowserRouter([
                 element: (
                     <PrivateRoute>
                         <OrdersPage />
+                    </PrivateRoute>
+                ),
+            },
+
+            {
+                path: "account",
+                element: (
+                    <PrivateRoute>
+                        <AccountPage />
                     </PrivateRoute>
                 ),
             },
