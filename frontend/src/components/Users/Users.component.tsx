@@ -7,6 +7,7 @@ import { LogoLoader } from "../Logo/Logo";
 import { User } from "./User.component";
 import styles from "./Users.module.scss";
 import type { IStatistic } from "../../interfaces/IStatistic";
+import { CreateManagerModal } from "../Modal/CreateManagerModal.component";
 
 export const Users = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -15,6 +16,8 @@ export const Users = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [loading, setLoading] = useState(false);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const page = Number(searchParams.get("page")) || 1;
 
@@ -106,9 +109,17 @@ export const Users = () => {
                         </div>
                     </div>
 
-                    <button className={styles.admin__panel__btn}>
+                    <button
+                        className={styles.admin__panel__btn}
+                        onClick={() => setIsModalOpen(true)}
+                    >
                         + Create manager
                     </button>
+
+                    <CreateManagerModal
+                        isOpen={isModalOpen}
+                        onClose={() => setIsModalOpen(false)}
+                    />
 
                     <div className={styles.manager}>
                         <div className={styles.manager__list}>

@@ -12,6 +12,8 @@ enum OrderQueryOrderEnum {
     SUM = "sum",
     ALREADY_PAID = "already_paid",
     CREATED_AT = "created_at",
+    MANAGER = "manager",
+    GROUP = "group",
 }
 
 export default OrderQueryOrderEnum;

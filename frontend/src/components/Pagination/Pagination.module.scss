@@ -2,12 +2,11 @@
 @use "../../styles/variables/typography" as *;
 
 .pagination {
-    border: 1px solid red;
-
     display: flex;
     justify-content: center;
     gap: 4px;
     margin-top: 24px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
 
     .page__btn {
@@ -19,5 +18,21 @@
 
         background: transparent;
         color: $grey;
+
+        &:hover {
+            background: $outline;
+            color: $dark;
+        }
+
+        &_active {
+            background: $primary;
+            color: $white;
+            box-shadow: $shadow-primary;
+
+            &:hover {
+                background: $primary;
+                color: $white;
+            }
+        }
     }
 }

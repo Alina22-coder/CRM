@@ -81,6 +81,11 @@ export const EditOrderModal = () => {
                         </div>
 
                         <div className={styles.grid__field}>
+                            <label>Already paid</label>
+                            <input type="number" />
+                        </div>
+
+                        <div className={styles.grid__field}>
                             <label>Course</label>
                             <select name="course">
                                 {COURSES.map((course) => (

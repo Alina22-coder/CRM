@@ -15,18 +15,16 @@ export const Pagination = ({
 
     let pages: number[] = [];
 
-    if (page === 1) {
-        pages = Array.from({ length: Math.min(7, totalPage) }, (_, i) => i + 1);
-    } else if (page > 1 && page <= totalPage / 2) {
-        pages = Array.from({ length: Math.min(7, totalPage) }, (_, i) => i + 1);
-    } else if (page > totalPage / 2 && page < totalPage) {
-        pages = [page - 2, page - 1, page, page + 1, page + 2].filter(
-            (p) => p > 0 && p <= totalPage,
-        );
-    } else if (page === totalPage) {
+    const count = Math.min(7, totalPage);
+
+    if (page <= totalPage / 2) {
+        // Режим 1 і 2: перша сторінка або перша половина — показувати перші 7
+        pages = Array.from({ length: count }, (_, i) => i + 1);
+    } else {
+        // Режим 3 і 4: друга половина або остання — показувати останні 7
         pages = Array.from(
-            { length: Math.min(7, totalPage) },
-            (_, i) => totalPage - Math.min(7, totalPage) + i + 1,
+            { length: count },
+            (_, i) => totalPage - count + i + 1,
         );
     }
 
@@ -54,7 +52,7 @@ export const Pagination = ({
 
             {pages.map((p) => (
                 <button
-                    className={styles.page__btn}
+                    className={`${styles.page__btn} ${p === page ? styles.page__btn_active : ""}`}
                     key={p}
                     onClick={() => onPageChange(p)}
                     disabled={p === page}
