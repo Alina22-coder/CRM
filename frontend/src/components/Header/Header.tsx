@@ -63,12 +63,16 @@ export const Header = () => {
                 </button>
 
                 <div className={styles.header__account}>
-                    <div className={styles.header__profile}>
-                        <div className={styles.user__avatar}>
-                            {user?.name?.charAt(0).toUpperCase()}
+                    <Link to="/account">
+                        <div className={styles.header__profile}>
+                            <div className={styles.user__avatar}>
+                                {user?.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div className={styles.user__name}>
+                                {user?.name}
+                            </div>
                         </div>
-                        <div className={styles.user__name}>{user?.name}</div>
-                    </div>
+                    </Link>
 
                     <div className={styles.header__panel}>
                         {user?.role === RoleEnum.Admin && (

@@ -4,6 +4,7 @@ import styles from "./User.module.scss";
 import { AVATAR_COLORS } from "../../constants/avatar.constant";
 import userService from "../../services/users.service";
 import { authService } from "../../services/auth.service";
+import { toast } from "sonner";
 
 const getAvatarColor = (name: string) => {
     const index = name.charCodeAt(0) % AVATAR_COLORS.length;
@@ -17,27 +18,47 @@ type UserPropType = {
 
 export const User: FC<UserPropType> = ({ user, onUpdate }) => {
     const handleRecovery = async () => {
-        const { data } = await authService.recovery(user._id);
-        await navigator.clipboard.writeText(
-            `${window.location.origin}/activate/${data.token}`,
-        );
+        try {
+            const { data } = await authService.recovery(user._id);
+            await navigator.clipboard.writeText(
+                `${window.location.origin}/activate/${data.token}`,
+            );
+            toast.success("Recovery link copied to clipboard");
+        } catch {
+            toast.error("Failed to generate recovery link");
+        }
     };
 
     const handleActivate = async () => {
-        const { data } = await authService.activate(user._id);
-        await navigator.clipboard.writeText(
-            `${window.location.origin}/activate/${data.token}`,
-        );
+        try {
+            const { data } = await authService.activate(user._id);
+            await navigator.clipboard.writeText(
+                `${window.location.origin}/activate/${data.token}`,
+            );
+            toast.success("Activation link copied to clipboard");
+        } catch {
+            toast.error("Failed to generate activation link");
+        }
     };
 
     const handleBan = async () => {
-        await userService.banUser(user._id);
-        onUpdate();
+        try {
+            await userService.banUser(user._id);
+            toast.success("User has been banned");
+            onUpdate();
+        } catch {
+            toast.error("Failed to ban user");
+        }
     };
 
     const handleUnban = async () => {
-        await userService.unbanUser(user._id);
-        onUpdate();
+        try {
+            await userService.unbanUser(user._id);
+            toast.success("User has been unbanned");
+            onUpdate();
+        } catch {
+            toast.error("Failed to unban user");
+        }
     };
 
     return (
