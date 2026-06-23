@@ -21,6 +21,13 @@ export const Users = () => {
 
     const page = Number(searchParams.get("page")) || 1;
 
+    const loadUsers = () => {
+        userService.getAllUsers({ page, pageSize: 25 }).then((usersData) => {
+            setUsers(usersData.data.data);
+            setTotal(usersData.data.total);
+        });
+    };
+
     useEffect(() => {
         setLoading(true);
         Promise.all([
@@ -124,7 +131,11 @@ export const Users = () => {
                     <div className={styles.manager}>
                         <div className={styles.manager__list}>
                             {users.map((user) => (
-                                <User key={user._id} user={user} />
+                                <User
+                                    key={user._id}
+                                    user={user}
+                                    onUpdate={loadUsers}
+                                />
                             ))}
                         </div>
                     </div>

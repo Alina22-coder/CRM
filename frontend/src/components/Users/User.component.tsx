@@ -2,6 +2,8 @@ import type { FC } from "react";
 import type { IUser } from "../../interfaces/IUser";
 import styles from "./User.module.scss";
 import { AVATAR_COLORS } from "../../constants/avatar.constant";
+import userService from "../../services/users.service";
+import { authService } from "../../services/auth.service";
 
 const getAvatarColor = (name: string) => {
     const index = name.charCodeAt(0) % AVATAR_COLORS.length;
@@ -10,9 +12,34 @@ const getAvatarColor = (name: string) => {
 
 type UserPropType = {
     user: IUser;
+    onUpdate: () => void;
 };
 
-export const User: FC<UserPropType> = ({ user }) => {
+export const User: FC<UserPropType> = ({ user, onUpdate }) => {
+    const handleRecovery = async () => {
+        const { data } = await authService.recovery(user._id);
+        await navigator.clipboard.writeText(
+            `${window.location.origin}/activate/${data.token}`,
+        );
+    };
+
+    const handleActivate = async () => {
+        const { data } = await authService.activate(user._id);
+        await navigator.clipboard.writeText(
+            `${window.location.origin}/activate/${data.token}`,
+        );
+    };
+
+    const handleBan = async () => {
+        await userService.banUser(user._id);
+        onUpdate();
+    };
+
+    const handleUnban = async () => {
+        await userService.unbanUser(user._id);
+        onUpdate();
+    };
+
     return (
         <div className={styles.manager__card}>
             <div
@@ -50,14 +77,22 @@ export const User: FC<UserPropType> = ({ user }) => {
 
             <div className={styles.card__btn}>
                 {user.is_active ? (
-                    <button className="btn-recovery">RECOVERY PASSWORD</button>
+                    <button className="btn-recovery" onClick={handleRecovery}>
+                        RECOVERY PASSWORD
+                    </button>
                 ) : (
-                    <button className="btn-activate">ACTIVATE</button>
+                    <button className="btn-activate" onClick={handleActivate}>
+                        ACTIVATE
+                    </button>
                 )}
 
-                <button className="btn-unban">UNBAN</button>
+                <button className="btn-unban" onClick={handleUnban}>
+                    UNBAN
+                </button>
 
-                <button className="btn-ban">BAN</button>
+                <button className="btn-ban" onClick={handleBan}>
+                    BAN
+                </button>
             </div>
         </div>
     );

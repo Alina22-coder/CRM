@@ -71,21 +71,37 @@ button:active {
 .btn-activate {
     background: $primary-light;
     color: $primary;
+
+    &:hover {
+        background: $primary-light;
+    }
 }
 
 .btn-recovery {
     background: $yellow-light;
     color: $yellow-dark;
+
+    &:hover {
+        background: $yellow-light;
+    }
 }
 
 .btn-ban {
     background: $pink-light;
     color: $pink-dark;
+
+    &:hover {
+        background: $pink-light;
+    }
 }
 
 .btn-unban {
     background: $green-light;
     color: $green-dark;
+
+    &:hover {
+        background: $green-light;
+    }
 }
 
 // input
