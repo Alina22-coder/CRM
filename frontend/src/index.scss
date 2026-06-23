@@ -135,3 +135,12 @@ select {
     appearance: none;
     cursor: pointer;
 }
+
+// badge
+.badge {
+    display: inline-block;
+    border-radius: $br-4;
+    padding: 3px 10px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+}

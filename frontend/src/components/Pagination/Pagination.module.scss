@@ -1,0 +1,23 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.pagination {
+    border: 1px solid red;
+
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+
+    .page__btn {
+        width: 36px;
+        height: 36px;
+
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+
+        background: transparent;
+        color: $grey;
+    }
+}

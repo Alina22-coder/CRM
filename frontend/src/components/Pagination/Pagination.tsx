@@ -1,3 +1,5 @@
+import styles from "./Pagination.module.scss";
+
 type PaginationType = {
     page: number;
     totalPage: number;
@@ -29,21 +31,30 @@ export const Pagination = ({
     }
 
     return (
-        <div>
-            {/* кнопка < */}
+        <div className={styles.pagination}>
             {page > 1 && (
-                <button onClick={() => onPageChange(page - 1)}>{"<"}</button>
+                <button
+                    className={styles.page__btn}
+                    onClick={() => onPageChange(page - 1)}
+                >
+                    {"<"}
+                </button>
             )}
 
-            {/* перша сторінка якщо не входить в pages */}
-            {pages[0] > 1 && <button onClick={() => onPageChange(1)}>1</button>}
+            {pages[0] > 1 && (
+                <button
+                    className={styles.page__btn}
+                    onClick={() => onPageChange(1)}
+                >
+                    1
+                </button>
+            )}
 
-            {/* перше ... якщо між 1 і pages є пропуск */}
             {pages[0] > 2 && <span>...</span>}
 
-            {/* основні кнопки */}
             {pages.map((p) => (
                 <button
+                    className={styles.page__btn}
                     key={p}
                     onClick={() => onPageChange(p)}
                     disabled={p === page}
@@ -52,19 +63,24 @@ export const Pagination = ({
                 </button>
             ))}
 
-            {/* друге ... якщо між pages і totalPage є пропуск */}
             {pages[pages.length - 1] < totalPage - 1 && <span>...</span>}
 
-            {/* остання сторінка якщо не входить в pages */}
             {pages[pages.length - 1] < totalPage && (
-                <button onClick={() => onPageChange(totalPage)}>
+                <button
+                    className={styles.page__btn}
+                    onClick={() => onPageChange(totalPage)}
+                >
                     {totalPage}
                 </button>
             )}
 
-            {/* кнопка > */}
             {page < totalPage && (
-                <button onClick={() => onPageChange(page + 1)}>{">"}</button>
+                <button
+                    className={styles.page__btn}
+                    onClick={() => onPageChange(page + 1)}
+                >
+                    {">"}
+                </button>
             )}
         </div>
     );

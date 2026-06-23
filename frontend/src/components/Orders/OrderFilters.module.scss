@@ -2,6 +2,61 @@
 @use "../../styles/variables/typography" as *;
 
 .filters {
+    background: $white;
+    border-radius: $br-12;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: $card-shadow;
+
+    &__group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter__input {
+            width: 160px;
+            height: 36px;
+            background: $white;
+            padding: 0 12px;
+            font-size: $font-size-xs;
+            color: $dark;
+        }
+
+        .filter__select {
+            width: min-content;
+            height: 36px;
+            background: $white;
+            padding: 0 12px;
+            font-size: $font-size-xs;
+            color: $dark;
+        }
+
+        .filter__label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: $font-size-xs;
+            font-weight: $font-weight-semibold;
+            color: $dark;
+            cursor: pointer;
+            text-transform: none;
+
+            &__checkbox {
+                width: 16px;
+                height: 16px;
+                accent-color: $primary;
+                cursor: pointer;
+                border-radius: $br-4;
+            }
+        }
+    }
+
     &_reset {
         height: 36px;
         padding: 0 16px;
@@ -18,5 +73,9 @@
         color: $green-dark;
         font-size: $font-size-xs;
         font-weight: $font-weight-semibold;
+
+        &:hover {
+            background: rgba(124, 231, 172, 0.2);
+        }
     }
 }

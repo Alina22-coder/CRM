@@ -1,5 +1,50 @@
-.order{
-    &__td{
-        
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.order {
+    border-bottom: 1px solid $outline;
+
+    td {
+        padding: 0 14px;
+        height: 52px;
+        font-size: $font-size-xs;
+        color: $dark;
+        white-space: nowrap;
+    }
+}
+
+.status {
+    &--new {
+        background: $primary-light;
+        color: $primary;
+    }
+
+    &--in-work {
+        background: $yellow-light;
+        color: $yellow-dark;
+    }
+
+    &--aggre {
+        background: $green-light;
+        color: $green-dark;
+    }
+
+    &--disaggre {
+        background: $pink-light;
+        color: $pink-dark;
+    }
+
+    &--dubbing {
+        // background-color: #f3e8fd;
+        // color: #9334e6;
+
+        // TODO
+    }
+
+    &--default {
+        // background-color: #f1f3f4;
+        // color: #5f6368;
+
+        // TODO
     }
 }
