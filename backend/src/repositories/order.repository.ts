@@ -86,16 +86,12 @@ class OrderRepository {
         return { total, byStatus };
     }
 
-    public async getStatisticByManager(managerSurname: string) {
+    public async getStatisticByManager(managerEmail: string) {
         const [total, byStatus] = await Promise.all([
-            OrderModel.countDocuments({ manager: managerSurname }),
+            OrderModel.countDocuments({ manager: managerEmail }),
             OrderModel.aggregate([
-                {
-                    $match: { manager: managerSurname },
-                },
-                {
-                    $group: { _id: "$status", count: { $sum: 1 } },
-                },
+                { $match: { manager: managerEmail } },
+                { $group: { _id: "$status", count: { $sum: 1 } } },
             ]),
         ]);
         return { total, byStatus };

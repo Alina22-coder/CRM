@@ -18,8 +18,8 @@ button {
     border: none;
     background: $primary;
     color: $white;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
 
     &:hover {
         background: $primary-dark;
@@ -32,11 +32,24 @@ button {
     border: 1.5px solid $outline;
     background: transparent;
     color: $dark;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
 
     &:hover {
         background: $background-light;
+    }
+}
+
+.danger {
+    height: 44px;
+    padding: 0 24px;
+    background: $pink-light;
+    color: $pink-dark;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+        background: rgba(255, 128, 139, 0.2);
     }
 }
 

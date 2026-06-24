@@ -1,12 +1,13 @@
 import { type FC, useState, useEffect } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
 import type { IComment } from "../../interfaces/IComment";
+import type { IStatistic } from "../../interfaces/IStatistic";
 import { STATUSES } from "../../constants/status.constant";
 import styles from "./OrderTable.module.scss";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { orderService } from "../../services/orders.service";
+import userService from "../../services/users.service";
 import { TagInput } from "../ui/tag/TagInput.ui";
-
 
 type OrderPropType = {
     order: IOrder;
@@ -38,6 +39,17 @@ export const OrderTable: FC<OrderPropType> = ({
     const user = useCurrentUser();
     const [text, setText] = useState("");
     const [comments, setComments] = useState<IComment[]>([]);
+
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const [managerInfo, setManagerInfo] = useState<{
+        name: string;
+        surname: string;
+        email: string;
+        is_active: boolean;
+        last_login: Date | null;
+        _id: string;
+    } | null>(null);
+    const [managerStat, setManagerStat] = useState<IStatistic | null>(null);
 
     useEffect(() => {
         if (!expanded) return;
@@ -83,7 +95,128 @@ export const OrderTable: FC<OrderPropType> = ({
                         ? new Date(order.created_at).toLocaleDateString()
                         : null}
                 </td>
-                <td>{order.manager}</td>
+                <td
+                    className={styles.order__manager}
+                    onMouseEnter={() => {
+                        setTooltipVisible(true);
+                        if (order.manager && !managerInfo) {
+                            userService
+                                .getAllUsers({
+                                    pageSize: 1,
+                                    page: 1,
+                                    search: order.manager,
+                                })
+                                .then((res) => {
+                                    const found = res.data.data?.[0];
+                                    if (found) {
+                                        setManagerInfo(found);
+                                        return userService.getStatisticByManager(
+                                            found._id,
+                                        );
+                                    }
+                                })
+                                .then((res) => res && setManagerStat(res.data));
+                        }
+                    }}
+                    onMouseLeave={() => setTooltipVisible(false)}
+                >
+                    {order.manager}
+                    {tooltipVisible && order.manager && (
+                        <div className={styles.manager__tooltip}>
+                            <div className={styles.manager__tooltip__header}>
+                                <div
+                                    className={styles.manager__tooltip__avatar}
+                                >
+                                    {managerInfo
+                                        ? `${managerInfo.name.charAt(0).toUpperCase()}${managerInfo.surname.charAt(0).toUpperCase()}`
+                                        : "?"}
+                                </div>
+                                <div>
+                                    <div
+                                        className={
+                                            styles.manager__tooltip__name
+                                        }
+                                    >
+                                        {managerInfo
+                                            ? `${managerInfo.name} ${managerInfo.surname}`
+                                            : order.manager}
+                                    </div>
+                                    <div
+                                        className={
+                                            styles.manager__tooltip__role
+                                        }
+                                    >
+                                        Manager ·{" "}
+                                        {managerInfo
+                                            ? managerInfo.is_active
+                                                ? "Active"
+                                                : "Inactive"
+                                            : "—"}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.manager__tooltip__rows}>
+                                <div className={styles.manager__tooltip__row}>
+                                    <span
+                                        className={
+                                            styles.manager__tooltip__row__title
+                                        }
+                                    >
+                                        Orders:
+                                    </span>
+                                    <span
+                                        className={
+                                            styles.manager__tooltip__row__value
+                                        }
+                                    >
+                                        {managerStat?.total ?? "—"}
+                                    </span>
+                                </div>
+
+                                <div className={styles.manager__tooltip__row}>
+                                    <span
+                                        className={
+                                            styles.manager__tooltip__row__title
+                                        }
+                                    >
+                                        Aggre:
+                                    </span>
+                                    <span
+                                        className={
+                                            styles[
+                                                "manager__tooltip__row__value--green"
+                                            ]
+                                        }
+                                    >
+                                        {managerStat?.Aggre ?? 0}
+                                    </span>
+                                </div>
+
+                                <div className={styles.manager__tooltip__row}>
+                                    <span
+                                        className={
+                                            styles.manager__tooltip__row__title
+                                        }
+                                    >
+                                        Last login:
+                                    </span>
+                                    <span
+                                        className={
+                                            styles.manager__tooltip__row__value
+                                        }
+                                    >
+                                        {managerInfo?.last_login
+                                            ? new Date(
+                                                  managerInfo.last_login,
+                                              ).toLocaleDateString()
+                                            : "Never"}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </td>
                 <td>{order.group}</td>
             </tr>
 
@@ -127,14 +260,6 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <div
                                         className={styles.comment__info__value}
                                     >
-                                        {/* <button
-                                            className={
-                                                styles.comment__info__btn
-                                            }
-                                        >
-                                            + Add tag
-                                        </button> */}
-
                                         <TagInput />
                                     </div>
                                 </div>

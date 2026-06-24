@@ -14,7 +14,7 @@ interface IOrder {
     utm: string;
     msg: string;
     status: string;
-    manager?: string;
+    manager?: any;
     group?: string;
 }
 

@@ -1,0 +1,49 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: $modal-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.confirm {
+    background: $white;
+    border-radius: $br-8;
+
+    border: 1px solid $outline;
+
+    box-shadow: $shadow-modal;
+    padding: 20px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    &__title {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-extrabold;
+        color: $dark;
+    }
+
+    &__description {
+        font-size: 10px;
+        color: $grey;
+        line-height: 1.6;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    button {
+        height: 24px;
+        font-size: 10px;
+    }
+}

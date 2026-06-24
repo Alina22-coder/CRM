@@ -8,7 +8,6 @@ import LoginPage from "../pages/auth/LoginPage";
 import { AdminRoute } from "../components/AdminRoute/AdminRoute";
 import SetPasswordPage from "../pages/auth/SetPasswordPage";
 import AccountPage from "../pages/account/AccountPage";
-import { EditOrderModal } from "../components/Modal/EditOrderModal.component";
 
 const routes = createBrowserRouter([
     {
@@ -39,7 +38,6 @@ const routes = createBrowserRouter([
                     <PrivateRoute>
                         <AdminRoute>
                             <UsersPage />
-                            <EditOrderModal />
                         </AdminRoute>
                     </PrivateRoute>
                 ),

@@ -9,12 +9,12 @@ import { Workbook } from "exceljs";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
-        let managerSurname: string | undefined;
+        let managerEmail: string | undefined;
         if (query.my) {
             const user = await userRepository.getUserById(userId);
-            managerSurname = user?.surname;
+            managerEmail = user?.email;
         }
-        return orderRepository.getAllOrders(query, managerSurname);
+        return orderRepository.getAllOrders(query, managerEmail);
     }
 
     public async getOrderById(orderId: string) {
@@ -43,7 +43,7 @@ class OrderService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        if (order.manager && order.manager !== user.surname) {
+        if (order.manager && order.manager !== user.email) {
             throw new ApiError(
                 "You can only edit your own orders",
                 StatusCodes.FORBIDDEN,
@@ -53,7 +53,7 @@ class OrderService {
         const updatedFields: Partial<IOrder> = { ...update };
 
         if (!order.manager) {
-            updatedFields.manager = user.surname;
+            updatedFields.manager = user.email;
         }
 
         if (!order.status || order.status === Status.NEW) {
@@ -68,24 +68,18 @@ class OrderService {
     }
 
     public async getStatisticByManager(userId: string) {
-        const user = await userRepository.getUserById(userId);
-
-        if (!user) {
-            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
-        }
-
-        return orderRepository.getStatisticByManager(user.surname);
+        return orderRepository.getStatisticByManager(userId);
     }
 
     public async getAllOrdersForExcel(query: IOrderQuery, userId: string) {
-        let managerSurname: string | undefined;
+        let managerEmail: string | undefined;
         if (query.my) {
             const user = await userRepository.getUserById(userId);
-            managerSurname = user?.surname;
+            managerEmail = user?.email;
         }
         const orders = await orderRepository.getAllOrdersForExcel(
             query,
-            managerSurname,
+            managerEmail,
         );
 
         const workbook = new Workbook();
