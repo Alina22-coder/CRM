@@ -235,15 +235,33 @@
             margin-top: 14px;
         }
 
-        .comment__btn {
-            height: 36px;
-            padding: 0 16px;
+        .comment__btn__wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
 
-            font-size: $font-size-xs;
-            font-weight: $font-weight-semibold;
+            .comment__btn__edit {
+                height: 36px;
+                padding: 0 16px;
 
-            background: $primary;
-            color: $white;
+                font-size: $font-size-xs;
+                font-weight: $font-weight-semibold;
+
+                border: 1.5px solid $outline;
+                background: transparent;
+                color: $dark;
+            }
+
+            .comment__btn__submit {
+                height: 36px;
+                padding: 0 16px;
+
+                font-size: $font-size-xs;
+                font-weight: $font-weight-semibold;
+
+                background: $primary;
+                color: $white;
+            }
         }
     }
 }

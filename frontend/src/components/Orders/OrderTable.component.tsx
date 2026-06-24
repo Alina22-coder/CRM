@@ -247,7 +247,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <div
                                         className={styles.comment__info__value}
                                     >
-                                        {order.utm}
+                                        {order.utm || "null"}
                                     </div>
                                 </div>
 
@@ -295,19 +295,42 @@ export const OrderTable: FC<OrderPropType> = ({
                                     ))}
                                 </div>
 
-                                <textarea
-                                    className={styles.comment__textarea}
-                                    placeholder="Comment..."
-                                    value={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                ></textarea>
+                                {(!order.manager ||
+                                    order.manager === user?.email) && (
+                                    <>
+                                        <textarea
+                                            className={styles.comment__textarea}
+                                            placeholder="Comment..."
+                                            value={text}
+                                            onChange={(e) =>
+                                                setText(e.target.value)
+                                            }
+                                        ></textarea>
 
-                                <button
-                                    className={styles.comment__btn}
-                                    onClick={addComment}
-                                >
-                                    Submit
-                                </button>
+                                        <div
+                                            className={
+                                                styles.comment__btn__wrap
+                                            }
+                                        >
+                                            <button
+                                                className={
+                                                    styles.comment__btn__edit
+                                                }
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                className={
+                                                    styles.comment__btn__submit
+                                                }
+                                                onClick={addComment}
+                                            >
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </td>
