@@ -1,0 +1,45 @@
+@use "../../../styles/variables/colors" as *;
+@use "../../../styles/variables/typography" as *;
+
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    border-radius: $br-8;
+    transition: all 150ms;
+}
+
+.primary {
+    height: 44px;
+    padding: 0 32px;
+    border: none;
+    background: $primary;
+    color: $white;
+    font-size: 14px;
+    font-weight: 600;
+
+    &:hover {
+        background: $primary-dark;
+    }
+}
+
+.secondary {
+    height: 44px;
+    padding: 0 24px;
+    border: 1.5px solid $outline;
+    background: transparent;
+    color: $dark;
+    font-size: 14px;
+    font-weight: 600;
+
+    &:hover {
+        background: $background-light;
+    }
+}
+
+button:active {
+    background: $primary-darker;
+}

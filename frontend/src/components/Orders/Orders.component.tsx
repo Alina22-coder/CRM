@@ -14,6 +14,11 @@ export const Orders = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [loading, setLoading] = useState(false);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
+
+    const handleExpand = (id: string) => {
+        setExpandedId((prev) => (prev === id ? null : id));
+    };
 
     const page = Number(searchParams.get("page")) || 1;
     const order = searchParams.get("order") || "-_id";
@@ -68,7 +73,12 @@ export const Orders = () => {
                             </thead>
                             <tbody>
                                 {orders.map((order) => (
-                                    <OrderTable key={order._id} order={order} />
+                                    <OrderTable
+                                        key={order._id}
+                                        order={order}
+                                        expanded={expandedId === order._id}
+                                        onExpand={handleExpand}
+                                    />
                                 ))}
                             </tbody>
                         </table>

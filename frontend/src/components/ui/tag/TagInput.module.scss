@@ -1,0 +1,41 @@
+@use "../../../styles/variables/colors" as *;
+@use "../../../styles/variables/typography" as *;
+
+.tag {
+    // display: flex;
+    // align-items: center;
+    // gap: 10px;
+
+    &__wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    button {
+        height: 24px;
+        padding: 0 10px;
+        border-radius: $br-4;
+        border: 1.5px dashed $outline;
+        background: transparent;
+        font-size: 10px;
+        font-weight: $font-weight-semibold;
+        color: $grey;
+
+        &:hover {
+            color: $primary;
+            border: 1.5px dashed $primary;
+            background: transparent;
+        }
+    }
+
+    input {
+        width: 120px;
+        height: 24px;
+        font-size: 10px;
+
+        &::placeholder {
+            font-size: 10px;
+        }
+    }
+}

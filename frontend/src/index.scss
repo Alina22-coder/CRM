@@ -152,6 +152,20 @@ select {
     cursor: pointer;
 }
 
+textarea {
+    width: 100%;
+    border-radius: $br-8;
+    border: 1.5px solid $outline;
+    background: $white;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: $font-size-xs;
+    resize: none;
+    outline: none;
+    margin-bottom: 8px;
+    transition: border 150ms;
+}
+
 // badge
 .badge {
     display: inline-block;
