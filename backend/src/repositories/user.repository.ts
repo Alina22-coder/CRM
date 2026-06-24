@@ -5,8 +5,8 @@ class UserRepository {
     public async getAllUsers(
         query: IUserQuery,
     ): Promise<{ data: IUser[]; total: number }> {
-        const { page, pageSize, search, order } = query;
-        const filter = search
+        const { page, pageSize, search, order, excludeId } = query;
+        const filter: Record<string, any> = search
             ? {
                   $or: [
                       { name: { $regex: search, $options: "i" } },
@@ -14,6 +14,10 @@ class UserRepository {
                   ],
               }
             : {};
+
+        if (excludeId) {
+            filter._id = { $ne: excludeId };
+        }
         const sortField = order?.startsWith("-") ? order.slice(1) : order;
         const sortDir = order?.startsWith("-") ? -1 : 1;
 

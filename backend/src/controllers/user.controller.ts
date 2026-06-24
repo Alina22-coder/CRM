@@ -2,12 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
 import { userService } from "../services/user.service";
 import { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
+import ApiError from "../errors/api.error";
+import { ITokenPayload } from "../interfaces/IToken";
 
 class UserController {
-    public async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    public async getAllUsers(_req: Request, res: Response, next: NextFunction) {
         try {
             const query = res.locals.query as IUserQuery;
-            const data = await userService.getAllUsers(query);
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const data = await userService.getAllUsers({ ...query, excludeId: userId });
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);
@@ -51,6 +54,10 @@ class UserController {
     public async banUser(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id as string;
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            if (id === userId) {
+                throw new ApiError("You cannot ban yourself", StatusCodes.FORBIDDEN);
+            }
             await userService.updateUserById(id, { is_banned: true });
             res.status(StatusCodes.OK).json({ message: "User banned" });
         } catch (e) {
