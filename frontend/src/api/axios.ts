@@ -18,7 +18,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
-        if (error.response?.status === 401) {
+        const url = error.config?.url ?? "";
+        if (
+            error.response?.status === 401 &&
+            !url.includes("/auth/login") &&
+            !url.includes("/auth/refresh")
+        ) {
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
 

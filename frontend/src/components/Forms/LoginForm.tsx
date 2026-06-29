@@ -5,7 +5,6 @@ import styles from "./LoginForm.module.scss";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import type { ILoginForm } from "../../interfaces/ILoginForm";
-import { Logo } from "../Logo/Logo";
 
 export const LoginForm = () => {
     const {
@@ -15,12 +14,13 @@ export const LoginForm = () => {
     } = useForm<ILoginForm>();
 
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const onSubmit = async (values: ILoginForm) => {
-        console.log(values);
-
+        if (loading) return;
+        setLoading(true);
         try {
             const { data } = await authService.login({
                 email: values.email,
@@ -34,6 +34,8 @@ export const LoginForm = () => {
             navigate("/orders");
         } catch (error) {
             setError("Invalid email or password");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -89,8 +91,12 @@ export const LoginForm = () => {
 
                 {error && <p className={styles.error}>{error}</p>}
 
-                <button className={styles.login__btn} type="submit">
-                    Login
+                <button
+                    className={styles.login__btn}
+                    type="submit"
+                    disabled={loading}
+                >
+                    {loading ? "Loading..." : "Login"}
                 </button>
             </form>
         </div>
