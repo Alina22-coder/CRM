@@ -5,23 +5,90 @@ import {
     COURSES,
 } from "../../constants/course.constant";
 import { STATUSES } from "../../constants/status.constant";
+import type { IOrder } from "../../interfaces/IOrder";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { groupService } from "../../services/group.service";
+import type { IGroup } from "../../interfaces/IGroup";
+import { orderService } from "../../services/orders.service";
 
-export const EditOrderModal = () => {
+interface EditOrderModalProps {
+    order: IOrder;
+    onClose: () => void;
+}
+
+type EditOrderForm = {
+    group: string;
+    name: string;
+    surname: string;
+    email: string;
+    phone: string;
+    age: number;
+    status: string;
+    sum: number;
+    already_paid: number;
+    course: string;
+    course_format: string;
+    course_type: string;
+};
+
+export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
+    const { register, handleSubmit, reset } = useForm<EditOrderForm>();
+
+    const [groups, setGroups] = useState<IGroup[]>([]);
+
+    useEffect(() => {
+        reset({
+            name: order.name ?? "",
+            surname: order.surname ?? "",
+            email: order.email ?? "",
+            phone: order.phone ?? "",
+            age: order.age ?? "",
+            course: order.course ?? "",
+            course_format: order.course_format ?? "",
+            course_type: order.course_type ?? "",
+            status: order.status ?? "",
+            sum: order.sum ?? "",
+            already_paid: order.already_paid ?? "",
+            group: order.group ?? "",
+        });
+    }, [order]);
+
+    useEffect(() => {
+        groupService.getAllGroups().then((res) => setGroups(res.data));
+    }, []);
+
+    const onSubmit = (data: EditOrderForm) => {
+        orderService.updateOrderById(order._id, data).then(() => {
+            onClose();
+        });
+    };
+
     return (
         <div className={styles.modal__overlay}>
-            <div className={styles.modal}>
+            <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
                 <div className={styles.modal__header}>
                     <div className={styles.header__title}>Edit Order</div>
-                    {/* TODO add btn */}
-                    <button className={styles.header__btn}>✕</button>
+
+                    <button
+                        type="button"
+                        className={styles.header__btn}
+                        onClick={onClose}
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 <div className={styles.modal__grid}>
                     <div>
                         <div className={styles.grid__field}>
                             <label>Group</label>
-                            <select name="group" id="">
-                                <option value=""></option>
+                            <select {...register("group")}>
+                                {groups.map((group) => (
+                                    <option key={group._id} value={group.name}>
+                                        {group.name}
+                                    </option>
+                                ))}
                             </select>
 
                             <div className={styles.add__group}>
@@ -39,34 +106,40 @@ export const EditOrderModal = () => {
 
                         <div className={styles.grid__field}>
                             <label>Name</label>
-                            <input type="text" name="" id="" />
+                            <input type="text" {...register("name")} />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Surname</label>
-                            <input type="text" name="" id="" />
+                            <input type="text" {...register("surname")} />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Email</label>
-                            <input type="text" name="" id="" />
+                            <input type="text" {...register("email")} />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Phone</label>
-                            <input type="number" name="" id="" />
+                            <input type="number" {...register("phone")} />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Age</label>
-                            <input type="number" name="" id="" />
+                            <input
+                                type="number"
+                                {...register("age", {
+                                    setValueAs: (v: string) =>
+                                        v === "" ? undefined : Number(v),
+                                })}
+                            />
                         </div>
                     </div>
 
                     <div>
                         <div className={styles.grid__field}>
                             <label>Status</label>
-                            <select name="status">
+                            <select {...register("status")}>
                                 {STATUSES.map((status) => (
                                     <option key={status} value={status}>
                                         {status}
@@ -77,17 +150,29 @@ export const EditOrderModal = () => {
 
                         <div className={styles.grid__field}>
                             <label>Sum</label>
-                            <input type="number" />
+                            <input
+                                type="number"
+                                {...register("sum", {
+                                    setValueAs: (v: string) =>
+                                        v === "" ? undefined : Number(v),
+                                })}
+                            />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Already paid</label>
-                            <input type="number" />
+                            <input
+                                type="number"
+                                {...register("already_paid", {
+                                    setValueAs: (v: string) =>
+                                        v === "" ? undefined : Number(v),
+                                })}
+                            />
                         </div>
 
                         <div className={styles.grid__field}>
                             <label>Course</label>
-                            <select name="course">
+                            <select {...register("course")}>
                                 {COURSES.map((course) => (
                                     <option key={course} value={course}>
                                         {course}
@@ -98,7 +183,7 @@ export const EditOrderModal = () => {
 
                         <div className={styles.grid__field}>
                             <label>Course Format</label>
-                            <select name="courseFormat">
+                            <select {...register("course_format")}>
                                 {COURSE_FORMATS.map((courseFormat) => (
                                     <option
                                         key={courseFormat}
@@ -112,7 +197,7 @@ export const EditOrderModal = () => {
 
                         <div className={styles.grid__field}>
                             <label>Course Type</label>
-                            <select name="courseType">
+                            <select {...register("course_type")}>
                                 {COURSE_TYPES.map((courseType) => (
                                     <option key={courseType} value={courseType}>
                                         {courseType}
@@ -124,10 +209,18 @@ export const EditOrderModal = () => {
                 </div>
 
                 <div className={styles.modal__footer}>
-                    <button className={styles.footer__close}>Close</button>
-                    <button className={styles.footer__submit}>Submit</button>
+                    <button
+                        type="button"
+                        className={styles.footer__close}
+                        onClick={onClose}
+                    >
+                        Close
+                    </button>
+                    <button type="submit" className={styles.footer__submit}>
+                        Submit
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 };

@@ -8,6 +8,7 @@ import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { orderService } from "../../services/orders.service";
 import userService from "../../services/users.service";
 import { TagInput } from "../ui/tag/TagInput.ui";
+import { EditOrderModal } from "../Modal/EditOrderModal.component";
 
 type OrderPropType = {
     order: IOrder;
@@ -71,6 +72,8 @@ export const OrderTable: FC<OrderPropType> = ({
             });
         });
     };
+
+    const [isEditOpen, setIsEditOpen] = useState(false);
 
     return (
         <>
@@ -355,6 +358,10 @@ export const OrderTable: FC<OrderPropType> = ({
                                                 className={
                                                     styles.comment__btn__edit
                                                 }
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // щоб не закрило рядок
+                                                    setIsEditOpen(true);
+                                                }}
                                             >
                                                 Edit
                                             </button>
@@ -374,6 +381,13 @@ export const OrderTable: FC<OrderPropType> = ({
                         </div>
                     </td>
                 </tr>
+            )}
+
+            {isEditOpen && (
+                <EditOrderModal
+                    order={currentOrder}
+                    onClose={() => setIsEditOpen(false)}
+                />
             )}
         </>
     );
