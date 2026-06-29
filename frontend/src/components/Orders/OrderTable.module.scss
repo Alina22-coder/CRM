@@ -197,7 +197,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 4px;
+            margin-bottom: 16px;
 
             &__avatar {
                 width: 24px;
@@ -214,7 +214,6 @@
 
             &__author {
                 font-size: $font-size-xs;
-                font-weight: $font-weight-semibold;
             }
 
             &__date {
@@ -226,12 +225,22 @@
             &__text {
                 font-size: $font-size-xs;
                 color: $dark;
-                padding-left: 32px;
+            }
+
+            &__wrap {
+                display: flex;
+                gap: 10px;
+                color: $grey;
+                font-size: 10px;
+                margin-block: 2px;
             }
         }
 
         .comment__textarea {
             height: 72px;
+        }
+
+        .comment__textarea--with-margin {
             margin-top: 14px;
         }
 

@@ -40,6 +40,8 @@ export const OrderTable: FC<OrderPropType> = ({
     const [text, setText] = useState("");
     const [comments, setComments] = useState<IComment[]>([]);
 
+    const [currentOrder, setCurrentOrder] = useState(order);
+
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [managerInfo, setManagerInfo] = useState<{
         name: string;
@@ -63,6 +65,10 @@ export const OrderTable: FC<OrderPropType> = ({
         orderService.createCommentToOrderById(order._id, text).then((res) => {
             setComments((prev) => [...prev, res.data]);
             setText("");
+
+            orderService.getOrderById(order._id).then((updated) => {
+                setCurrentOrder(updated.data);
+            });
         });
     };
 
@@ -83,9 +89,9 @@ export const OrderTable: FC<OrderPropType> = ({
                 <td>{order.course_type}</td>
                 <td>
                     <span
-                        className={`badge ${styles.status} ${getStatusClass(order.status)}`}
+                        className={`badge ${styles.status} ${getStatusClass(currentOrder.status)}`}
                     >
-                        {order.status}
+                        {currentOrder.status}
                     </span>
                 </td>
                 <td>{order.sum}</td>
@@ -99,12 +105,12 @@ export const OrderTable: FC<OrderPropType> = ({
                     className={styles.order__manager}
                     onMouseEnter={() => {
                         setTooltipVisible(true);
-                        if (order.manager && !managerInfo) {
+                        if (currentOrder.manager && !managerInfo) {
                             userService
                                 .getAllUsers({
                                     pageSize: 1,
                                     page: 1,
-                                    search: order.manager,
+                                    search: currentOrder.manager,
                                 })
                                 .then((res) => {
                                     const found = res.data.data?.[0];
@@ -120,8 +126,8 @@ export const OrderTable: FC<OrderPropType> = ({
                     }}
                     onMouseLeave={() => setTooltipVisible(false)}
                 >
-                    {order.manager}
-                    {tooltipVisible && order.manager && (
+                    {currentOrder.manager}
+                    {tooltipVisible && currentOrder.manager && (
                         <div className={styles.manager__tooltip}>
                             <div className={styles.manager__tooltip__header}>
                                 <div
@@ -139,7 +145,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     >
                                         {managerInfo
                                             ? `${managerInfo.name} ${managerInfo.surname}`
-                                            : order.manager}
+                                            : currentOrder.manager}
                                     </div>
                                     <div
                                         className={
@@ -266,40 +272,73 @@ export const OrderTable: FC<OrderPropType> = ({
                             </div>
 
                             <div className={styles.comment__section}>
-                                <div className={styles.comment__meta}>
-                                    <div
-                                        className={styles.comment__meta__avatar}
-                                    >
-                                        {user?.name?.charAt(0).toUpperCase()}
-                                    </div>
-
-                                    <div
-                                        className={styles.comment__meta__author}
-                                    >
-                                        {user?.name} {user?.surname}
-                                    </div>
-                                </div>
-
                                 <div className={styles.comment__meta__text}>
-                                    {comments.map((c) => (
-                                        <div key={c._id}>
-                                            <span>{c.text}</span>
-                                            <span>
-                                                {" "}
-                                                —{" "}
-                                                {new Date(
-                                                    c.createdAt,
-                                                ).toLocaleString()}
-                                            </span>
-                                        </div>
-                                    ))}
+                                    {comments.map((c) => {
+                                        const author =
+                                            typeof c._userId === "object"
+                                                ? (c._userId as {
+                                                      _id: string;
+                                                      name: string;
+                                                      surname: string;
+                                                  })
+                                                : null;
+
+                                        return (
+                                            <div key={c._id}>
+                                                <div
+                                                    className={
+                                                        styles.comment__meta
+                                                    }
+                                                >
+                                                    <div
+                                                        className={
+                                                            styles.comment__meta__avatar
+                                                        }
+                                                    >
+                                                        {author
+                                                            ? author.name
+                                                                  .charAt(0)
+                                                                  .toUpperCase()
+                                                            : "?"}
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            styles.comment__meta__author
+                                                        }
+                                                    >
+                                                        <div
+                                                            className={
+                                                                styles.comment__meta__wrap
+                                                            }
+                                                        >
+                                                            {author
+                                                                ? `${author.name} ${author.surname}`
+                                                                : ""}
+
+                                                            <span>
+                                                                {new Date(
+                                                                    c.createdAt,
+                                                                ).toLocaleString()}
+                                                            </span>
+                                                        </div>
+
+                                                        <div>
+                                                            <span>
+                                                                {c.text}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
 
-                                {(!order.manager ||
-                                    order.manager === user?.email) && (
+                                {(!currentOrder.manager ||
+                                    currentOrder.manager === user?.surname) && (
                                     <>
                                         <textarea
-                                            className={styles.comment__textarea}
+                                            className={`${styles.comment__textarea} ${comments.length > 0 ? styles["comment__textarea--with-margin"] : ""}`}
                                             placeholder="Comment..."
                                             value={text}
                                             onChange={(e) =>

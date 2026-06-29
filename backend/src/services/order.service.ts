@@ -9,12 +9,12 @@ import { Workbook } from "exceljs";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
-        let managerEmail: string | undefined;
+        let managerSurname: string | undefined;
         if (query.my) {
             const user = await userRepository.getUserById(userId);
-            managerEmail = user?.email;
+            managerSurname = user?.surname;
         }
-        return orderRepository.getAllOrders(query, managerEmail);
+        return orderRepository.getAllOrders(query, managerSurname);
     }
 
     public async getOrderById(orderId: string) {
@@ -43,7 +43,7 @@ class OrderService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        if (order.manager && order.manager !== user.email) {
+        if (order.manager && order.manager !== user.surname) {
             throw new ApiError(
                 "You can only edit your own orders",
                 StatusCodes.FORBIDDEN,
@@ -53,7 +53,7 @@ class OrderService {
         const updatedFields: Partial<IOrder> = { ...update };
 
         if (!order.manager) {
-            updatedFields.manager = user.email;
+            updatedFields.manager = user.surname;
         }
 
         if (!order.status || order.status === Status.NEW) {
@@ -75,7 +75,7 @@ class OrderService {
         let managerEmail: string | undefined;
         if (query.my) {
             const user = await userRepository.getUserById(userId);
-            managerEmail = user?.email;
+            managerEmail = user?.surname;
         }
         const orders = await orderRepository.getAllOrdersForExcel(
             query,
