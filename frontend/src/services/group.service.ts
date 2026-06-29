@@ -9,3 +9,4 @@ export const groupService = {
         return api.post("/groups", { name });
     },
 };
+ 

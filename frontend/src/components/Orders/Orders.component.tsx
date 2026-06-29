@@ -1,47 +1,29 @@
-import { useEffect, useState } from "react";
-import type { IOrder } from "../../interfaces/IOrder";
-import { orderService } from "../../services/orders.service";
+import { useState } from "react";
 import { OrderTable } from "./OrderTable.component";
 import styles from "./Orders.module.scss";
 import { ORDER_COLUMNS } from "../../constants/order.constant";
-import { useSearchParams } from "react-router-dom";
 import { Pagination } from "../Pagination/Pagination";
 import { LogoLoader } from "../Logo/Logo";
+import { OrderFilters } from "./OrderFilters.component";
+import { useOrders } from "../../hooks/useOrders";
 
 export const Orders = () => {
-    const [orders, setOrders] = useState<IOrder[]>([]);
-    const [total, setTotal] = useState(0);
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const [loading, setLoading] = useState(false);
+    const {
+        orders,
+        total,
+        loading,
+        filters,
+        page,
+        order,
+        handleSort,
+        handlePageChange,
+        handleChangeFilters,
+        handleResetFilters,
+    } = useOrders();
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
     const handleExpand = (id: string) => {
         setExpandedId((prev) => (prev === id ? null : id));
-    };
-
-    const page = Number(searchParams.get("page")) || 1;
-    const order = searchParams.get("order") || "-_id";
-
-    useEffect(() => {
-        setLoading(true);
-        orderService
-            .getAllOrders({ page, pageSize: 25, order })
-            .then((data) => {
-                setOrders(data.data.data);
-                setTotal(data.data.total);
-            })
-            .finally(() => setLoading(false));
-    }, [page, order]);
-
-    const handleSort = (field: string) => {
-        const current = searchParams.get("order");
-        const next = current === field ? `-${field}` : field;
-        setSearchParams({ page: "1", order: next });
-    };
-
-    const handlePageChange = (newPage: number) => {
-        setSearchParams({ page: String(newPage), order: order });
     };
 
     const totalPage = Math.ceil(total / 25);
@@ -52,6 +34,12 @@ export const Orders = () => {
                 <LogoLoader />
             ) : (
                 <>
+                    <OrderFilters
+                        filters={filters}
+                        onChange={handleChangeFilters}
+                        onReset={handleResetFilters}
+                    />
+
                     <div className={styles.table}>
                         <table>
                             <thead className={styles.table__thead}>
