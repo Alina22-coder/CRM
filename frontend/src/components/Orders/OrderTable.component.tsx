@@ -79,17 +79,17 @@ export const OrderTable: FC<OrderPropType> = ({
         <>
             <tr
                 className={`${styles.order} ${expanded ? styles["order--active"] : ""}`}
-                onClick={() => onExpand(order._id)}
+                onClick={() => onExpand(currentOrder._id)}
             >
-                <td>{order._id}</td>
-                <td>{order.name}</td>
-                <td>{order.surname}</td>
-                <td>{order.email}</td>
-                <td>{order.phone}</td>
-                <td>{order.age}</td>
-                <td>{order.course}</td>
-                <td>{order.course_format}</td>
-                <td>{order.course_type}</td>
+                <td>{currentOrder._id}</td>
+                <td>{currentOrder.name}</td>
+                <td>{currentOrder.surname}</td>
+                <td>{currentOrder.email}</td>
+                <td>{currentOrder.phone}</td>
+                <td>{currentOrder.age}</td>
+                <td>{currentOrder.course}</td>
+                <td>{currentOrder.course_format}</td>
+                <td>{currentOrder.course_type}</td>
                 <td>
                     <span
                         className={`badge ${styles.status} ${getStatusClass(currentOrder.status)}`}
@@ -97,11 +97,11 @@ export const OrderTable: FC<OrderPropType> = ({
                         {currentOrder.status}
                     </span>
                 </td>
-                <td>{order.sum}</td>
-                <td>{order.already_paid}</td>
+                <td>{currentOrder.sum}</td>
+                <td>{currentOrder.already_paid}</td>
                 <td>
-                    {order.created_at
-                        ? new Date(order.created_at).toLocaleDateString()
+                    {currentOrder.created_at
+                        ? new Date(currentOrder.created_at).toLocaleDateString()
                         : null}
                 </td>
                 <td
@@ -387,6 +387,12 @@ export const OrderTable: FC<OrderPropType> = ({
                 <EditOrderModal
                     order={currentOrder}
                     onClose={() => setIsEditOpen(false)}
+                    onSuccess={() => {
+                        orderService.getOrderById(order._id).then((res) => {
+                            setCurrentOrder(res.data);
+                        });
+                        setIsEditOpen(false);
+                    }}
                 />
             )}
         </>

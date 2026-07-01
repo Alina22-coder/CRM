@@ -15,6 +15,7 @@ import { orderService } from "../../services/orders.service";
 interface EditOrderModalProps {
     order: IOrder;
     onClose: () => void;
+    onSuccess: () => void;
 }
 
 type EditOrderForm = {
@@ -32,10 +33,22 @@ type EditOrderForm = {
     course_type: string;
 };
 
-export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
-    const { register, handleSubmit, reset } = useForm<EditOrderForm>();
+export const EditOrderModal = ({
+    order,
+    onClose,
+    onSuccess,
+}: EditOrderModalProps) => {
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        formState: { errors },
+    } = useForm<EditOrderForm>();
 
     const [groups, setGroups] = useState<IGroup[]>([]);
+
+    const [newGroupName, setNewGroupName] = useState("");
 
     useEffect(() => {
         reset({
@@ -60,8 +73,29 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
 
     const onSubmit = (data: EditOrderForm) => {
         orderService.updateOrderById(order._id, data).then(() => {
-            onClose();
+            onSuccess();
         });
+    };
+
+    const handleAddGroup = () => {
+        if (newGroupName.trim() === "") return;
+
+        const exists = groups.some((g) => g.name === newGroupName.trim());
+        if (exists) return;
+
+        groupService.createGroup(newGroupName).then((res) => {
+            setGroups((prevGroups) => [...prevGroups, res.data]);
+            setNewGroupName("");
+            setValue("group", res.data.name);
+        });
+    };
+
+    const handleSelectGroup = () => {
+        const found = groups.find((g) => g.name === newGroupName.trim());
+        if (found) {
+            setValue("group", found.name);
+            setNewGroupName("");
+        }
     };
 
     return (
@@ -84,6 +118,8 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
                         <div className={styles.grid__field}>
                             <label>Group</label>
                             <select {...register("group")}>
+                                <option value="">no group</option>
+
                                 {groups.map((group) => (
                                     <option key={group._id} value={group.name}>
                                         {group.name}
@@ -96,9 +132,23 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
                                     className={styles.add__input}
                                     type="text"
                                     placeholder="New group name"
+                                    value={newGroupName}
+                                    onChange={(e) =>
+                                        setNewGroupName(e.target.value)
+                                    }
                                 />
-                                <button className={styles.btn__add}>Add</button>
-                                <button className={styles.btn_select}>
+                                <button
+                                    type="button"
+                                    className={styles.btn__add}
+                                    onClick={handleAddGroup}
+                                >
+                                    Add
+                                </button>
+                                <button
+                                    type="button"
+                                    className={styles.btn_select}
+                                    onClick={handleSelectGroup}
+                                >
                                     Select
                                 </button>
                             </div>
@@ -116,7 +166,20 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
 
                         <div className={styles.grid__field}>
                             <label>Email</label>
-                            <input type="text" {...register("email")} />
+                            <input
+                                type="text"
+                                {...register("email", {
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: "Invalid email",
+                                    },
+                                })}
+                            />
+                            {errors.email && (
+                                <span className={styles.error}>
+                                    {errors.email.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className={styles.grid__field}>
@@ -131,8 +194,17 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
                                 {...register("age", {
                                     setValueAs: (v: string) =>
                                         v === "" ? undefined : Number(v),
+                                    min: {
+                                        value: 0,
+                                        message: "Age must be ≥ 0",
+                                    },
                                 })}
                             />
+                            {errors.age && (
+                                <span className={styles.error}>
+                                    {errors.age.message}
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -155,8 +227,14 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
                                 {...register("sum", {
                                     setValueAs: (v: string) =>
                                         v === "" ? undefined : Number(v),
+                                    min: { value: 0, message: "Must be ≥ 0" },
                                 })}
                             />
+                            {errors.sum && (
+                                <span className={styles.error}>
+                                    {errors.sum.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className={styles.grid__field}>
@@ -166,8 +244,14 @@ export const EditOrderModal = ({ order, onClose }: EditOrderModalProps) => {
                                 {...register("already_paid", {
                                     setValueAs: (v: string) =>
                                         v === "" ? undefined : Number(v),
+                                    min: { value: 0, message: "Must be ≥ 0" },
                                 })}
                             />
+                            {errors.already_paid && (
+                                <span className={styles.error}>
+                                    {errors.already_paid.message}
+                                </span>
+                            )}
                         </div>
 
                         <div className={styles.grid__field}>
