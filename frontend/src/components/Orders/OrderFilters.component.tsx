@@ -42,19 +42,40 @@ export const OrderFilters: FC<IOrderFiltersProps> = ({
     const order = searchParams.get("order") || "-_id";
 
     const handleExcel = () => {
-        orderService.getAllOrdersForExcel({ order }).then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
+        orderService
+            .getAllOrdersForExcel({
+                order,
+                name: searchParams.get("name") || undefined,
+                surname: searchParams.get("surname") || undefined,
+                email: searchParams.get("email") || undefined,
+                phone: searchParams.get("phone") || undefined,
+                age: searchParams.get("age")
+                    ? Number(searchParams.get("age"))
+                    : undefined,
+                course: searchParams.get("course") || undefined,
+                course_format: searchParams.get("course_format") || undefined,
+                course_type: searchParams.get("course_type") || undefined,
+                status: searchParams.get("status") || undefined,
+                group: searchParams.get("group") || undefined,
+                start_date: searchParams.get("start_date") || undefined,
+                end_date: searchParams.get("end_date") || undefined,
+                my: searchParams.get("my") === "true" || undefined,
+            })
+            .then((response) => {
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data]),
+                );
+                const link = document.createElement("a");
 
-            link.href = url;
+                link.href = url;
 
-            link.setAttribute("download", "orders.xlsx");
+                link.setAttribute("download", "orders.xlsx");
 
-            document.body.appendChild(link);
+                document.body.appendChild(link);
 
-            link.click();
-            link.remove();
-        });
+                link.click();
+                link.remove();
+            });
     };
 
     const [groups, setGroups] = useState<IGroup[]>([]);

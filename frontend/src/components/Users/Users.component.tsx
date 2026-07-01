@@ -126,6 +126,7 @@ export const Users = () => {
                     <CreateManagerModal
                         isOpen={isModalOpen}
                         onClose={() => setIsModalOpen(false)}
+                        onSuccess={loadUsers}
                     />
 
                     <div className={styles.manager}>
