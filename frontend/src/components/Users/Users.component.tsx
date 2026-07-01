@@ -8,6 +8,7 @@ import { User } from "./User.component";
 import styles from "./Users.module.scss";
 import type { IStatistic } from "../../interfaces/IStatistic";
 import { CreateManagerModal } from "../Modal/CreateManagerModal.component";
+import { Pagination } from "../Pagination/Pagination";
 
 export const Users = () => {
     const [users, setUsers] = useState<IUser[]>([]);
@@ -20,6 +21,12 @@ export const Users = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const page = Number(searchParams.get("page")) || 1;
+
+    const totalPages = Math.ceil(total / 25);
+
+    const handlePageChange = (newPage: number) => {
+        setSearchParams({ page: String(newPage) });
+    };
 
     const loadUsers = () => {
         userService.getAllUsers({ page, pageSize: 25 }).then((usersData) => {
@@ -140,6 +147,12 @@ export const Users = () => {
                             ))}
                         </div>
                     </div>
+
+                    <Pagination
+                        page={page}
+                        totalPage={totalPages}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
             )}
         </div>

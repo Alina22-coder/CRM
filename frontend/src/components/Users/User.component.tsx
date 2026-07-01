@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import type { IUser } from "../../interfaces/IUser";
 import styles from "./User.module.scss";
 import { AVATAR_COLORS } from "../../constants/avatar.constant";
@@ -6,6 +6,7 @@ import userService from "../../services/users.service";
 import { authService } from "../../services/auth.service";
 import { toast } from "sonner";
 import { ConfirmModal } from "../Modal/ConfirmModal.component";
+import type { IStatistic } from "../../interfaces/IStatistic";
 
 const getAvatarColor = (name: string) => {
     const index = name.charCodeAt(0) % AVATAR_COLORS.length;
@@ -23,6 +24,17 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
         description: React.ReactNode;
         action: () => void;
     } | null>(null);
+
+    const [statistic, setStatistic] = useState<IStatistic | null>(null);
+
+    const stats = [
+        { label: "Total", value: statistic?.total },
+        { label: "In work", value: statistic?.["In work"] },
+        { label: "New", value: statistic?.New },
+        { label: "Aggre", value: statistic?.Aggre },
+        { label: "Disaggre", value: statistic?.Disaggre },
+        { label: "Dubbing", value: statistic?.Dubbing },
+    ];
 
     const handleRecovery = async () => {
         try {
@@ -68,6 +80,12 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
         }
     };
 
+    useEffect(() => {
+        userService.getStatisticByManager(user._id).then((res) => {
+            setStatistic(res.data);
+        });
+    }, [user._id]);
+
     return (
         <div className={styles.manager__card}>
             <div
@@ -100,6 +118,16 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
                             ? new Date(user.last_login).toLocaleDateString()
                             : "Never"}
                     </div>
+                </div>
+
+                <div className={styles.card__statistic}>
+                    {stats
+                        .filter((s) => s.value && s.value > 0)
+                        .map((s) => (
+                            <span key={s.label}>
+                                {s.label}: {s.value}
+                            </span>
+                        ))}
                 </div>
             </div>
 
