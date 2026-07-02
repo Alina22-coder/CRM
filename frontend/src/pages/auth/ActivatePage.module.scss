@@ -1,0 +1,9 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.activate__page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
