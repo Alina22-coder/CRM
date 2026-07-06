@@ -11,7 +11,7 @@ import StatusCodes from "../enums/status-codes.enum";
 class AuthService {
     public async login(
         dto: IUserLoginDTO,
-    ): Promise<{ user: IUser; tokens: ITokenPair }> {
+    ): Promise<{ user: Omit<IUser, "password">; tokens: ITokenPair }> {
         const user = await userRepository.getUserByEmail(dto.email);
 
         if (!user) {
@@ -50,7 +50,9 @@ class AuthService {
             userRepository.updateUserById(user._id, { last_login: new Date() }),
         ]);
 
-        return { user, tokens };
+        const { password, ...userWithoutPassword } = user.toObject();
+
+        return { user: userWithoutPassword, tokens };
     }
 
     public async refresh(

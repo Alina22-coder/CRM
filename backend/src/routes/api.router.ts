@@ -4,6 +4,7 @@ import authRouter from "./auth.router.js";
 import orderRouter from "./order.router.js";
 import userRouter from "./user.router.js";
 import groupRouter from "./group.router.js";
+import { swaggerDocument, swaggerUI } from "../config/swagger.config.js";
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.use("/users", userRouter);
 router.use("/orders", orderRouter);
 
 router.use("/groups", groupRouter);
+
+router.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 export default router;

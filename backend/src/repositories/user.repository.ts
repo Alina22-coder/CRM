@@ -51,8 +51,8 @@ class UserRepository {
         return UserModel.findByIdAndDelete(userId);
     }
 
-    public getUserByEmail(email: string): Promise<IUser | null> {
-        return UserModel.findOne({ email });
+    public getUserByEmail(email: string) {
+        return UserModel.findOne({ email }).select("+password");
     }
 }
 
