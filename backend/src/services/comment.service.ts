@@ -1,11 +1,10 @@
 import StatusCodes from "../enums/status-codes.enum";
 import ApiError from "../errors/api.error";
 import IComment from "../interfaces/IComment";
-import Status from "../enums/status.enum";
 import { commentRepository } from "../repositories/comment.repository";
 import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
-import IOrder from "../interfaces/IOrder";
+import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 
 class CommentService {
     public async createCommentToOrderById(
@@ -23,27 +22,13 @@ class CommentService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        if (order.manager && order.manager !== user.surname) {
-            throw new ApiError(
-                "You can only comment your own orders",
-                StatusCodes.FORBIDDEN,
-            );
-        }
+        const update = applyAutoAssignDefaults(order, user, "comment");
 
         const comment = await commentRepository.createCommentToOrderById({
             text,
             _orderId: orderId,
             _userId: userId,
         });
-
-        const update: Partial<IOrder> = {};
-
-        if (!order.manager) {
-            update.manager = user.surname;
-        }
-        if (!order.status || order.status === Status.NEW) {
-            update.status = Status.IN_WORK;
-        }
 
         if (Object.keys(update).length) {
             await orderRepository.updateOrderById(orderId, update);

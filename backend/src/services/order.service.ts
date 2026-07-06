@@ -3,9 +3,9 @@ import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
-import Status from "../enums/status.enum";
 import { commentRepository } from "../repositories/comment.repository";
 import { Workbook } from "exceljs";
+import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
@@ -43,22 +43,8 @@ class OrderService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        if (order.manager && order.manager !== user.surname) {
-            throw new ApiError(
-                "You can only edit your own orders",
-                StatusCodes.FORBIDDEN,
-            );
-        }
-
-        const updatedFields: Partial<IOrder> = { ...update };
-
-        if (!order.manager) {
-            updatedFields.manager = user.surname;
-        }
-
-        if (!order.status || order.status === Status.NEW) {
-            updatedFields.status = Status.IN_WORK;
-        }
+        const autoFields = applyAutoAssignDefaults(order, user, "edit");
+        const updatedFields: Partial<IOrder> = { ...update, ...autoFields };
 
         return orderRepository.updateOrderById(orderId, updatedFields);
     }
