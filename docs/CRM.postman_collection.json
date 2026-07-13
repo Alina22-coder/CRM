@@ -1,0 +1,563 @@
+{
+  "info": {
+    "_postman_id": "cdc085c2-1bb3-4103-b6d1-d3d7107593a8",
+    "name": "CRM",
+    "description": "CRM Programming School — API колекція.\n\n**Base URL**: http://localhost:5000 (див. PORT в backend/.env)\n\n**Як почати:**\n1. Виконати `auth/login` з дефолтним admin (email: admin@gmail.com, password: admin) — у відповіді прийдуть `accessToken` і `refreshToken`.\n2. Скопіювати `accessToken` у змінну колекції `adminAccessToken` (для admin-only запитів: users, orders/statistic, auth/activate, auth/recovery) або `accessToken` (для решти запитів, доступних і менеджеру).\n3. Для перевірки менеджерського флоу: створити менеджера через `users (create manager)`, активувати через `auth/activate/:userId` (поверне токен активації), викликати `auth/set-password` з цим токеном, потім залогінитись новим менеджером — отриманий `accessToken` покласти у змінну `accessToken`.\n4. `refreshToken` (auth/refresh) не потребує bearer-токена — refresh token передається в тілі запиту.\n\n**Змінні колекції**: accessToken, adminAccessToken, refreshToken — заповнюються вручну після логіну (Postman не оновлює їх автоматично, автотести/скрипти для цього не налаштовані).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51254694"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "auth/login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "email", "value": "admin@gmail.com", "type": "text" },
+                { "key": "password", "value": "admin", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "refreshToken", "value": "{{refreshToken}}", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/auth/refresh",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/auth/logout",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/activate/:userId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/auth/activate/:userId",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "activate", ":userId"],
+              "variable": [{ "key": "userId", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/set-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "token", "value": "", "type": "text", "description": "activate/recovery JWT received from auth/activate or auth/recovery" },
+                { "key": "password", "value": "", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/auth/set-password",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "set-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/recovery/:userId",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/auth/recovery/:userId",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auth", "recovery", ":userId"],
+              "variable": [{ "key": "userId", "value": "" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "users (list, paginated)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users?page=1&pageSize=25&order=-_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "25" },
+                { "key": "order", "value": "-_id" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users (create manager)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "name", "value": "Oleg", "type": "text" },
+                { "key": "surname", "value": "Popov", "type": "text" },
+                { "key": "email", "value": "oleg.popov@example.com", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id (update name/surname)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "name", "value": "Oleh", "type": "text" },
+                { "key": "surname", "value": "Popov", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/users/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id/ban",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id/ban",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id", "ban"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id/unban",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id/unban",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id", "unban"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id (delete)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id/statistic",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id/statistic",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["users", ":id", "statistic"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "item": [
+        {
+          "name": "orders (list, paginated)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders?page=1&pageSize=25&order=-_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "25" },
+                { "key": "order", "value": "-_id" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders (filtered)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders?name=Oleg&status=New&course=QACX&my=true&start_date=2022-01-01&end_date=2022-12-31",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders"],
+              "query": [
+                { "key": "name", "value": "Oleg" },
+                { "key": "status", "value": "New" },
+                { "key": "course", "value": "QACX" },
+                { "key": "my", "value": "true" },
+                { "key": "start_date", "value": "2022-01-01" },
+                { "key": "end_date", "value": "2022-12-31" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id (update)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "status", "value": "In work", "type": "text" },
+                { "key": "sum", "value": "5000", "type": "text" },
+                { "key": "already_paid", "value": "1000", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/orders/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id/comments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "text", "value": "Called the client, waiting for confirmation", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/orders/:id/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id", "comments"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/statistic",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders/statistic",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", "statistic"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/excel (filtered)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders/excel?status=New&course=QACX",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", "excel"],
+              "query": [
+                { "key": "status", "value": "New" },
+                { "key": "course", "value": "QACX" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "groups",
+      "item": [
+        {
+          "name": "groups (list)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/groups",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["groups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "groups (create)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "name", "value": "sep-2022", "type": "text" }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:5000/groups",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["groups"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "/",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000"
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    { "key": "accessToken", "value": "" },
+    { "key": "adminAccessToken", "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ]
+}
