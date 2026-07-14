@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { groupService } from "../../services/group.service";
 import type { IGroup } from "../../interfaces/IGroup";
 import { orderService } from "../../services/orders.service";
+import { toast } from "sonner";
 
 interface EditOrderModalProps {
     order: IOrder;
@@ -65,16 +66,22 @@ export const EditOrderModal = ({
             already_paid: order.already_paid ?? "",
             group: order.group ?? "",
         });
-    }, [order]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [order._id]);
 
     useEffect(() => {
         groupService.getAllGroups().then((res) => setGroups(res.data));
     }, []);
 
     const onSubmit = (data: EditOrderForm) => {
-        orderService.updateOrderById(order._id, data).then(() => {
-            onSuccess();
-        });
+        orderService
+            .updateOrderById(order._id, data)
+            .then(() => {
+                onSuccess();
+            })
+            .catch(() => {
+                toast.error("Failed to update order");
+            });
     };
 
     const handleAddGroup = () => {
@@ -83,11 +90,16 @@ export const EditOrderModal = ({
         const exists = groups.some((g) => g.name === newGroupName.trim());
         if (exists) return;
 
-        groupService.createGroup(newGroupName).then((res) => {
-            setGroups((prevGroups) => [...prevGroups, res.data]);
-            setNewGroupName("");
-            setValue("group", res.data.name);
-        });
+        groupService
+            .createGroup(newGroupName)
+            .then((res) => {
+                setGroups((prevGroups) => [...prevGroups, res.data]);
+                setNewGroupName("");
+                setValue("group", res.data.name);
+            })
+            .catch(() => {
+                toast.error("Failed to create group");
+            });
     };
 
     const handleSelectGroup = () => {

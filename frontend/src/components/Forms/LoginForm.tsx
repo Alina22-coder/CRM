@@ -32,7 +32,7 @@ export const LoginForm = () => {
             localStorage.setItem("user", JSON.stringify(data.user));
 
             navigate("/orders");
-        } catch (error) {
+        } catch {
             setError("Invalid email or password");
         } finally {
             setLoading(false);

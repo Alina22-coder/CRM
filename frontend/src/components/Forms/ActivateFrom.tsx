@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./ActivateFrom.module.scss";
 import { useForm } from "react-hook-form";
 import { authService } from "../../services/auth.service";
+import { toast } from "sonner";
+import { useState } from "react";
 
 type ActivateFormType = {
     password: string;
@@ -19,11 +21,19 @@ export const ActivateForm = () => {
     } = useForm<ActivateFormType>();
     const { token } = useParams();
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onSubmit = (data: ActivateFormType) => {
-        authService.setPassword(token!, data.password).then(() => {
-            navigate("/auth/login");
-        });
+        setIsSubmitting(true);
+        authService
+            .setPassword(token!, data.password)
+            .then(() => {
+                navigate("/auth/login");
+            })
+            .catch(() => {
+                toast.error("Invalid or expired activation link");
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -82,7 +92,11 @@ export const ActivateForm = () => {
                     )}
                 </div>
 
-                <button className={styles.activate__btn} type="submit">
+                <button
+                    className={styles.activate__btn}
+                    type="submit"
+                    disabled={isSubmitting}
+                >
                     Activate account
                 </button>
             </form>

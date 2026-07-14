@@ -10,6 +10,7 @@ import { STATUSES } from "../../constants/status.constant";
 import { useEffect, useState, type FC } from "react";
 import { groupService } from "../../services/group.service";
 import type { IGroup } from "../../interfaces/IGroup";
+import { toast } from "sonner";
 
 interface IOrderFiltersProps {
     filters: {
@@ -62,6 +63,14 @@ export const OrderFilters: FC<IOrderFiltersProps> = ({
                 my: searchParams.get("my") === "true" || undefined,
             })
             .then((response) => {
+                const isExcel =
+                    response.data.type ===
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+                if (!isExcel) {
+                    throw new Error("Unexpected response");
+                }
+
                 const url = window.URL.createObjectURL(
                     new Blob([response.data]),
                 );
@@ -75,6 +84,10 @@ export const OrderFilters: FC<IOrderFiltersProps> = ({
 
                 link.click();
                 link.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(() => {
+                toast.error("Failed to export orders to Excel");
             });
     };
 

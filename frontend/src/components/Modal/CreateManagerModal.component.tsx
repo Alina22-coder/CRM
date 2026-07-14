@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import styles from "./CreateManagerModal.module.scss";
 import userService from "../../services/users.service";
+import { toast } from "sonner";
 
 type CreateManagerModalType = {
     isOpen: boolean;
@@ -26,10 +27,18 @@ export const CreateManagerModal = ({
     } = useForm<CreateManagerForm>();
 
     const onSubmit = (data: CreateManagerForm) => {
-        userService.createUser(data).then(() => {
-            onSuccess();
-            onClose();
-        });
+        userService
+            .createUser(data)
+            .then(() => {
+                onSuccess();
+                onClose();
+            })
+            .catch((error) => {
+                toast.error(
+                    error?.response?.data?.message ??
+                        "Failed to create manager",
+                );
+            });
     };
 
     if (!isOpen) return null;

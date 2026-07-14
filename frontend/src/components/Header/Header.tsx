@@ -4,6 +4,7 @@ import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { authService } from "../../services/auth.service";
 import RoleEnum from "../../enums/role.enum";
 import { Logo } from "../Logo/Logo";
+import { toast } from "sonner";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -12,7 +13,10 @@ export const Header = () => {
     const handleLogout = async () => {
         try {
             await authService.logout();
-        } catch (error) {
+        } catch {
+            toast.error(
+                "Could not reach the server to log out, ending local session anyway",
+            );
         } finally {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");

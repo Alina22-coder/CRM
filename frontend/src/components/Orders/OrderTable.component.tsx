@@ -9,6 +9,7 @@ import { orderService } from "../../services/orders.service";
 import userService from "../../services/users.service";
 import { TagInput } from "../ui/tag/TagInput.ui";
 import { EditOrderModal } from "../Modal/EditOrderModal.component";
+import { toast } from "sonner";
 
 type OrderPropType = {
     order: IOrder;
@@ -53,6 +54,7 @@ export const OrderTable: FC<OrderPropType> = ({
         _id: string;
     } | null>(null);
     const [managerStat, setManagerStat] = useState<IStatistic | null>(null);
+    const [isCommenting, setIsCommenting] = useState(false);
 
     useEffect(() => {
         if (!expanded) return;
@@ -62,15 +64,24 @@ export const OrderTable: FC<OrderPropType> = ({
     }, [expanded, order._id]);
 
     const addComment = () => {
-        if (!text.trim()) return;
-        orderService.createCommentToOrderById(order._id, text).then((res) => {
-            setComments((prev) => [...prev, res.data]);
-            setText("");
+        if (!text.trim() || isCommenting) return;
+        setIsCommenting(true);
+        orderService
+            .createCommentToOrderById(order._id, text)
+            .then((res) => {
+                setComments((prev) => [...prev, res.data]);
+                setText("");
 
-            orderService.getOrderById(order._id).then((updated) => {
-                setCurrentOrder(updated.data);
+                return orderService.getOrderById(order._id).then((updated) => {
+                    setCurrentOrder(updated.data);
+                });
+            })
+            .catch(() => {
+                toast.error("Failed to add comment");
+            })
+            .finally(() => {
+                setIsCommenting(false);
             });
-        });
     };
 
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -371,6 +382,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                                     styles.comment__btn__submit
                                                 }
                                                 onClick={addComment}
+                                                disabled={isCommenting}
                                             >
                                                 Submit
                                             </button>
