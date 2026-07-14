@@ -23,7 +23,11 @@ class OrderService {
             commentRepository.getAllCommentsByOrderId(orderId),
         ]);
 
-        return { ...order?.toObject(), comments };
+        if (!order) {
+            throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
+        }
+
+        return { ...order.toObject(), comments };
     }
 
     public async updateOrderById(
@@ -54,18 +58,24 @@ class OrderService {
     }
 
     public async getStatisticByManager(userId: string) {
-        return orderRepository.getStatisticByManager(userId);
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        return orderRepository.getStatisticByManager(user.surname);
     }
 
     public async getAllOrdersForExcel(query: IOrderQuery, userId: string) {
-        let managerEmail: string | undefined;
+        let managerSurname: string | undefined;
         if (query.my) {
             const user = await userRepository.getUserById(userId);
-            managerEmail = user?.surname;
+            managerSurname = user?.surname;
         }
         const orders = await orderRepository.getAllOrdersForExcel(
             query,
-            managerEmail,
+            managerSurname,
         );
 
         const workbook = new Workbook();

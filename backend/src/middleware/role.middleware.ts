@@ -6,7 +6,6 @@ import StatusCodes from "../enums/status-codes.enum";
 class RoleMiddleware {
     public checkRole(...roles: RoleEnum[]) {
         return (req: Request, res: Response, next: NextFunction) => {
-            console.log(res.locals.tokenPayload);
             const { role } = res.locals.tokenPayload;
 
             if (!roles.includes(role)) {

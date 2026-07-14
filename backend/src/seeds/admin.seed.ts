@@ -8,7 +8,7 @@ const createAdmin = async () => {
 
     if (admin) return;
 
-    const hashedPassword = await passwordService.hashPassword("admin");
+    const hashedPassword = await passwordService.hashPassword(config.ADMIN_PASSWORD);
 
     await UserModel.create({
         email: config.ADMIN_EMAIL,

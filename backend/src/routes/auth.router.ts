@@ -25,6 +25,7 @@ authRouter.post(
     "/activate/:userId",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("userId"),
     authController.activate,
 );
 
@@ -34,6 +35,7 @@ authRouter.post(
     "/recovery/:userId",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("userId"),
     authController.recoveryPassword,
 );
 

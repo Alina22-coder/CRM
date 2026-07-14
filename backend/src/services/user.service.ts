@@ -8,8 +8,14 @@ class UserService {
         return userRepository.getAllUsers(query);
     }
 
-    public getUserById(userId: string) {
-        return userRepository.getUserById(userId);
+    public async getUserById(userId: string) {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        return user;
     }
 
     public async createUser(user: IUserRegisterDTO) {

@@ -29,12 +29,14 @@ userRouter.get(
     "/:id",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("id"),
     userController.getUserById,
 );
 
 userRouter.put(
     "/:id",
     authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
     commonMiddleware.validateBody(UserValidator.update),
     userController.updateUserById,
 );
@@ -43,6 +45,7 @@ userRouter.patch(
     "/:id/ban",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("id"),
     userController.banUser,
 );
 
@@ -50,6 +53,7 @@ userRouter.patch(
     "/:id/unban",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("id"),
     userController.unBanUser,
 );
 
@@ -64,6 +68,7 @@ userRouter.delete(
 userRouter.get(
     "/:id/statistic",
     authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
     orderController.getStatisticByManager,
 );
 

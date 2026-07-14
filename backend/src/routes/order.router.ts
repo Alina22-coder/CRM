@@ -34,12 +34,14 @@ orderRouter.get(
 orderRouter.get(
     "/:id",
     authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
     orderController.getOrderById,
 );
 
 orderRouter.patch(
     "/:id",
     authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
     commonMiddleware.validateBody(OrderValidator.update),
     orderController.updateOrderById,
 );
@@ -47,6 +49,7 @@ orderRouter.patch(
 orderRouter.post(
     "/:id/comments",
     authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
     commonMiddleware.validateBody(CommentValidator.create),
     commentController.createCommentToOrderById,
 );

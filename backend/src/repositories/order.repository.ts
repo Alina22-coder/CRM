@@ -56,7 +56,7 @@ class OrderRepository {
 
         const [data, total] = await Promise.all([
             OrderModel.find(filter)
-                .sort(sortField ? { [sortField]: sortDir } : { _id: -1 })
+                .sort(sortField ? { [sortField]: sortDir } : { created_at: -1 })
                 .skip((page - 1) * pageSize)
                 .limit(pageSize),
             OrderModel.countDocuments(filter),
@@ -86,11 +86,11 @@ class OrderRepository {
         return { total, byStatus };
     }
 
-    public async getStatisticByManager(managerEmail: string) {
+    public async getStatisticByManager(managerSurname: string) {
         const [total, byStatus] = await Promise.all([
-            OrderModel.countDocuments({ manager: managerEmail }),
+            OrderModel.countDocuments({ manager: managerSurname }),
             OrderModel.aggregate([
-                { $match: { manager: managerEmail } },
+                { $match: { manager: managerSurname } },
                 { $group: { _id: "$status", count: { $sum: 1 } } },
             ]),
         ]);
@@ -107,7 +107,7 @@ class OrderRepository {
         const sortDir = order?.startsWith("-") ? -1 : 1;
 
         const data = await OrderModel.find(filter).sort(
-            sortField ? { [sortField]: sortDir } : { _id: -1 },
+            sortField ? { [sortField]: sortDir } : { created_at: -1 },
         );
 
         return data;

@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useState } from "react";
 import { Button } from "../button/Button.ui";
 import styles from "./TagInput.module.scss";
 
