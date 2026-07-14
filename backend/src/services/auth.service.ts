@@ -81,6 +81,7 @@ class AuthService {
             userId: user._id,
             role: user.role,
             isActivation: true,
+            tokenVersion: user.tokenVersion,
         });
 
         return token;
@@ -88,10 +89,25 @@ class AuthService {
 
     public async setPassword(token: string, password: string): Promise<void> {
         const payload = tokenService.verifyActivateToken(token);
+
+        const user = await userRepository.getUserById(payload.userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        if (user.tokenVersion !== payload.tokenVersion) {
+            throw new ApiError(
+                "Invalid or expired token",
+                StatusCodes.UNAUTHORIZED,
+            );
+        }
+
         const hashedPassword = await passwordService.hashPassword(password);
 
         await userRepository.updateUserById(payload.userId, {
             password: hashedPassword,
+            tokenVersion: user.tokenVersion + 1,
             ...(payload.isActivation && { is_active: true }),
         });
     }
@@ -106,6 +122,7 @@ class AuthService {
         const token = tokenService.generateActivateToken({
             userId: user._id,
             role: user.role,
+            tokenVersion: user.tokenVersion,
         });
 
         return token;

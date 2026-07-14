@@ -9,7 +9,18 @@ class GroupService {
 
     public async createGroup(name: string) {
         await this.isNameGroupUnique(name);
-        return await groupRepository.createGroup(name);
+
+        try {
+            return await groupRepository.createGroup(name);
+        } catch (e) {
+            if ((e as { code?: number }).code === 11000) {
+                throw new ApiError(
+                    "Group with this name already exists",
+                    StatusCodes.BAD_REQUEST,
+                );
+            }
+            throw e;
+        }
     }
 
     public async isNameGroupUnique(name: string) {

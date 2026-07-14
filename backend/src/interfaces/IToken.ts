@@ -12,6 +12,7 @@ interface ITokenPayload {
     userId: string;
     role: RoleEnum;
     isActivation?: boolean;
+    tokenVersion?: number;
 }
 
 type ITokenPair = Pick<IToken, "accessToken" | "refreshToken">;

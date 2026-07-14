@@ -13,6 +13,7 @@ interface IUser extends IBase {
     isDeleted: boolean;
     isVerified: boolean;
     last_login: Date | null;
+    tokenVersion: number;
 }
 
 export interface IUserQuery {

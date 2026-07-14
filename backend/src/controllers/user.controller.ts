@@ -4,6 +4,7 @@ import { userService } from "../services/user.service";
 import { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import ApiError from "../errors/api.error";
 import { ITokenPayload } from "../interfaces/IToken";
+import RoleEnum from "../enums/role.enum";
 
 class UserController {
     public async getAllUsers(_req: Request, res: Response, next: NextFunction) {
@@ -44,6 +45,15 @@ class UserController {
     ) {
         try {
             const id = req.params.id as string;
+            const { userId, role } = res.locals.tokenPayload as ITokenPayload;
+
+            if (role !== RoleEnum.Admin && id !== userId) {
+                throw new ApiError(
+                    "You can only edit your own profile",
+                    StatusCodes.FORBIDDEN,
+                );
+            }
+
             const data = await userService.updateUserById(id, req.body);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {

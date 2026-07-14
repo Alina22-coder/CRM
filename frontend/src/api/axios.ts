@@ -15,6 +15,31 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+let refreshPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null;
+
+const refreshTokens = () => {
+    if (!refreshPromise) {
+        const refreshToken = localStorage.getItem("refreshToken");
+
+        refreshPromise = axios
+            .post(
+                `${import.meta.env.VITE_API_URL}/auth/refresh`,
+                { refreshToken },
+                { headers: { Authorization: `Bearer ${refreshToken}` } },
+            )
+            .then(({ data }) => {
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("refreshToken", data.refreshToken);
+                return data;
+            })
+            .finally(() => {
+                refreshPromise = null;
+            });
+    }
+
+    return refreshPromise;
+};
+
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -25,18 +50,7 @@ api.interceptors.response.use(
             !url.includes("/auth/refresh")
         ) {
             try {
-                const refreshToken = localStorage.getItem("refreshToken");
-
-                const { data } = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/auth/refresh`,
-                    {
-                        refreshToken,
-                    },
-                    { headers: { Authorization: `Bearer ${refreshToken}` } },
-                );
-
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken);
+                const data = await refreshTokens();
 
                 error.config.headers.Authorization = `Bearer ${data.accessToken}`;
                 return api(error.config);

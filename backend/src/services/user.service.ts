@@ -20,7 +20,15 @@ class UserService {
 
     public async createUser(user: IUserRegisterDTO) {
         await this.isEmailUnique(user.email);
-        return userRepository.createUser(user);
+
+        try {
+            return await userRepository.createUser(user);
+        } catch (e) {
+            if ((e as { code?: number }).code === 11000) {
+                throw new ApiError("User already exists!", StatusCodes.BAD_REQUEST);
+            }
+            throw e;
+        }
     }
 
     public async updateUserById(userId: string, update: Partial<IUser>) {
