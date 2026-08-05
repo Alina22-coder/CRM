@@ -80,12 +80,20 @@ export const Header = () => {
 
                     <div className={styles.header__panel}>
                         {user?.role === RoleEnum.Admin && (
-                            <button
-                                className={styles.panel__admin}
-                                onClick={() => navigate("/admin")}
-                            >
-                                Admin Panel
-                            </button>
+                            <>
+                                <button
+                                    className={styles.panel__admin}
+                                    onClick={() => navigate("/admin")}
+                                >
+                                    Admin Panel
+                                </button>
+                                <button
+                                    className={styles.panel__admin}
+                                    onClick={() => navigate("/admin/history")}
+                                >
+                                    Activity Log
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>

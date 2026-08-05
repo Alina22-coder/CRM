@@ -28,4 +28,6 @@ export const orderService = {
     createCommentToOrderById: (orderId: string, body: string) => {
         return api.post(`/orders/${orderId}/comments`, { text: body });
     },
+
+    getHistoryByOrderId: (orderId: string) => api.get(`/orders/${orderId}/history`),
 };

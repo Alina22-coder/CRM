@@ -154,7 +154,7 @@
 
     &__inner {
         display: grid;
-        grid-template-columns: 1fr 1.2fr;
+        grid-template-columns: 1fr 1.2fr 1fr;
         gap: 24px;
         align-items: start;
     }
@@ -271,6 +271,48 @@
                 background: $primary;
                 color: $white;
             }
+        }
+    }
+}
+
+.history {
+    &__label {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        color: $grey;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 12px;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    &__empty {
+        font-size: $font-size-xs;
+        color: $grey;
+    }
+
+    &__item {
+        border-left: 2px solid $outline;
+        padding-left: 10px;
+
+        &__author {
+            display: flex;
+            gap: 10px;
+            font-size: 10px;
+            color: $grey;
+            margin-bottom: 2px;
+        }
+
+        &__text {
+            font-size: $font-size-xs;
+            color: $dark;
         }
     }
 }

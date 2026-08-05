@@ -5,6 +5,7 @@ import { commentRepository } from "../repositories/comment.repository";
 import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
+import { historyService } from "./history.service";
 
 class CommentService {
     public async createCommentToOrderById(
@@ -32,7 +33,15 @@ class CommentService {
 
         if (Object.keys(update).length) {
             await orderRepository.updateOrderById(orderId, update);
+            await historyService.logOrderChanges(
+                orderId,
+                userId,
+                order.toObject(),
+                update,
+            );
         }
+
+        await historyService.logCommentAdded(orderId, userId);
 
         return comment;
     }

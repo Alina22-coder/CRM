@@ -6,6 +6,7 @@ import StatusCodes from "../enums/status-codes.enum";
 import { commentRepository } from "../repositories/comment.repository";
 import { Workbook } from "exceljs";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
+import { historyService } from "./history.service";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
@@ -50,7 +51,19 @@ class OrderService {
         const autoFields = applyAutoAssignDefaults(order, user, "edit");
         const updatedFields: Partial<IOrder> = { ...update, ...autoFields };
 
-        return orderRepository.updateOrderById(orderId, updatedFields);
+        const updatedOrder = await orderRepository.updateOrderById(
+            orderId,
+            updatedFields,
+        );
+
+        await historyService.logOrderChanges(
+            orderId,
+            userId,
+            order.toObject(),
+            updatedFields,
+        );
+
+        return updatedOrder;
     }
 
     public async getOrderStatistic() {

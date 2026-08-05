@@ -16,6 +16,12 @@ body {
     font-size: $font-size-base;
     background: $background-light;
     color: $dark;
+    user-select: none;
+}
+
+input,
+textarea {
+    user-select: text;
 }
 
 h1 {

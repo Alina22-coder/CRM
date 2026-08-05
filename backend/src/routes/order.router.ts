@@ -7,6 +7,7 @@ import { commentController } from "../controllers/comment.controller.js";
 import { CommentValidator } from "../validators/comment.validator.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import RoleEnum from "../enums/role.enum.js";
+import { historyController } from "../controllers/history.controller.js";
 
 const orderRouter = Router();
 
@@ -52,6 +53,13 @@ orderRouter.post(
     commonMiddleware.isValidate("id"),
     commonMiddleware.validateBody(CommentValidator.create),
     commentController.createCommentToOrderById,
+);
+
+orderRouter.get(
+    "/:id/history",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
+    historyController.getAllHistoryByOrderId,
 );
 
 export default orderRouter;

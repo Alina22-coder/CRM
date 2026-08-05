@@ -31,6 +31,10 @@ const swaggerDocument: OpenAPIV3.Document = {
             name: "Groups",
             description: "Group management endpoints",
         },
+        {
+            name: "History",
+            description: "Order activity log / audit trail endpoints",
+        },
     ],
     paths: {
         "/auth/login": {
@@ -780,6 +784,113 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/orders/{id}/history": {
+            get: {
+                tags: ["Orders"],
+                summary: "Get activity history for an order",
+                description:
+                    "Returns a chronological list of tracked changes (status, manager, group, field edits) and comment events for this order, newest first.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                responses: {
+                    "200": {
+                        description: "List of history entries for the order",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/HistoryEntry" },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/history": {
+            get: {
+                tags: ["History"],
+                summary: "Get full activity log across the system (admin only)",
+                description:
+                    "Returns a paginated, filterable log of all tracked order events across the whole system.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    {
+                        name: "page",
+                        in: "query",
+                        schema: { type: "integer", minimum: 1, default: 1 },
+                    },
+                    {
+                        name: "pageSize",
+                        in: "query",
+                        schema: { type: "integer", minimum: 1, default: 25 },
+                    },
+                    {
+                        name: "author",
+                        in: "query",
+                        schema: { type: "string" },
+                        description: "Filter by author (user) id",
+                    },
+                    {
+                        name: "start_date",
+                        in: "query",
+                        schema: { type: "string", format: "date-time" },
+                    },
+                    {
+                        name: "end_date",
+                        in: "query",
+                        schema: { type: "string", format: "date-time" },
+                    },
+                ],
+                responses: {
+                    "200": {
+                        description: "Paginated list of history entries",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        data: {
+                                            type: "array",
+                                            items: { $ref: "#/components/schemas/HistoryEntry" },
+                                        },
+                                        total: { type: "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/users": {
             get: {
                 tags: ["Users"],
@@ -1364,6 +1475,42 @@ const swaggerDocument: OpenAPIV3.Document = {
                     _userId: { type: "string" },
                     createdAt: { type: "string", format: "date-time" },
                     updatedAt: { type: "string", format: "date-time" },
+                },
+            },
+            HistoryEntry: {
+                type: "object",
+                properties: {
+                    _id: { type: "string" },
+                    order: { type: "string" },
+                    author: {
+                        oneOf: [
+                            { type: "string" },
+                            {
+                                type: "object",
+                                properties: {
+                                    _id: { type: "string" },
+                                    name: { type: "string" },
+                                    surname: { type: "string" },
+                                },
+                            },
+                        ],
+                        description:
+                            "Populated with author's name/surname when returned via GET endpoints.",
+                    },
+                    type: {
+                        type: "string",
+                        enum: [
+                            "status_change",
+                            "manager_change",
+                            "group_change",
+                            "field_edit",
+                            "comment_added",
+                        ],
+                    },
+                    field: { type: "string", nullable: true },
+                    old_value: { type: "string", nullable: true },
+                    new_value: { type: "string", nullable: true },
+                    created_at: { type: "string", format: "date-time" },
                 },
             },
         },

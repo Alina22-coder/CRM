@@ -10,6 +10,8 @@ import userService from "../../services/users.service";
 import { TagInput } from "../ui/tag/TagInput.ui";
 import { EditOrderModal } from "../Modal/EditOrderModal.component";
 import { toast } from "sonner";
+import type { IHistory } from "../../interfaces/IHistory";
+import { formatHistoryText, getHistoryAuthor } from "../../helpers/formatHistoryEntry";
 
 type OrderPropType = {
     order: IOrder;
@@ -41,6 +43,7 @@ export const OrderTable: FC<OrderPropType> = ({
     const user = useCurrentUser();
     const [text, setText] = useState("");
     const [comments, setComments] = useState<IComment[]>([]);
+    const [history, setHistory] = useState<IHistory[]>([])
 
     const [currentOrder, setCurrentOrder] = useState(order);
 
@@ -56,11 +59,18 @@ export const OrderTable: FC<OrderPropType> = ({
     const [managerStat, setManagerStat] = useState<IStatistic | null>(null);
     const [isCommenting, setIsCommenting] = useState(false);
 
+    const loadHistory = () => {
+        orderService.getHistoryByOrderId(order._id).then((res) => {
+            setHistory(res.data ?? []);
+        });
+    };
+
     useEffect(() => {
         if (!expanded) return;
         orderService.getOrderById(order._id).then((res) => {
             setComments(res.data.comments ?? []);
         });
+        loadHistory();
     }, [expanded, order._id]);
 
     const addComment = () => {
@@ -71,6 +81,7 @@ export const OrderTable: FC<OrderPropType> = ({
             .then((res) => {
                 setComments((prev) => [...prev, res.data]);
                 setText("");
+                loadHistory();
 
                 return orderService.getOrderById(order._id).then((updated) => {
                     setCurrentOrder(updated.data);
@@ -205,7 +216,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <span
                                         className={
                                             styles[
-                                                "manager__tooltip__row__value--green"
+                                            "manager__tooltip__row__value--green"
                                             ]
                                         }
                                     >
@@ -228,8 +239,8 @@ export const OrderTable: FC<OrderPropType> = ({
                                     >
                                         {managerInfo?.last_login
                                             ? new Date(
-                                                  managerInfo.last_login,
-                                              ).toLocaleDateString()
+                                                managerInfo.last_login,
+                                            ).toLocaleDateString()
                                             : "Never"}
                                     </span>
                                 </div>
@@ -291,10 +302,10 @@ export const OrderTable: FC<OrderPropType> = ({
                                         const author =
                                             typeof c._userId === "object"
                                                 ? (c._userId as {
-                                                      _id: string;
-                                                      name: string;
-                                                      surname: string;
-                                                  })
+                                                    _id: string;
+                                                    name: string;
+                                                    surname: string;
+                                                })
                                                 : null;
 
                                         return (
@@ -311,8 +322,8 @@ export const OrderTable: FC<OrderPropType> = ({
                                                     >
                                                         {author
                                                             ? author.name
-                                                                  .charAt(0)
-                                                                  .toUpperCase()
+                                                                .charAt(0)
+                                                                .toUpperCase()
                                                             : "?"}
                                                     </div>
                                                     <div
@@ -350,45 +361,90 @@ export const OrderTable: FC<OrderPropType> = ({
 
                                 {(!currentOrder.manager ||
                                     currentOrder.manager === user?.surname) && (
-                                    <>
-                                        <textarea
-                                            className={`${styles.comment__textarea} ${comments.length > 0 ? styles["comment__textarea--with-margin"] : ""}`}
-                                            placeholder="Comment..."
-                                            value={text}
-                                            onChange={(e) =>
-                                                setText(e.target.value)
-                                            }
-                                        ></textarea>
-
-                                        <div
-                                            className={
-                                                styles.comment__btn__wrap
-                                            }
-                                        >
-                                            <button
-                                                className={
-                                                    styles.comment__btn__edit
+                                        <>
+                                            <textarea
+                                                className={`${styles.comment__textarea} ${comments.length > 0 ? styles["comment__textarea--with-margin"] : ""}`}
+                                                placeholder="Comment..."
+                                                value={text}
+                                                onChange={(e) =>
+                                                    setText(e.target.value)
                                                 }
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // щоб не закрило рядок
-                                                    setIsEditOpen(true);
-                                                }}
-                                            >
-                                                Edit
-                                            </button>
+                                            ></textarea>
 
-                                            <button
+                                            <div
                                                 className={
-                                                    styles.comment__btn__submit
+                                                    styles.comment__btn__wrap
                                                 }
-                                                onClick={addComment}
-                                                disabled={isCommenting}
                                             >
-                                                Submit
-                                            </button>
+                                                <button
+                                                    className={
+                                                        styles.comment__btn__edit
+                                                    }
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // щоб не закрило рядок
+                                                        setIsEditOpen(true);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                <button
+                                                    className={
+                                                        styles.comment__btn__submit
+                                                    }
+                                                    onClick={addComment}
+                                                    disabled={isCommenting}
+                                                >
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                            </div>
+
+                            <div className={styles.comment__section}>
+                                <div className={styles.history__label}>
+                                    Історія активності
+                                </div>
+                                <div className={styles.history__list}>
+                                    {history.length === 0 && (
+                                        <div className={styles.history__empty}>
+                                            Немає подій
                                         </div>
-                                    </>
-                                )}
+                                    )}
+                                    {history.map((h) => {
+                                        const author = getHistoryAuthor(h);
+
+                                        return (
+                                            <div
+                                                key={h._id}
+                                                className={styles.history__item}
+                                            >
+                                                <div
+                                                    className={
+                                                        styles.history__item__author
+                                                    }
+                                                >
+                                                    {author
+                                                        ? `${author.name} ${author.surname}`
+                                                        : ""}
+                                                    <span>
+                                                        {new Date(
+                                                            h.created_at,
+                                                        ).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    className={
+                                                        styles.history__item__text
+                                                    }
+                                                >
+                                                    {formatHistoryText(h)}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -403,6 +459,7 @@ export const OrderTable: FC<OrderPropType> = ({
                         orderService.getOrderById(order._id).then((res) => {
                             setCurrentOrder(res.data);
                         });
+                        loadHistory();
                         setIsEditOpen(false);
                     }}
                 />

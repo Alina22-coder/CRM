@@ -9,6 +9,7 @@ import { AdminRoute } from "../components/AdminRoute/AdminRoute";
 import SetPasswordPage from "../pages/auth/SetPasswordPage";
 import AccountPage from "../pages/account/AccountPage";
 import ActivatePage from "../pages/auth/ActivatePage";
+import HistoryPage from "../pages/history/HistoryPage";
 
 const routes = createBrowserRouter([
     {
@@ -52,6 +53,16 @@ const routes = createBrowserRouter([
                 element: (
                     <PrivateRoute>
                         <OrdersPage />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: "admin/history",
+                element: (
+                    <PrivateRoute>
+                        <AdminRoute>
+                            <HistoryPage />
+                        </AdminRoute>
                     </PrivateRoute>
                 ),
             },
