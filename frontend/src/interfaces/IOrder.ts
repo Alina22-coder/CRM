@@ -14,6 +14,8 @@ export interface IOrder {
     utm: string;
     msg: string;
     status: string;
+    disagree_reason?: string | null;
+    disagree_reason_comment?: string | null;
     manager?: string;
     group?: string;
 }

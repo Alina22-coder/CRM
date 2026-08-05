@@ -507,6 +507,55 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/orders/loss-report": {
+            get: {
+                tags: ["Orders"],
+                summary: "Get a breakdown of lost orders by disagree reason (Admin only)",
+                description:
+                    "Returns the count of Disagree orders grouped by disagree_reason for the given period.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "start_date", in: "query", schema: { type: "string", format: "date-time" } },
+                    { name: "end_date", in: "query", schema: { type: "string", format: "date-time" } },
+                ],
+                responses: {
+                    "200": {
+                        description: "Loss report breakdown",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: {
+                                        type: "object",
+                                        properties: {
+                                            reason: { type: "string" },
+                                            count: { type: "integer" },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/orders/excel": {
             get: {
                 tags: ["Orders"],

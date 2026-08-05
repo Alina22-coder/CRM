@@ -3,6 +3,7 @@ import type { IOrder } from "../../interfaces/IOrder";
 import type { IComment } from "../../interfaces/IComment";
 import type { IStatistic } from "../../interfaces/IStatistic";
 import { STATUSES } from "../../constants/status.constant";
+import { DISAGREE_REASONS } from "../../constants/disagreeReason.constant";
 import styles from "./OrderTable.module.scss";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { orderService } from "../../services/orders.service";
@@ -59,6 +60,10 @@ export const OrderTable: FC<OrderPropType> = ({
     const [managerStat, setManagerStat] = useState<IStatistic | null>(null);
     const [isCommenting, setIsCommenting] = useState(false);
 
+    const [statusDraft, setStatusDraft] = useState(order.status ?? "");
+    const [disagreeReason, setDisagreeReason] = useState("");
+    const [disagreeComment, setDisagreeComment] = useState("");
+
     const loadHistory = () => {
         orderService.getHistoryByOrderId(order._id).then((res) => {
             setHistory(res.data ?? []);
@@ -73,11 +78,39 @@ export const OrderTable: FC<OrderPropType> = ({
         loadHistory();
     }, [expanded, order._id]);
 
+    useEffect(() => {
+        setStatusDraft(currentOrder.status ?? "");
+        setDisagreeReason(currentOrder.disagree_reason ?? "");
+        setDisagreeComment(currentOrder.disagree_reason_comment ?? "");
+    }, [currentOrder.status, currentOrder.disagree_reason, currentOrder.disagree_reason_comment]);
+
+    const isDisagreeSelected = statusDraft === "Disaggre";
+    const statusChanged = statusDraft !== (currentOrder.status ?? "");
+
     const addComment = () => {
         if (!text.trim() || isCommenting) return;
+        if (statusChanged && isDisagreeSelected && !disagreeReason) {
+            toast.error("Disagree reason is required");
+            return;
+        }
+
         setIsCommenting(true);
         orderService
-            .createCommentToOrderById(order._id, text)
+            .createCommentToOrderById(
+                order._id,
+                text,
+                statusChanged
+                    ? {
+                          status: statusDraft,
+                          disagree_reason: isDisagreeSelected
+                              ? disagreeReason
+                              : undefined,
+                          disagree_reason_comment: isDisagreeSelected
+                              ? disagreeComment
+                              : undefined,
+                      }
+                    : undefined,
+            )
             .then((res) => {
                 setComments((prev) => [...prev, res.data]);
                 setText("");
@@ -362,6 +395,83 @@ export const OrderTable: FC<OrderPropType> = ({
                                 {(!currentOrder.manager ||
                                     currentOrder.manager === user?.surname) && (
                                         <>
+                                            <div className={styles.comment__field}>
+                                                <label>Status</label>
+                                                <select
+                                                    value={statusDraft}
+                                                    onChange={(e) =>
+                                                        setStatusDraft(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                >
+                                                    {STATUSES.map((status) => (
+                                                        <option
+                                                            key={status}
+                                                            value={status}
+                                                        >
+                                                            {status}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            {statusChanged &&
+                                                isDisagreeSelected && (
+                                                    <div
+                                                        className={
+                                                            styles.comment__field
+                                                        }
+                                                    >
+                                                        <label>
+                                                            Disagree reason
+                                                        </label>
+                                                        <select
+                                                            value={
+                                                                disagreeReason
+                                                            }
+                                                            onChange={(e) =>
+                                                                setDisagreeReason(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                        >
+                                                            <option value="">
+                                                                select a reason
+                                                            </option>
+                                                            {DISAGREE_REASONS.map(
+                                                                (reason) => (
+                                                                    <option
+                                                                        key={
+                                                                            reason
+                                                                        }
+                                                                        value={
+                                                                            reason
+                                                                        }
+                                                                    >
+                                                                        {reason}
+                                                                    </option>
+                                                                ),
+                                                            )}
+                                                        </select>
+
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Optional details"
+                                                            value={
+                                                                disagreeComment
+                                                            }
+                                                            onChange={(e) =>
+                                                                setDisagreeComment(
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                )}
+
                                             <textarea
                                                 className={`${styles.comment__textarea} ${comments.length > 0 ? styles["comment__textarea--with-margin"] : ""}`}
                                                 placeholder="Comment..."

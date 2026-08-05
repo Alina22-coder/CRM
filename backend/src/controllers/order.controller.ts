@@ -62,6 +62,23 @@ class OrderController {
         }
     }
 
+    public async getLossReport(
+        _req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const query = res.locals.query as {
+                start_date?: string;
+                end_date?: string;
+            };
+            const data = await orderService.getLossReport(query);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async getStatisticByManager(
         req: Request,
         res: Response,

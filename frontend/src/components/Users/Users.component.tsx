@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { IUser } from "../../interfaces/IUser";
 import userService from "../../services/users.service";
 import { orderService } from "../../services/orders.service";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LogoLoader } from "../Logo/Logo";
 import { User } from "./User.component";
 import styles from "./Users.module.scss";
@@ -11,6 +11,8 @@ import { CreateManagerModal } from "../Modal/CreateManagerModal.component";
 import { Pagination } from "../Pagination/Pagination";
 
 export const Users = () => {
+    const navigate = useNavigate();
+
     const [users, setUsers] = useState<IUser[]>([]);
     const [total, setTotal] = useState(0);
     const [statistic, setStatistic] = useState<IStatistic | null>(null);
@@ -123,12 +125,28 @@ export const Users = () => {
                         </div>
                     </div>
 
-                    <button
-                        className={styles.admin__panel__btn}
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        + Create manager
-                    </button>
+                    <div className={styles.admin__panel__actions}>
+                        <button
+                            className={styles.admin__panel__btn}
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                            + Create manager
+                        </button>
+
+                        <button
+                            className={styles.admin__panel__btn_secondary}
+                            onClick={() => navigate("/admin/history")}
+                        >
+                            Activity Log
+                        </button>
+
+                        <button
+                            className={styles.admin__panel__btn_secondary}
+                            onClick={() => navigate("/admin/loss-report")}
+                        >
+                            Loss Report
+                        </button>
+                    </div>
 
                     <CreateManagerModal
                         isOpen={isModalOpen}

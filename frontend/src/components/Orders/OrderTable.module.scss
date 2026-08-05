@@ -236,6 +236,29 @@
             }
         }
 
+        .comment__field {
+            margin-bottom: 12px;
+
+            label {
+                display: block;
+                font-size: 10px;
+                font-weight: $font-weight-semibold;
+                color: $grey;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                margin-bottom: 4px;
+            }
+
+            select,
+            input {
+                margin-bottom: 8px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
         .comment__textarea {
             height: 72px;
         }

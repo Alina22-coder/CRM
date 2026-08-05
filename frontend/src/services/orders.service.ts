@@ -18,6 +18,10 @@ export const orderService = {
         return api.get("/orders/statistic");
     },
 
+    getLossReport: (query: { start_date?: string; end_date?: string }) => {
+        return api.get("/orders/loss-report", { params: query });
+    },
+
     getAllOrdersForExcel: (query: IOrderQuery) => {
         return api.get("/orders/excel", {
             params: query,
@@ -25,8 +29,19 @@ export const orderService = {
         });
     },
 
-    createCommentToOrderById: (orderId: string, body: string) => {
-        return api.post(`/orders/${orderId}/comments`, { text: body });
+    createCommentToOrderById: (
+        orderId: string,
+        body: string,
+        statusUpdate?: {
+            status?: string;
+            disagree_reason?: string;
+            disagree_reason_comment?: string;
+        },
+    ) => {
+        return api.post(`/orders/${orderId}/comments`, {
+            text: body,
+            ...statusUpdate,
+        });
     },
 
     getHistoryByOrderId: (orderId: string) => api.get(`/orders/${orderId}/history`),

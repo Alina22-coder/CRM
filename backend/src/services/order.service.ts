@@ -9,6 +9,7 @@ import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
 import NotificationEvent from "../enums/notification-event.enum";
+import Status from "../enums/status.enum";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
@@ -51,7 +52,18 @@ class OrderService {
         }
 
         const autoFields = applyAutoAssignDefaults(order, user, "edit");
-        const updatedFields: Partial<IOrder> = { ...update, ...autoFields };
+        const updatedFields: Partial<IOrder> = { ...autoFields, ...update };
+
+        const resultingStatus = updatedFields.status ?? order.status;
+        const resultingReason =
+            updatedFields.disagree_reason ?? order.disagree_reason;
+
+        if (resultingStatus === Status.DISAGGRE && !resultingReason) {
+            throw new ApiError(
+                "Disagree reason is required when status is Disagree",
+                StatusCodes.BAD_REQUEST,
+            );
+        }
 
         const updatedOrder = await orderRepository.updateOrderById(
             orderId,
@@ -88,6 +100,13 @@ class OrderService {
 
     public async getOrderStatistic() {
         return orderRepository.getOrderStatistic();
+    }
+
+    public async getLossReport(filter: {
+        start_date?: string;
+        end_date?: string;
+    }) {
+        return orderRepository.getLossReport(filter);
     }
 
     public async getStatisticByManager(userId: string) {

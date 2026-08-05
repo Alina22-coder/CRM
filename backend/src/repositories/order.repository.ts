@@ -1,5 +1,6 @@
 import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
+import Status from "../enums/status.enum";
 
 class OrderRepository {
     private buildFilter(query: IOrderQuery, managerSurname?: string): object {
@@ -95,6 +96,36 @@ class OrderRepository {
             ]),
         ]);
         return { total, byStatus };
+    }
+
+    public async getLossReport(filter: {
+        start_date?: string;
+        end_date?: string;
+    }): Promise<{ reason: string; count: number }[]> {
+        const match: Record<string, any> = { status: Status.DISAGGRE };
+
+        if (filter.start_date || filter.end_date) {
+            match.created_at = {};
+            if (filter.start_date) {
+                match.created_at.$gte = new Date(filter.start_date);
+            }
+            if (filter.end_date) {
+                match.created_at.$lte = new Date(filter.end_date);
+            }
+        }
+
+        const result = await OrderModel.aggregate([
+            { $match: match },
+            {
+                $group: {
+                    _id: { $ifNull: ["$disagree_reason", "Unspecified"] },
+                    count: { $sum: 1 },
+                },
+            },
+            { $sort: { count: -1 } },
+        ]);
+
+        return result.map((row) => ({ reason: row._id, count: row.count }));
     }
 
     public async getAllOrdersForExcel(

@@ -1,0 +1,54 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.loss__report {
+    flex: 1;
+    background: $white;
+    border-radius: $br-12;
+    padding: 24px;
+    box-shadow: $shadow-card;
+
+    &__filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    &__empty {
+        font-size: $font-size-sm;
+        color: $grey;
+    }
+
+    &__chart {
+        margin-bottom: 24px;
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: $font-size-sm;
+            border-bottom: 1px solid $outline;
+        }
+
+        th {
+            color: $grey;
+            font-weight: $font-weight-semibold;
+            text-transform: uppercase;
+            font-size: $font-size-xs;
+            letter-spacing: 0.4px;
+        }
+    }
+
+    &__total {
+        font-weight: $font-weight-bold;
+
+        td {
+            border-bottom: none;
+        }
+    }
+}

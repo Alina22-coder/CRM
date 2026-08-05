@@ -26,6 +26,14 @@ orderRouter.get(
 );
 
 orderRouter.get(
+    "/loss-report",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.query(OrderValidator.lossReportQuery),
+    orderController.getLossReport,
+);
+
+orderRouter.get(
     "/excel",
     authMiddleware.checkAccessToken,
     commonMiddleware.query(OrderValidator.query),

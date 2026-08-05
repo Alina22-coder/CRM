@@ -5,6 +5,7 @@ import {
     COURSES,
 } from "../../constants/course.constant";
 import { STATUSES } from "../../constants/status.constant";
+import { DISAGREE_REASONS } from "../../constants/disagreeReason.constant";
 import type { IOrder } from "../../interfaces/IOrder";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -27,12 +28,16 @@ type EditOrderForm = {
     phone: string;
     age: number;
     status: string;
+    disagree_reason: string;
+    disagree_reason_comment: string;
     sum: number;
     already_paid: number;
     course: string;
     course_format: string;
     course_type: string;
 };
+
+const DISAGREE_STATUS = "Disaggre";
 
 export const EditOrderModal = ({
     order,
@@ -44,12 +49,15 @@ export const EditOrderModal = ({
         handleSubmit,
         reset,
         setValue,
+        watch,
         formState: { errors },
     } = useForm<EditOrderForm>();
 
     const [groups, setGroups] = useState<IGroup[]>([]);
 
     const [newGroupName, setNewGroupName] = useState("");
+
+    const selectedStatus = watch("status");
 
     useEffect(() => {
         reset({
@@ -62,6 +70,8 @@ export const EditOrderModal = ({
             course_format: order.course_format ?? "",
             course_type: order.course_type ?? "",
             status: order.status ?? "",
+            disagree_reason: order.disagree_reason ?? "",
+            disagree_reason_comment: order.disagree_reason_comment ?? "",
             sum: order.sum ?? "",
             already_paid: order.already_paid ?? "",
             group: order.group ?? "",
@@ -231,6 +241,48 @@ export const EditOrderModal = ({
                                 ))}
                             </select>
                         </div>
+
+                        {selectedStatus === DISAGREE_STATUS && (
+                            <>
+                                <div className={styles.grid__field}>
+                                    <label>Disagree reason</label>
+                                    <select
+                                        {...register("disagree_reason", {
+                                            required:
+                                                "Disagree reason is required",
+                                        })}
+                                    >
+                                        <option value="">
+                                            select a reason
+                                        </option>
+                                        {DISAGREE_REASONS.map((reason) => (
+                                            <option
+                                                key={reason}
+                                                value={reason}
+                                            >
+                                                {reason}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.disagree_reason && (
+                                        <span className={styles.error}>
+                                            {errors.disagree_reason.message}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className={styles.grid__field}>
+                                    <label>Disagree comment</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Optional details"
+                                        {...register(
+                                            "disagree_reason_comment",
+                                        )}
+                                    />
+                                </div>
+                            </>
+                        )}
 
                         <div className={styles.grid__field}>
                             <label>Sum</label>

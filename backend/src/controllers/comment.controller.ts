@@ -13,12 +13,14 @@ class CommentController {
 
             const { userId } = res.locals.tokenPayload;
 
-            const { text } = req.body;
+            const { text, status, disagree_reason, disagree_reason_comment } =
+                req.body;
 
             const data = await commentService.createCommentToOrderById(
                 orderId,
                 userId,
                 text,
+                { status, disagree_reason, disagree_reason_comment },
             );
 
             res.status(StatusCodes.CREATED).json(data);

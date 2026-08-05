@@ -4,6 +4,7 @@ import Status from "../enums/status.enum";
 import Course from "../enums/course.enum";
 import CourseType from "../enums/course-type.enum";
 import CourseFormat from "../enums/course-format.enum";
+import DisagreeReason from "../enums/disagree-reason.enum";
 
 export class OrderValidator {
     public static query = joi.object({
@@ -68,5 +69,19 @@ export class OrderValidator {
             .allow(null),
         group: joi.string().allow(null, ""),
         msg: joi.string().allow(null, ""),
+        disagree_reason: joi
+            .string()
+            .valid(...Object.values(DisagreeReason))
+            .when("status", {
+                is: Status.DISAGGRE,
+                then: joi.required(),
+                otherwise: joi.allow(null, ""),
+            }),
+        disagree_reason_comment: joi.string().allow(null, ""),
+    });
+
+    public static lossReportQuery = joi.object({
+        start_date: joi.string().isoDate(),
+        end_date: joi.string().isoDate(),
     });
 }
