@@ -7,6 +7,8 @@ import { commentRepository } from "../repositories/comment.repository";
 import { Workbook } from "exceljs";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
+import { telegramService } from "./telegram.service";
+import NotificationEvent from "../enums/notification-event.enum";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
@@ -62,6 +64,24 @@ class OrderService {
             order.toObject(),
             updatedFields,
         );
+
+        if (updatedFields.status && updatedFields.status !== order.status) {
+            const text = `Order status for ${updatedOrder?.name} ${updatedOrder?.surname}: ${order.status} → ${updatedFields.status}`;
+
+            if (updatedOrder?.manager) {
+                await telegramService.notifyManagerBySurname(
+                    updatedOrder.manager,
+                    NotificationEvent.STATUS_CHANGE,
+                    text,
+                );
+            }
+
+            await telegramService.notifyAdmins(
+                NotificationEvent.STATUS_CHANGE,
+                text,
+                userId,
+            );
+        }
 
         return updatedOrder;
     }

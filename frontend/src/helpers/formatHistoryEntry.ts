@@ -1,29 +1,29 @@
 import type { IHistory } from "../interfaces/IHistory";
 
 const FIELD_LABELS: Record<string, string> = {
-    status: "Статус",
-    manager: "Менеджер",
-    group: "Група",
-    name: "Ім'я",
-    surname: "Прізвище",
+    status: "Status",
+    manager: "Manager",
+    group: "Group",
+    name: "Name",
+    surname: "Surname",
     email: "Email",
-    phone: "Телефон",
-    age: "Вік",
-    course: "Курс",
-    course_format: "Формат курсу",
-    course_type: "Тип курсу",
-    sum: "Сума",
-    already_paid: "Оплачено",
+    phone: "Phone",
+    age: "Age",
+    course: "Course",
+    course_format: "Course format",
+    course_type: "Course type",
+    sum: "Sum",
+    already_paid: "Already paid",
     utm: "UTM",
-    msg: "Повідомлення",
+    msg: "Message",
 };
 
 const TYPE_LABELS: Record<IHistory["type"], string> = {
-    status_change: "Статус",
-    manager_change: "Менеджер",
-    group_change: "Група",
-    field_edit: "Поле",
-    comment_added: "Коментар",
+    status_change: "Status",
+    manager_change: "Manager",
+    group_change: "Group",
+    field_edit: "Field",
+    comment_added: "Comment",
 };
 
 const getFieldLabel = (entry: IHistory): string => {
@@ -35,7 +35,7 @@ const getFieldLabel = (entry: IHistory): string => {
 
 export const formatHistoryText = (entry: IHistory): string => {
     if (entry.type === "comment_added") {
-        return "Додано коментар";
+        return "Comment added";
     }
 
     const label = getFieldLabel(entry);

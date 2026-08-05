@@ -381,7 +381,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                                         styles.comment__btn__edit
                                                     }
                                                     onClick={(e) => {
-                                                        e.stopPropagation(); // щоб не закрило рядок
+                                                        e.stopPropagation();
                                                         setIsEditOpen(true);
                                                     }}
                                                 >
@@ -404,12 +404,12 @@ export const OrderTable: FC<OrderPropType> = ({
 
                             <div className={styles.comment__section}>
                                 <div className={styles.history__label}>
-                                    Історія активності
+                                    Activity history
                                 </div>
                                 <div className={styles.history__list}>
                                     {history.length === 0 && (
                                         <div className={styles.history__empty}>
-                                            Немає подій
+                                            No events
                                         </div>
                                     )}
                                     {history.map((h) => {

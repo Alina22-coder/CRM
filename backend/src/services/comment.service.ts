@@ -6,6 +6,8 @@ import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
+import { telegramService } from "./telegram.service";
+import NotificationEvent from "../enums/notification-event.enum";
 
 class CommentService {
     public async createCommentToOrderById(
@@ -42,6 +44,23 @@ class CommentService {
         }
 
         await historyService.logCommentAdded(orderId, userId);
+
+        const managerSurname = update.manager ?? order.manager;
+        const notificationText = `New comment on order ${order.name} ${order.surname}`;
+
+        if (managerSurname && managerSurname !== user.surname) {
+            await telegramService.notifyManagerBySurname(
+                managerSurname,
+                NotificationEvent.COMMENT_ADDED,
+                notificationText,
+            );
+        }
+
+        await telegramService.notifyAdmins(
+            NotificationEvent.COMMENT_ADDED,
+            notificationText,
+            userId,
+        );
 
         return comment;
     }

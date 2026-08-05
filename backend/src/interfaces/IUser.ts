@@ -1,4 +1,5 @@
 import RoleEnum from "../enums/role.enum";
+import NotificationEvent from "../enums/notification-event.enum";
 import IBase from "./IBase";
 
 interface IUser extends IBase {
@@ -14,6 +15,8 @@ interface IUser extends IBase {
     isVerified: boolean;
     last_login: Date | null;
     tokenVersion: number;
+    telegram_chat_id: string | null;
+    telegram_notifications: Partial<Record<NotificationEvent, boolean>>;
 }
 
 export interface IUserQuery {

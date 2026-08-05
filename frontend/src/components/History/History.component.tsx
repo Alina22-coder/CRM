@@ -116,7 +116,7 @@ export const History = () => {
                     <div className={styles.history__list}>
                         {entries.length === 0 && (
                             <div className={styles.history__empty}>
-                                Немає подій
+                                No events
                             </div>
                         )}
 

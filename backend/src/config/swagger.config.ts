@@ -35,6 +35,10 @@ const swaggerDocument: OpenAPIV3.Document = {
             name: "History",
             description: "Order activity log / audit trail endpoints",
         },
+        {
+            name: "Telegram",
+            description: "Telegram account linking and notification preferences",
+        },
     ],
     paths: {
         "/auth/login": {
@@ -881,6 +885,156 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "403": {
                         description: "Forbidden - admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/telegram/status": {
+            get: {
+                tags: ["Telegram"],
+                summary: "Get current user's Telegram link status",
+                description:
+                    "Returns whether the authenticated user has a linked Telegram account and their notification preferences.",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Telegram link status",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        telegram_chat_id: {
+                                            type: "string",
+                                            nullable: true,
+                                        },
+                                        telegram_notifications: {
+                                            type: "object",
+                                            additionalProperties: { type: "boolean" },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/telegram/link-code": {
+            post: {
+                tags: ["Telegram"],
+                summary: "Generate a one-time Telegram link code",
+                description:
+                    "Generates a short-lived code the user sends to the Telegram bot via /start <code> (or a deep-link) to link their account.",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Generated link code",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        code: { type: "string" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/telegram/link": {
+            delete: {
+                tags: ["Telegram"],
+                summary: "Unlink the current user's Telegram account",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "204": {
+                        description: "Telegram account unlinked",
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/telegram/preferences": {
+            patch: {
+                tags: ["Telegram"],
+                summary: "Update Telegram notification preferences",
+                description:
+                    "Enables or disables specific notification events (new_order, status_change, comment_added) sent to Telegram.",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    new_order: { type: "boolean" },
+                                    status_change: { type: "boolean" },
+                                    comment_added: { type: "boolean" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Preferences updated",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        success: { type: "boolean" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },

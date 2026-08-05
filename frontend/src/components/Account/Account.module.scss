@@ -82,3 +82,56 @@
         letter-spacing: 0.2px;
     }
 }
+
+.telegram {
+    &__status {
+        font-size: $font-size-sm;
+        color: $grey;
+        margin-bottom: 16px;
+    }
+
+    &__preferences {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    &__preference {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-regular;
+        text-transform: none;
+        cursor: pointer;
+
+        input {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &__link {
+        margin-bottom: 16px;
+    }
+
+    &__code {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-bold;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+    }
+
+    &__link__btn {
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 20px;
+        background: $primary;
+        color: $white;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        border-radius: $br-8;
+    }
+}

@@ -9,6 +9,7 @@ interface IConfig {
     JWT_ACTIVATE_LIFETIME: any;
     ADMIN_EMAIL: string;
     ADMIN_PASSWORD: string;
+    TELEGRAM_BOT_TOKEN: string;
 }
 
 const config: IConfig = {
@@ -22,6 +23,7 @@ const config: IConfig = {
     JWT_ACTIVATE_LIFETIME: process.env.JWT_ACTIVATE_LIFETIME || "30m",
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || "admin@gmail.com",
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "admin",
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || "",
 };
 
 export default config;

@@ -50,6 +50,14 @@ const userSchema = new Schema(
             type: Number,
             default: 0,
         },
+        telegram_chat_id: {
+            type: String,
+            default: null,
+        },
+        telegram_notifications: {
+            type: Object,
+            default: {},
+        },
     },
     { timestamps: true },
 );

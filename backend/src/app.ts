@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from "express";
 import ApiError from "./errors/api.error";
 import config from "./config/config";
 import createAdmin from "./seeds/admin.seed.js";
+import "./services/telegram.service";
 
 const app = express();
 

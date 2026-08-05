@@ -1,5 +1,6 @@
 import IUser, { IUserQuery } from "../interfaces/IUser";
 import { UserModel } from "../models/user.model";
+import RoleEnum from "../enums/role.enum";
 
 class UserRepository {
     public async getAllUsers(
@@ -53,6 +54,21 @@ class UserRepository {
 
     public getUserByEmail(email: string) {
         return UserModel.findOne({ email }).select("+password");
+    }
+
+    public getUserByTelegramChatId(chatId: string): Promise<IUser | null> {
+        return UserModel.findOne({ telegram_chat_id: chatId });
+    }
+
+    public getUserBySurname(surname: string): Promise<IUser | null> {
+        return UserModel.findOne({ surname });
+    }
+
+    public getAdminsWithTelegram(): Promise<IUser[]> {
+        return UserModel.find({
+            role: RoleEnum.Admin,
+            telegram_chat_id: { $ne: null },
+        });
     }
 }
 
