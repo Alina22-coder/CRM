@@ -8,6 +8,20 @@
 
 }
 
+.history__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $grey;
+
+    &:hover {
+        color: $primary;
+    }
+}
+
 .history__filters {
     display: flex;
     flex-wrap: wrap;

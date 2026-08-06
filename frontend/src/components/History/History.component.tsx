@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { historyService } from "../../services/history.service";
 import userService from "../../services/users.service";
 import type { IHistory } from "../../interfaces/IHistory";
@@ -74,6 +74,10 @@ export const History = () => {
 
     return (
         <div className={styles.history__page}>
+            <Link className={styles.history__back} to="/admin">
+                ← Back to Admin Panel
+            </Link>
+
             <div className={styles.history__filters}>
                 <select
                     className={styles.history__filter__select}
