@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "cdc085c2-1bb3-4103-b6d1-d3d7107593a8",
     "name": "CRM",
-    "description": "CRM Programming School — API колекція.\n\n**Base URL**: http://localhost:5000 (див. PORT в backend/.env)\n\n**Як почати:**\n1. Виконати `auth/login` з дефолтним admin (email: admin@gmail.com, password: admin) — у відповіді прийдуть `accessToken` і `refreshToken`.\n2. Скопіювати `accessToken` у змінну колекції `adminAccessToken` (для admin-only запитів: users, orders/statistic, auth/activate, auth/recovery) або `accessToken` (для решти запитів, доступних і менеджеру).\n3. Для перевірки менеджерського флоу: створити менеджера через `users (create manager)`, активувати через `auth/activate/:userId` (поверне токен активації), викликати `auth/set-password` з цим токеном, потім залогінитись новим менеджером — отриманий `accessToken` покласти у змінну `accessToken`.\n4. `refreshToken` (auth/refresh) не потребує bearer-токена — refresh token передається в тілі запиту.\n\n**Змінні колекції**: accessToken, adminAccessToken, refreshToken — заповнюються вручну після логіну (Postman не оновлює їх автоматично, автотести/скрипти для цього не налаштовані).",
+    "description": "CRM Programming School — API колекція.\n\n**Base URL**: http://localhost:5000 (див. PORT в backend/.env)\n\n**Як почати:**\n1. Виконати `auth/login` з дефолтним admin (email: admin@gmail.com, password: admin) — у відповіді прийдуть `accessToken` і `refreshToken`.\n2. Скопіювати `accessToken` у змінну колекції `adminAccessToken` (для admin-only запитів: users, orders/statistic, orders/loss-report, history, auto-assign, auth/activate, auth/recovery) або `accessToken` (для решти запитів, доступних і менеджеру, включно з telegram/*).\n3. Для перевірки менеджерського флоу: створити менеджера через `users (create manager)`, активувати через `auth/activate/:userId` (поверне токен активації), викликати `auth/set-password` з цим токеном, потім залогінитись новим менеджером — отриманий `accessToken` покласти у змінну `accessToken`.\n4. `refreshToken` (auth/refresh) не потребує bearer-токена — refresh token передається в тілі запиту.\n5. `orders (create)` не потребує авторизації — це публічний вхід для лідів. Якщо в `/admin/settings` (auto-assign) увімкнено авторозподіл, менеджер призначиться автоматично.\n\n**Папки**: auth, users, orders (CRUD + history + loss-report), groups, history (повний журнал), telegram (прив'язка бота і сповіщення), auto-assign (налаштування авторозподілу).\n\n**Змінні колекції**: accessToken, adminAccessToken, refreshToken — заповнюються вручну після логіну (Postman не оновлює їх автоматично, автотести/скрипти для цього не налаштовані).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "51254694"
   },
@@ -347,6 +347,29 @@
           "response": []
         },
         {
+          "name": "orders (create)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane\",\n  \"surname\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"phone\": \"380991234567\",\n  \"age\": 25,\n  \"course\": \"QACX\",\n  \"course_type\": \"minimal\",\n  \"course_format\": \"online\",\n  \"sum\": 500,\n  \"already_paid\": 0,\n  \"utm\": \"utm_source=facebook\",\n  \"msg\": \"Interested in QA course\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Публічний ендпоінт (без авторизації) — призначений для зовнішніх форм/вебхуків з лідами. Якщо авторозподіл увімкнено в /admin/settings, менеджер призначається автоматично.",
+            "url": {
+              "raw": "http://localhost:5000/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders"]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "orders (filtered)",
           "request": {
             "auth": {
@@ -421,6 +444,34 @@
           "response": []
         },
         {
+          "name": "orders/:id (update, disagree)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Disaggre\",\n  \"disagree_reason\": \"High price\",\n  \"disagree_reason_comment\": \"Client said the price is too high compared to competitors\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "disagree_reason є обов'язковим, коли status = Disaggre.",
+            "url": {
+              "raw": "http://localhost:5000/orders/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "orders/:id/comments",
           "request": {
             "auth": {
@@ -448,6 +499,54 @@
           "response": []
         },
         {
+          "name": "orders/:id/comments (with status change)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Client refused after the call\",\n  \"status\": \"Disaggre\",\n  \"disagree_reason\": \"Not answering calls\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Коментар може одночасно змінювати статус заявки; disagree_reason обов'язковий, коли status = Disaggre.",
+            "url": {
+              "raw": "http://localhost:5000/orders/:id/comments",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id", "comments"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id/history",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders/:id/history",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", ":id", "history"],
+              "variable": [{ "key": "id", "value": "" }]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "orders/statistic",
           "request": {
             "auth": {
@@ -462,6 +561,29 @@
               "host": ["localhost"],
               "port": "5000",
               "path": ["orders", "statistic"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/loss-report (filtered)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/orders/loss-report?start_date=2026-01-01&end_date=2026-12-31",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["orders", "loss-report"],
+              "query": [
+                { "key": "start_date", "value": "2026-01-01" },
+                { "key": "end_date", "value": "2026-12-31" }
+              ]
             }
           },
           "response": []
@@ -535,6 +657,179 @@
               "host": ["localhost"],
               "port": "5000",
               "path": ["groups"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "history",
+      "item": [
+        {
+          "name": "history (list, filtered)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "description": "Admin only. Повний журнал подій по всій системі з фільтром по автору та даті.",
+            "url": {
+              "raw": "http://localhost:5000/history?page=1&pageSize=25",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["history"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "25" },
+                { "key": "author", "value": "", "disabled": true },
+                { "key": "start_date", "value": "", "disabled": true },
+                { "key": "end_date", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "telegram",
+      "item": [
+        {
+          "name": "telegram/status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "description": "Поточний стан прив'язки Telegram та підписки на сповіщення для авторизованого користувача.",
+            "url": {
+              "raw": "http://localhost:5000/telegram/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["telegram", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "telegram/link-code",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "POST",
+            "header": [],
+            "description": "Генерує одноразовий код. Надіслати боту /start <код>, щоб прив'язати акаунт.",
+            "url": {
+              "raw": "http://localhost:5000/telegram/link-code",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["telegram", "link-code"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "telegram/link (unlink)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/telegram/link",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["telegram", "link"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "telegram/preferences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"new_order\": true,\n  \"status_change\": true,\n  \"comment_added\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:5000/telegram/preferences",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["telegram", "preferences"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auto-assign",
+      "item": [
+        {
+          "name": "auto-assign (get settings)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/auto-assign",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auto-assign"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auto-assign (update settings)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+            },
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true,\n  \"mode\": \"round_robin\",\n  \"participantIds\": [\"<managerId1>\", \"<managerId2>\"]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "mode: round_robin | load_based. participantIds — ObjectId менеджерів, що беруть участь в авторозподілі.",
+            "url": {
+              "raw": "http://localhost:5000/auto-assign",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["auto-assign"]
             }
           },
           "response": []
