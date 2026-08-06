@@ -84,4 +84,29 @@ export class OrderValidator {
         start_date: joi.string().isoDate(),
         end_date: joi.string().isoDate(),
     });
+
+    public static create = joi.object({
+        name: joi.string().required(),
+        surname: joi.string().required(),
+        email: joi.string().email().required(),
+        phone: joi.string().required(),
+        age: joi.number().min(0),
+        course: joi
+            .string()
+            .valid(...Object.values(Course))
+            .required(),
+        course_type: joi
+            .string()
+            .valid(...Object.values(CourseType))
+            .required(),
+        course_format: joi
+            .string()
+            .valid(...Object.values(CourseFormat))
+            .required(),
+        sum: joi.number().min(0),
+        already_paid: joi.number().min(0),
+        utm: joi.string().allow(""),
+        msg: joi.string().allow(""),
+        group: joi.string().allow(null, ""),
+    });
 }

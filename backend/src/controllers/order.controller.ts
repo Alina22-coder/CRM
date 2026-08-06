@@ -20,6 +20,15 @@ class OrderController {
         }
     }
 
+    public async createOrder(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await orderService.createOrder(req.body);
+            res.status(StatusCodes.CREATED).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async getOrderById(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id as string;

@@ -39,6 +39,10 @@ const swaggerDocument: OpenAPIV3.Document = {
             name: "Telegram",
             description: "Telegram account linking and notification preferences",
         },
+        {
+            name: "AutoAssign",
+            description: "Automatic order-to-manager assignment settings",
+        },
     ],
     paths: {
         "/auth/login": {
@@ -463,6 +467,73 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "401": {
                         description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+            post: {
+                tags: ["Orders"],
+                summary: "Create a new order (public, e.g. from a lead form)",
+                description:
+                    "Creates a new order with status New. If auto-assign is enabled, the order's manager is picked automatically (round-robin or load-based).",
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: [
+                                    "name",
+                                    "surname",
+                                    "email",
+                                    "phone",
+                                    "course",
+                                    "course_type",
+                                    "course_format",
+                                ],
+                                properties: {
+                                    name: { type: "string" },
+                                    surname: { type: "string" },
+                                    email: { type: "string" },
+                                    phone: { type: "string" },
+                                    age: { type: "integer", minimum: 0 },
+                                    course: {
+                                        type: "string",
+                                        enum: ["FS", "QACX", "JCX", "JSCX", "FE", "PCX"],
+                                    },
+                                    course_type: {
+                                        type: "string",
+                                        enum: ["pro", "minimal", "premium", "incubator", "vip"],
+                                    },
+                                    course_format: {
+                                        type: "string",
+                                        enum: ["static", "online"],
+                                    },
+                                    sum: { type: "number", minimum: 0 },
+                                    already_paid: { type: "number", minimum: 0 },
+                                    utm: { type: "string" },
+                                    msg: { type: "string" },
+                                    group: { type: "string" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "201": {
+                        description: "Order created",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Order" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -1094,6 +1165,102 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/auto-assign": {
+            get: {
+                tags: ["AutoAssign"],
+                summary: "Get auto-assign settings (Admin only)",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Current auto-assign settings",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/AutoAssignSettings" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+            patch: {
+                tags: ["AutoAssign"],
+                summary: "Update auto-assign settings (Admin only)",
+                description:
+                    "Enable/disable auto-assign, switch mode (round_robin / load_based), or update the list of participating managers.",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    enabled: { type: "boolean" },
+                                    mode: {
+                                        type: "string",
+                                        enum: ["round_robin", "load_based"],
+                                    },
+                                    participantIds: {
+                                        type: "array",
+                                        items: { type: "string" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Updated auto-assign settings",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/AutoAssignSettings" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/users": {
             get: {
                 tags: ["Users"],
@@ -1636,9 +1803,29 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "string",
                         nullable: true,
                         description:
-                            "Surname of the manager assigned to this order. Set automatically to the current user's surname on first update or first comment.",
+                            "Surname of the manager assigned to this order. Set automatically to the current user's surname on first update or first comment, or by the auto-assign feature on creation.",
                     },
                     group: { type: "string", nullable: true },
+                },
+            },
+            AutoAssignSettings: {
+                type: "object",
+                properties: {
+                    _id: { type: "string" },
+                    enabled: { type: "boolean" },
+                    mode: {
+                        type: "string",
+                        enum: ["round_robin", "load_based"],
+                    },
+                    participantIds: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "IDs of managers participating in auto-assign",
+                    },
+                    lastAssignedIndex: {
+                        type: "integer",
+                        description: "Internal round-robin pointer",
+                    },
                 },
             },
             OrderStatistic: {

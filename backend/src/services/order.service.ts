@@ -8,6 +8,7 @@ import { Workbook } from "exceljs";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
+import { autoAssignService } from "./auto-assign.service";
 import NotificationEvent from "../enums/notification-event.enum";
 import Status from "../enums/status.enum";
 
@@ -19,6 +20,34 @@ class OrderService {
             managerSurname = user?.surname;
         }
         return orderRepository.getAllOrders(query, managerSurname);
+    }
+
+    public async createOrder(order: Partial<IOrder>) {
+        const manager = await autoAssignService.pickManager();
+
+        const createdOrder = await orderRepository.createOrder({
+            ...order,
+            created_at: new Date(),
+            status: Status.NEW,
+            manager: manager ?? undefined,
+        });
+
+        await telegramService.notifyAdmins(
+            NotificationEvent.NEW_ORDER,
+            `New order: ${createdOrder.name} ${createdOrder.surname}${
+                manager ? ` (auto-assigned to ${manager})` : ""
+            }`,
+        );
+
+        if (manager) {
+            await telegramService.notifyManagerBySurname(
+                manager,
+                NotificationEvent.NEW_ORDER,
+                `New order assigned to you: ${createdOrder.name} ${createdOrder.surname}`,
+            );
+        }
+
+        return createdOrder;
     }
 
     public async getOrderById(orderId: string) {

@@ -7,6 +7,7 @@ import groupRouter from "./group.router.js";
 import { swaggerDocument, swaggerUI } from "../config/swagger.config.js";
 import historyRouter from "./history.router.js";
 import telegramRouter from "./telegram.router.js";
+import autoAssignRouter from "./auto-assign.router.js";
 
 const router = Router();
 
@@ -25,6 +26,8 @@ router.use("/groups", groupRouter);
 router.use("/history", historyRouter);
 
 router.use("/telegram", telegramRouter);
+
+router.use("/auto-assign", autoAssignRouter);
 
 router.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 

@@ -128,6 +128,34 @@ class OrderRepository {
         return result.map((row) => ({ reason: row._id, count: row.count }));
     }
 
+    public async getActiveOrderCountsByManagers(
+        managerSurnames: string[],
+    ): Promise<Record<string, number>> {
+        const result = await OrderModel.aggregate([
+            {
+                $match: {
+                    manager: { $in: managerSurnames },
+                    status: Status.IN_WORK,
+                },
+            },
+            { $group: { _id: "$manager", count: { $sum: 1 } } },
+        ]);
+
+        const counts: Record<string, number> = {};
+        for (const surname of managerSurnames) {
+            counts[surname] = 0;
+        }
+        for (const row of result) {
+            counts[row._id] = row.count;
+        }
+
+        return counts;
+    }
+
+    public createOrder(order: Partial<IOrder>): Promise<IOrder> {
+        return OrderModel.create(order);
+    }
+
     public async getAllOrdersForExcel(
         query: IOrderQuery,
         managerSurname?: string,

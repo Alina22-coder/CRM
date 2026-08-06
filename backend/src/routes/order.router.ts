@@ -18,6 +18,12 @@ orderRouter.get(
     orderController.getAllOrders,
 );
 
+orderRouter.post(
+    "/",
+    commonMiddleware.validateBody(OrderValidator.create),
+    orderController.createOrder,
+);
+
 orderRouter.get(
     "/statistic",
     authMiddleware.checkAccessToken,

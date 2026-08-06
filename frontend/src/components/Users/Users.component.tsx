@@ -146,6 +146,13 @@ export const Users = () => {
                         >
                             Loss Report
                         </button>
+
+                        <button
+                            className={styles.admin__panel__btn_secondary}
+                            onClick={() => navigate("/admin/settings")}
+                        >
+                            Settings
+                        </button>
                     </div>
 
                     <CreateManagerModal

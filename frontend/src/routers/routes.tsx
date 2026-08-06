@@ -11,6 +11,7 @@ import AccountPage from "../pages/account/AccountPage";
 import ActivatePage from "../pages/auth/ActivatePage";
 import HistoryPage from "../pages/history/HistoryPage";
 import LossReportPage from "../pages/lossReport/LossReportPage";
+import SettingsPage from "../pages/settings/SettingsPage";
 
 const routes = createBrowserRouter([
     {
@@ -73,6 +74,16 @@ const routes = createBrowserRouter([
                     <PrivateRoute>
                         <AdminRoute>
                             <LossReportPage />
+                        </AdminRoute>
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: "admin/settings",
+                element: (
+                    <PrivateRoute>
+                        <AdminRoute>
+                            <SettingsPage />
                         </AdminRoute>
                     </PrivateRoute>
                 ),
