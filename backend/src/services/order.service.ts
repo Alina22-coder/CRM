@@ -29,6 +29,7 @@ class OrderService {
             ...order,
             created_at: new Date(),
             status: Status.NEW,
+            status_updated_at: new Date(),
             manager: manager ?? undefined,
         });
 
@@ -83,6 +84,19 @@ class OrderService {
         const autoFields = applyAutoAssignDefaults(order, user, "edit");
         const updatedFields: Partial<IOrder> = { ...autoFields, ...update };
 
+        const resultingSum = updatedFields.sum ?? order.sum;
+        const resultingAlreadyPaid =
+            updatedFields.already_paid ?? order.already_paid;
+
+        if (
+            !update.status &&
+            resultingSum > 0 &&
+            resultingAlreadyPaid >= resultingSum &&
+            order.status !== Status.AGGRE
+        ) {
+            updatedFields.status = Status.AGGRE;
+        }
+
         const resultingStatus = updatedFields.status ?? order.status;
         const resultingReason =
             updatedFields.disagree_reason ?? order.disagree_reason;
@@ -92,6 +106,11 @@ class OrderService {
                 "Disagree reason is required when status is Disagree",
                 StatusCodes.BAD_REQUEST,
             );
+        }
+
+        if (updatedFields.status && updatedFields.status !== order.status) {
+            updatedFields.status_updated_at = new Date();
+            updatedFields.is_overdue = false;
         }
 
         const updatedOrder = await orderRepository.updateOrderById(

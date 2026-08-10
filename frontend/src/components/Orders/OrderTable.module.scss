@@ -298,6 +298,71 @@
     }
 }
 
+.tasks {
+    &__label {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        color: $grey;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-top: 20px;
+        margin-bottom: 12px;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: $font-size-xs;
+        color: $dark;
+
+        &--done {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        &__title {
+            font-weight: $font-weight-semibold;
+        }
+
+        &__due {
+            font-size: 10px;
+            color: $grey;
+            margin-left: auto;
+        }
+
+        &__done_btn {
+            height: 22px;
+            padding: 0 8px;
+            font-size: 10px;
+            border: 1.5px dashed $outline;
+            background: transparent;
+            color: $grey;
+
+            &:hover {
+                color: $primary;
+                border: 1.5px dashed $primary;
+            }
+        }
+    }
+
+    &__form {
+        display: flex;
+        gap: 8px;
+
+        input {
+            height: 32px;
+        }
+    }
+}
+
 .history {
     &__label {
         font-size: $font-size-xs;

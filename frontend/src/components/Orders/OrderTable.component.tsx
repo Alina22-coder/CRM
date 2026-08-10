@@ -13,6 +13,8 @@ import { EditOrderModal } from "../Modal/EditOrderModal.component";
 import { toast } from "sonner";
 import type { IHistory } from "../../interfaces/IHistory";
 import { formatHistoryText, getHistoryAuthor } from "../../helpers/formatHistoryEntry";
+import type { ITask } from "../../interfaces/ITask";
+import { taskService } from "../../services/task.service";
 
 type OrderPropType = {
     order: IOrder;
@@ -64,9 +66,20 @@ export const OrderTable: FC<OrderPropType> = ({
     const [disagreeReason, setDisagreeReason] = useState("");
     const [disagreeComment, setDisagreeComment] = useState("");
 
+    const [tasks, setTasks] = useState<ITask[]>([]);
+    const [taskTitle, setTaskTitle] = useState("");
+    const [taskDueDate, setTaskDueDate] = useState("");
+    const [isCreatingTask, setIsCreatingTask] = useState(false);
+
     const loadHistory = () => {
         orderService.getHistoryByOrderId(order._id).then((res) => {
             setHistory(res.data ?? []);
+        });
+    };
+
+    const loadTasks = () => {
+        taskService.getAllTasksByOrderId(order._id).then((res) => {
+            setTasks(res.data ?? []);
         });
     };
 
@@ -76,6 +89,7 @@ export const OrderTable: FC<OrderPropType> = ({
             setComments(res.data.comments ?? []);
         });
         loadHistory();
+        loadTasks();
     }, [expanded, order._id]);
 
     useEffect(() => {
@@ -129,6 +143,37 @@ export const OrderTable: FC<OrderPropType> = ({
     };
 
     const [isEditOpen, setIsEditOpen] = useState(false);
+
+    const createTask = () => {
+        if (!taskTitle.trim() || !taskDueDate || !user?._id || isCreatingTask)
+            return;
+
+        setIsCreatingTask(true);
+        taskService
+            .createTask(order._id, {
+                title: taskTitle,
+                assignee: user._id,
+                dueDate: taskDueDate,
+            })
+            .then((res) => {
+                setTasks((prev) => [...prev, res.data]);
+                setTaskTitle("");
+                setTaskDueDate("");
+            })
+            .catch(() => {
+                toast.error("Failed to create task");
+            })
+            .finally(() => {
+                setIsCreatingTask(false);
+            });
+    };
+
+    const markTaskDone = (taskId: string) => {
+        taskService
+            .markDone(taskId)
+            .then(() => loadTasks())
+            .catch(() => toast.error("Failed to update task"));
+    };
 
     return (
         <>
@@ -555,6 +600,90 @@ export const OrderTable: FC<OrderPropType> = ({
                                         );
                                     })}
                                 </div>
+
+                                <div className={styles.tasks__label}>
+                                    Tasks
+                                </div>
+                                <div className={styles.tasks__list}>
+                                    {tasks.length === 0 && (
+                                        <div className={styles.history__empty}>
+                                            No tasks
+                                        </div>
+                                    )}
+                                    {tasks.map((t) => (
+                                        <div
+                                            key={t._id}
+                                            className={`${styles.tasks__item} ${
+                                                t.isDone
+                                                    ? styles["tasks__item--done"]
+                                                    : ""
+                                            }`}
+                                        >
+                                            <div
+                                                className={
+                                                    styles.tasks__item__title
+                                                }
+                                            >
+                                                {t.title}
+                                            </div>
+                                            <div
+                                                className={
+                                                    styles.tasks__item__due
+                                                }
+                                            >
+                                                {new Date(
+                                                    t.dueDate,
+                                                ).toLocaleString()}
+                                            </div>
+                                            {!t.isDone && (
+                                                <button
+                                                    className={
+                                                        styles.tasks__item__done_btn
+                                                    }
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        markTaskDone(t._id);
+                                                    }}
+                                                >
+                                                    Mark done
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {(!currentOrder.manager ||
+                                    currentOrder.manager === user?.surname) && (
+                                    <div className={styles.tasks__form}>
+                                        <input
+                                            type="text"
+                                            placeholder="Task title"
+                                            value={taskTitle}
+                                            onChange={(e) =>
+                                                setTaskTitle(e.target.value)
+                                            }
+                                        />
+                                        <input
+                                            type="datetime-local"
+                                            value={taskDueDate}
+                                            onChange={(e) =>
+                                                setTaskDueDate(e.target.value)
+                                            }
+                                        />
+                                        <button
+                                            className={
+                                                styles.comment__btn__submit
+                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                createTask();
+                                            }}
+                                            disabled={isCreatingTask}
+                                        >
+                                            + Add task
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </td>

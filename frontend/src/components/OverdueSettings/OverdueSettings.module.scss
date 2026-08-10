@@ -1,0 +1,54 @@
+@use "../../styles/variables/colors" as *;
+@use "../../styles/variables/typography" as *;
+
+.overdue {
+    flex: 1;
+    background: $white;
+    border-radius: $br-12;
+    padding: 24px;
+    box-shadow: $shadow-card;
+    margin-top: 24px;
+
+    &__title {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-extrabold;
+        margin-bottom: 22px;
+    }
+
+    &__toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: $font-size-sm;
+        font-weight: $font-weight-semibold;
+        text-transform: none;
+        margin-bottom: 24px;
+        cursor: pointer;
+
+        input {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &__section {
+        margin-bottom: 0;
+    }
+
+    &__label {
+        font-size: $font-size-xs;
+        font-weight: $font-weight-semibold;
+        color: $grey;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 12px;
+    }
+
+    &__input {
+        width: 120px;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid $outline;
+        font-size: $font-size-sm;
+    }
+}

@@ -156,6 +156,26 @@ class OrderRepository {
         return OrderModel.create(order);
     }
 
+    public getNewOrdersOlderThan(cutoff: Date): Promise<IOrder[]> {
+        return OrderModel.find({
+            status: Status.NEW,
+            is_overdue: false,
+            status_updated_at: { $lte: cutoff },
+        });
+    }
+
+    public markOverdue(orderId: string): Promise<IOrder | null> {
+        return OrderModel.findByIdAndUpdate(
+            orderId,
+            { is_overdue: true },
+            { new: true },
+        );
+    }
+
+    public getOverdueCount(): Promise<number> {
+        return OrderModel.countDocuments({ is_overdue: true });
+    }
+
     public async getAllOrdersForExcel(
         query: IOrderQuery,
         managerSurname?: string,

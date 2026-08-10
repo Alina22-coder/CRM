@@ -8,6 +8,8 @@ import { swaggerDocument, swaggerUI } from "../config/swagger.config.js";
 import historyRouter from "./history.router.js";
 import telegramRouter from "./telegram.router.js";
 import autoAssignRouter from "./auto-assign.router.js";
+import overdueSettingsRouter from "./overdue-settings.router.js";
+import taskRouter from "./task.router.js";
 
 const router = Router();
 
@@ -28,6 +30,10 @@ router.use("/history", historyRouter);
 router.use("/telegram", telegramRouter);
 
 router.use("/auto-assign", autoAssignRouter);
+
+router.use("/overdue-settings", overdueSettingsRouter);
+
+router.use("/tasks", taskRouter);
 
 router.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 

@@ -8,6 +8,8 @@ import { CommentValidator } from "../validators/comment.validator.js";
 import { roleMiddleware } from "../middleware/role.middleware.js";
 import RoleEnum from "../enums/role.enum.js";
 import { historyController } from "../controllers/history.controller.js";
+import { taskController } from "../controllers/task.controller.js";
+import { TaskValidator } from "../validators/task.validator.js";
 
 const orderRouter = Router();
 
@@ -74,6 +76,21 @@ orderRouter.get(
     authMiddleware.checkAccessToken,
     commonMiddleware.isValidate("id"),
     historyController.getAllHistoryByOrderId,
+);
+
+orderRouter.post(
+    "/:id/tasks",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
+    commonMiddleware.validateBody(TaskValidator.create),
+    taskController.createTask,
+);
+
+orderRouter.get(
+    "/:id/tasks",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
+    taskController.getAllTasksByOrderId,
 );
 
 export default orderRouter;

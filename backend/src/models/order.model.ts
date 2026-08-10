@@ -55,6 +55,14 @@ const orderSchema = new Schema({
         type: String,
         enum: Status,
     },
+    status_updated_at: {
+        type: Date,
+        default: null,
+    },
+    is_overdue: {
+        type: Boolean,
+        default: false,
+    },
     disagree_reason: {
         type: String,
         enum: DisagreeReason,

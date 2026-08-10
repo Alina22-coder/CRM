@@ -12,6 +12,10 @@ class CommentRepository {
             "name surname",
         );
     }
+
+    public hasAnyComment(orderId: string): Promise<boolean> {
+        return CommentModel.exists({ _orderId: orderId }).then(Boolean);
+    }
 }
 
 export const commentRepository = new CommentRepository();

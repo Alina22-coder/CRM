@@ -8,6 +8,7 @@ import ApiError from "./errors/api.error";
 import config from "./config/config";
 import createAdmin from "./seeds/admin.seed.js";
 import "./services/telegram.service";
+import { startScheduler } from "./services/scheduler.service";
 
 const app = express();
 
@@ -31,6 +32,7 @@ process.on("uncaughtException", (err) => {
 const bootstrap = async () => {
     await connectDB();
     await createAdmin();
+    startScheduler();
 
     app.listen(config.PORT, () => {
         console.log(`Server is running on port ${config.PORT}`);

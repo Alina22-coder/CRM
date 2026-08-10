@@ -43,6 +43,14 @@ const swaggerDocument: OpenAPIV3.Document = {
             name: "AutoAssign",
             description: "Automatic order-to-manager assignment settings",
         },
+        {
+            name: "OverdueSettings",
+            description: "Settings for automatic overdue-order detection",
+        },
+        {
+            name: "Tasks",
+            description: "Order tasks and reminders",
+        },
     ],
     paths: {
         "/auth/login": {
@@ -1261,6 +1269,237 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/overdue-settings": {
+            get: {
+                tags: ["OverdueSettings"],
+                summary: "Get overdue-detection settings (Admin only)",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Current overdue settings",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/OverdueSettings" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+            patch: {
+                tags: ["OverdueSettings"],
+                summary: "Update overdue-detection settings (Admin only)",
+                description:
+                    "Enable/disable automatic overdue detection and set the threshold (hours) a New order can stay without a comment before being flagged.",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    enabled: { type: "boolean" },
+                                    thresholdHours: { type: "integer", minimum: 1 },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Updated overdue settings",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/OverdueSettings" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/orders/{id}/tasks": {
+            post: {
+                tags: ["Tasks"],
+                summary: "Create a task/reminder for an order",
+                description:
+                    "If the order's status hasn't changed by dueDate, the assignee gets a reminder (in Telegram, if enabled).",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["title", "assignee", "dueDate"],
+                                properties: {
+                                    title: { type: "string" },
+                                    assignee: { type: "string", description: "User id" },
+                                    dueDate: { type: "string", format: "date-time" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "201": {
+                        description: "Task created",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Task" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+            get: {
+                tags: ["Tasks"],
+                summary: "Get tasks for an order",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                responses: {
+                    "200": {
+                        description: "List of tasks for the order",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Task" },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/tasks/my": {
+            get: {
+                tags: ["Tasks"],
+                summary: "Get open tasks assigned to the current user",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "List of open tasks",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Task" },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/tasks/{taskId}/done": {
+            patch: {
+                tags: ["Tasks"],
+                summary: "Mark a task as done",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "taskId", in: "path", required: true, schema: { type: "string" } },
+                ],
+                responses: {
+                    "200": {
+                        description: "Updated task",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Task" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/users": {
             get: {
                 tags: ["Users"],
@@ -1799,6 +2038,15 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "string",
                         enum: ["In work", "New", "Aggre", "Disaggre", "Dubbing"],
                     },
+                    status_updated_at: {
+                        type: "string",
+                        format: "date-time",
+                        description: "Timestamp of the last status change",
+                    },
+                    is_overdue: {
+                        type: "boolean",
+                        description: "True if flagged overdue by the automated check (New status, no comment, past the configured threshold)",
+                    },
                     manager: {
                         type: "string",
                         nullable: true,
@@ -1826,6 +2074,31 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "integer",
                         description: "Internal round-robin pointer",
                     },
+                },
+            },
+            OverdueSettings: {
+                type: "object",
+                properties: {
+                    _id: { type: "string" },
+                    enabled: { type: "boolean" },
+                    thresholdHours: {
+                        type: "integer",
+                        description: "Hours a New order can stay without a comment before being flagged overdue",
+                    },
+                },
+            },
+            Task: {
+                type: "object",
+                properties: {
+                    _id: { type: "string" },
+                    title: { type: "string" },
+                    order: { type: "string" },
+                    assignee: { type: "string" },
+                    dueDate: { type: "string", format: "date-time" },
+                    statusAtCreation: { type: "string" },
+                    isDone: { type: "boolean" },
+                    reminderSentAt: { type: "string", format: "date-time", nullable: true },
+                    createdAt: { type: "string", format: "date-time" },
                 },
             },
             OrderStatistic: {
