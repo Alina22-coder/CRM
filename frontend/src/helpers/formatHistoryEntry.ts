@@ -16,7 +16,11 @@ const FIELD_LABELS: Record<string, string> = {
     already_paid: "Already paid",
     utm: "UTM",
     msg: "Message",
+    disagree_reason: "Disagree reason",
+    disagree_reason_comment: "Disagree comment",
 };
+
+const HIDDEN_FIELDS = new Set(["status_updated_at", "is_overdue", "disagree_at"]);
 
 const TYPE_LABELS: Record<IHistory["type"], string> = {
     status_change: "Status",
@@ -47,8 +51,12 @@ export const formatHistoryText = (entry: IHistory): string => {
 
 export const getHistoryAuthor = (
     entry: IHistory,
-): { name: string; surname: string } | null => {
+): { surname: string } | null => {
     return typeof entry.author === "object" ? entry.author : null;
+};
+
+export const isHiddenHistoryEntry = (entry: IHistory): boolean => {
+    return !!entry.field && HIDDEN_FIELDS.has(entry.field);
 };
 
 export const getHistoryOrder = (

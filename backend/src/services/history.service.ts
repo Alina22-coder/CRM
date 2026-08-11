@@ -8,6 +8,12 @@ const TRACKED_FIELD_TO_TYPE: Partial<Record<keyof IOrder, HistoryType>> = {
     group: HistoryType.GROUP_CHANGE,
 };
 
+const UNTRACKED_FIELDS: Set<keyof IOrder> = new Set([
+    "status_updated_at",
+    "is_overdue",
+    "disagree_at",
+]);
+
 class HistoryService {
     public async logOrderChanges(
         orderId: string,
@@ -18,6 +24,8 @@ class HistoryService {
         const entries = [];
 
         for (const field of Object.keys(after) as (keyof IOrder)[]) {
+            if (UNTRACKED_FIELDS.has(field)) continue;
+
             const oldValue = before[field];
             const newValue = after[field];
 

@@ -10,6 +10,7 @@ import {
     formatHistoryText,
     getHistoryAuthor,
     getHistoryOrder,
+    isHiddenHistoryEntry,
 } from "../../helpers/formatHistoryEntry";
 import styles from "./History.module.scss";
 
@@ -124,7 +125,9 @@ export const History = () => {
                             </div>
                         )}
 
-                        {entries.map((entry) => {
+                        {entries
+                            .filter((entry) => !isHiddenHistoryEntry(entry))
+                            .map((entry) => {
                             const entryAuthor = getHistoryAuthor(entry);
                             const order = getHistoryOrder(entry);
 
@@ -140,7 +143,7 @@ export const History = () => {
                                             }
                                         >
                                             {entryAuthor
-                                                ? `${entryAuthor.name} ${entryAuthor.surname}`
+                                                ? entryAuthor.surname
                                                 : ""}
                                         </div>
                                         <div

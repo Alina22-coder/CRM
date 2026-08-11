@@ -10,6 +10,7 @@ import RoleEnum from "../enums/role.enum.js";
 import { historyController } from "../controllers/history.controller.js";
 import { taskController } from "../controllers/task.controller.js";
 import { TaskValidator } from "../validators/task.validator.js";
+import { createOrderRateLimit } from "../middleware/rate-limit.middleware.js";
 
 const orderRouter = Router();
 
@@ -22,6 +23,7 @@ orderRouter.get(
 
 orderRouter.post(
     "/",
+    createOrderRateLimit,
     commonMiddleware.validateBody(OrderValidator.create),
     orderController.createOrder,
 );

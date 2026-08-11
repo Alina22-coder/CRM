@@ -36,16 +36,33 @@ class CommentService {
         const autoUpdate = applyAutoAssignDefaults(order, user, "comment");
 
         const update: Partial<IOrder> = { ...autoUpdate };
+        const statusChanging =
+            !!statusUpdate?.status && statusUpdate.status !== order.status;
 
-        if (statusUpdate?.status) {
-            update.status = statusUpdate.status;
-            update.disagree_reason = statusUpdate.disagree_reason ?? null;
-            update.disagree_reason_comment =
-                statusUpdate.disagree_reason_comment ?? null;
+        if (statusChanging) {
+            update.status = statusUpdate!.status;
+
+            if (statusUpdate!.status === Status.DISAGGRE) {
+                update.disagree_reason = statusUpdate!.disagree_reason ?? null;
+                update.disagree_reason_comment =
+                    statusUpdate!.disagree_reason_comment ?? null;
+                update.disagree_at = new Date();
+            } else {
+                update.disagree_reason = null;
+                update.disagree_reason_comment = null;
+                update.disagree_at = null;
+            }
+
+            update.status_updated_at = new Date();
+            update.is_overdue = false;
+        } else if (order.is_overdue) {
+            update.is_overdue = false;
         }
 
         const resultingStatus = update.status ?? order.status;
-        const resultingReason = update.disagree_reason ?? order.disagree_reason;
+        const resultingReason = statusChanging
+            ? update.disagree_reason
+            : update.disagree_reason ?? order.disagree_reason;
 
         if (resultingStatus === Status.DISAGGRE && !resultingReason) {
             throw new ApiError(

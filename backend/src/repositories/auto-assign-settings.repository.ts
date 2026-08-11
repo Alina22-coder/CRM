@@ -4,18 +4,20 @@ import AutoAssignMode from "../enums/auto-assign-mode.enum";
 
 class AutoAssignSettingsRepository {
     public async getSettings(): Promise<IAutoAssignSettings> {
-        let settings = await AutoAssignSettingsModel.findOne();
+        const settings = await AutoAssignSettingsModel.findOneAndUpdate(
+            {},
+            {
+                $setOnInsert: {
+                    enabled: false,
+                    mode: AutoAssignMode.ROUND_ROBIN,
+                    participantIds: [],
+                    lastAssignedUserId: null,
+                },
+            },
+            { new: true, upsert: true },
+        );
 
-        if (!settings) {
-            settings = await AutoAssignSettingsModel.create({
-                enabled: false,
-                mode: AutoAssignMode.ROUND_ROBIN,
-                participantIds: [],
-                lastAssignedIndex: -1,
-            });
-        }
-
-        return settings;
+        return settings as IAutoAssignSettings;
     }
 
     public async updateSettings(
@@ -34,10 +36,10 @@ class AutoAssignSettingsRepository {
         return settings as IAutoAssignSettings;
     }
 
-    public async setLastAssignedIndex(index: number): Promise<void> {
+    public async setLastAssignedUserId(userId: string): Promise<void> {
         await AutoAssignSettingsModel.updateOne(
             {},
-            { lastAssignedIndex: index },
+            { lastAssignedUserId: userId },
         );
     }
 }

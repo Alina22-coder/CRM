@@ -4,7 +4,6 @@ import Course from "../enums/course.enum";
 import CourseFormat from "../enums/course-format.enum";
 import CourseType from "../enums/course-type.enum";
 import Status from "../enums/status.enum";
-import DisagreeReason from "../enums/disagree-reason.enum";
 
 const Schema = mongoose.Schema;
 
@@ -65,11 +64,14 @@ const orderSchema = new Schema({
     },
     disagree_reason: {
         type: String,
-        enum: DisagreeReason,
         default: null,
     },
     disagree_reason_comment: {
         type: String,
+        default: null,
+    },
+    disagree_at: {
+        type: Date,
         default: null,
     },
     manager: {

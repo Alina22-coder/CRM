@@ -95,6 +95,11 @@ export const Users = () => {
                                         value: statistic?.Dubbing,
                                         color: "#9698d6",
                                     },
+                                    {
+                                        label: "Overdue",
+                                        value: statistic?.overdueCount,
+                                        color: "#d63048",
+                                    },
                                 ] as const
                             ).map(({ label, value, color }) => (
                                 <div

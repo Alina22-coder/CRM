@@ -5,6 +5,6 @@ export class AutoAssignValidator {
     public static update = joi.object({
         enabled: joi.boolean(),
         mode: joi.string().valid(...Object.values(AutoAssignMode)),
-        participantIds: joi.array().items(joi.string()),
+        participantIds: joi.array().items(joi.string().hex().length(24)),
     });
 }

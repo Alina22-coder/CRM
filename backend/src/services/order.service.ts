@@ -33,6 +33,19 @@ class OrderService {
             manager: manager ?? undefined,
         });
 
+        if (manager) {
+            const managerUser = await userRepository.getUserBySurname(manager);
+
+            if (managerUser) {
+                await historyService.logOrderChanges(
+                    createdOrder._id,
+                    managerUser._id,
+                    {},
+                    { manager },
+                );
+            }
+        }
+
         await telegramService.notifyAdmins(
             NotificationEvent.NEW_ORDER,
             `New order: ${createdOrder.name} ${createdOrder.surname}${
@@ -97,9 +110,21 @@ class OrderService {
             updatedFields.status = Status.AGGRE;
         }
 
+        const statusChanging =
+            !!updatedFields.status && updatedFields.status !== order.status;
+
+        if (statusChanging && updatedFields.status !== Status.DISAGGRE) {
+            updatedFields.disagree_reason = null;
+            updatedFields.disagree_reason_comment = null;
+            updatedFields.disagree_at = null;
+        }
+
         const resultingStatus = updatedFields.status ?? order.status;
-        const resultingReason =
-            updatedFields.disagree_reason ?? order.disagree_reason;
+        const enteringDisagree =
+            statusChanging && updatedFields.status === Status.DISAGGRE;
+        const resultingReason = enteringDisagree
+            ? update.disagree_reason
+            : updatedFields.disagree_reason ?? order.disagree_reason;
 
         if (resultingStatus === Status.DISAGGRE && !resultingReason) {
             throw new ApiError(
@@ -108,9 +133,13 @@ class OrderService {
             );
         }
 
-        if (updatedFields.status && updatedFields.status !== order.status) {
+        if (statusChanging) {
             updatedFields.status_updated_at = new Date();
             updatedFields.is_overdue = false;
+
+            if (updatedFields.status === Status.DISAGGRE) {
+                updatedFields.disagree_at = new Date();
+            }
         }
 
         const updatedOrder = await orderRepository.updateOrderById(

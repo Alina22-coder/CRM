@@ -12,7 +12,7 @@ import { TagInput } from "../ui/tag/TagInput.ui";
 import { EditOrderModal } from "../Modal/EditOrderModal.component";
 import { toast } from "sonner";
 import type { IHistory } from "../../interfaces/IHistory";
-import { formatHistoryText, getHistoryAuthor } from "../../helpers/formatHistoryEntry";
+import { formatHistoryText, getHistoryAuthor, isHiddenHistoryEntry } from "../../helpers/formatHistoryEntry";
 import type { ITask } from "../../interfaces/ITask";
 import { taskService } from "../../services/task.service";
 
@@ -65,6 +65,7 @@ export const OrderTable: FC<OrderPropType> = ({
     const [statusDraft, setStatusDraft] = useState(order.status ?? "");
     const [disagreeReason, setDisagreeReason] = useState("");
     const [disagreeComment, setDisagreeComment] = useState("");
+    const [isCustomReason, setIsCustomReason] = useState(false);
 
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [taskTitle, setTaskTitle] = useState("");
@@ -471,35 +472,67 @@ export const OrderTable: FC<OrderPropType> = ({
                                                         <label>
                                                             Disagree reason
                                                         </label>
-                                                        <select
-                                                            value={
-                                                                disagreeReason
-                                                            }
-                                                            onChange={(e) =>
+                                                        {isCustomReason ? (
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Enter a reason"
+                                                                value={
+                                                                    disagreeReason
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setDisagreeReason(
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                            />
+                                                        ) : (
+                                                            <select
+                                                                value={
+                                                                    disagreeReason
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setDisagreeReason(
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <option value="">
+                                                                    select a reason
+                                                                </option>
+                                                                {DISAGREE_REASONS.map(
+                                                                    (reason) => (
+                                                                        <option
+                                                                            key={
+                                                                                reason
+                                                                            }
+                                                                            value={
+                                                                                reason
+                                                                            }
+                                                                        >
+                                                                            {reason}
+                                                                        </option>
+                                                                    ),
+                                                                )}
+                                                            </select>
+                                                        )}
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setIsCustomReason(
+                                                                    !isCustomReason,
+                                                                );
                                                                 setDisagreeReason(
-                                                                    e.target
-                                                                        .value,
-                                                                )
-                                                            }
+                                                                    "",
+                                                                );
+                                                            }}
                                                         >
-                                                            <option value="">
-                                                                select a reason
-                                                            </option>
-                                                            {DISAGREE_REASONS.map(
-                                                                (reason) => (
-                                                                    <option
-                                                                        key={
-                                                                            reason
-                                                                        }
-                                                                        value={
-                                                                            reason
-                                                                        }
-                                                                    >
-                                                                        {reason}
-                                                                    </option>
-                                                                ),
-                                                            )}
-                                                        </select>
+                                                            {isCustomReason
+                                                                ? "Choose from list"
+                                                                : "Enter custom reason"}
+                                                        </button>
 
                                                         <input
                                                             type="text"
@@ -567,7 +600,9 @@ export const OrderTable: FC<OrderPropType> = ({
                                             No events
                                         </div>
                                     )}
-                                    {history.map((h) => {
+                                    {history
+                                        .filter((h) => !isHiddenHistoryEntry(h))
+                                        .map((h) => {
                                         const author = getHistoryAuthor(h);
 
                                         return (
@@ -581,7 +616,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                                     }
                                                 >
                                                     {author
-                                                        ? `${author.name} ${author.surname}`
+                                                        ? author.surname
                                                         : ""}
                                                     <span>
                                                         {new Date(

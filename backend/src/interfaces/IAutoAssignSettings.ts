@@ -6,7 +6,7 @@ interface IAutoAssignSettings {
     enabled: boolean;
     mode: AutoAssignMode;
     participantIds: Types.ObjectId[];
-    lastAssignedIndex: number;
+    lastAssignedUserId: Types.ObjectId | null;
 }
 
 export default IAutoAssignSettings;

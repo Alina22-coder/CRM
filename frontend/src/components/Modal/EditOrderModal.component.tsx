@@ -58,6 +58,7 @@ export const EditOrderModal = ({
     const [newGroupName, setNewGroupName] = useState("");
 
     const selectedStatus = watch("status");
+    const [isCustomReason, setIsCustomReason] = useState(false);
 
     useEffect(() => {
         reset({
@@ -76,6 +77,12 @@ export const EditOrderModal = ({
             already_paid: order.already_paid ?? "",
             group: order.group ?? "",
         });
+        setIsCustomReason(
+            !!order.disagree_reason &&
+                !DISAGREE_REASONS.includes(
+                    order.disagree_reason as (typeof DISAGREE_REASONS)[number],
+                ),
+        );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [order._id]);
 
@@ -246,24 +253,47 @@ export const EditOrderModal = ({
                             <>
                                 <div className={styles.grid__field}>
                                     <label>Disagree reason</label>
-                                    <select
-                                        {...register("disagree_reason", {
-                                            required:
-                                                "Disagree reason is required",
-                                        })}
-                                    >
-                                        <option value="">
-                                            select a reason
-                                        </option>
-                                        {DISAGREE_REASONS.map((reason) => (
-                                            <option
-                                                key={reason}
-                                                value={reason}
-                                            >
-                                                {reason}
+                                    {isCustomReason ? (
+                                        <input
+                                            type="text"
+                                            placeholder="Enter a reason"
+                                            {...register("disagree_reason", {
+                                                required:
+                                                    "Disagree reason is required",
+                                            })}
+                                        />
+                                    ) : (
+                                        <select
+                                            {...register("disagree_reason", {
+                                                required:
+                                                    "Disagree reason is required",
+                                            })}
+                                        >
+                                            <option value="">
+                                                select a reason
                                             </option>
-                                        ))}
-                                    </select>
+                                            {DISAGREE_REASONS.map((reason) => (
+                                                <option
+                                                    key={reason}
+                                                    value={reason}
+                                                >
+                                                    {reason}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className={styles.btn_select}
+                                        onClick={() => {
+                                            setIsCustomReason(!isCustomReason);
+                                            setValue("disagree_reason", "");
+                                        }}
+                                    >
+                                        {isCustomReason
+                                            ? "Choose from list"
+                                            : "Enter custom reason"}
+                                    </button>
                                     {errors.disagree_reason && (
                                         <span className={styles.error}>
                                             {errors.disagree_reason.message}

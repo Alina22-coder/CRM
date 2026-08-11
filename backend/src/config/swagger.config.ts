@@ -2047,6 +2047,12 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "boolean",
                         description: "True if flagged overdue by the automated check (New status, no comment, past the configured threshold)",
                     },
+                    disagree_at: {
+                        type: "string",
+                        format: "date-time",
+                        nullable: true,
+                        description: "Timestamp of the most recent transition into Disaggre status; used by the loss report period filter",
+                    },
                     manager: {
                         type: "string",
                         nullable: true,
@@ -2070,9 +2076,10 @@ const swaggerDocument: OpenAPIV3.Document = {
                         items: { type: "string" },
                         description: "IDs of managers participating in auto-assign",
                     },
-                    lastAssignedIndex: {
-                        type: "integer",
-                        description: "Internal round-robin pointer",
+                    lastAssignedUserId: {
+                        type: "string",
+                        nullable: true,
+                        description: "Internal round-robin pointer (last assigned manager's user id)",
                     },
                 },
             },
@@ -2103,22 +2110,12 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
             OrderStatistic: {
                 type: "object",
+                description: "Total orders, one count per status (keyed by status value, e.g. 'New', 'In work'), and overdueCount.",
                 properties: {
                     total: { type: "integer" },
-                    byStatus: {
-                        type: "array",
-                        items: {
-                            type: "object",
-                            properties: {
-                                _id: {
-                                    type: "string",
-                                    description: "Order status",
-                                },
-                                count: { type: "integer" },
-                            },
-                        },
-                    },
+                    overdueCount: { type: "integer" },
                 },
+                additionalProperties: { type: "integer" },
             },
             Group: {
                 type: "object",

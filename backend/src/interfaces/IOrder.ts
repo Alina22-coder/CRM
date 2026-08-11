@@ -18,6 +18,7 @@ interface IOrder {
     is_overdue?: boolean;
     disagree_reason?: string | null;
     disagree_reason_comment?: string | null;
+    disagree_at?: Date | null;
     manager?: any;
     group?: string;
 }

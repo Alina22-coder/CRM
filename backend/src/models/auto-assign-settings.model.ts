@@ -19,9 +19,10 @@ const autoAssignSettingsSchema = new Schema({
         ref: "user",
         default: [],
     },
-    lastAssignedIndex: {
-        type: Number,
-        default: -1,
+    lastAssignedUserId: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+        default: null,
     },
 });
 

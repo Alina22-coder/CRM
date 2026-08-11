@@ -9,7 +9,7 @@ class HistoryRepository {
     public getAllHistoryByOrderId(orderId: string): Promise<IHistory[]> {
         return HistoryModel.find({ order: orderId })
             .sort({ created_at: -1 })
-            .populate("author", "name surname");
+            .populate("author", "surname");
     }
 
     public async getAllHistory(filter: {
@@ -42,7 +42,7 @@ class HistoryRepository {
                 .sort({ created_at: -1 })
                 .skip((filter.page - 1) * filter.pageSize)
                 .limit(filter.pageSize)
-                .populate("author", "name surname")
+                .populate("author", "surname")
                 .populate("order", "name surname email"),
             HistoryModel.countDocuments(query),
         ]);

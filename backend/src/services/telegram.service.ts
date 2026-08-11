@@ -32,6 +32,16 @@ class TelegramService {
             return;
         }
 
+        const existingOwner = await userRepository.getUserByTelegramChatId(
+            String(chatId),
+        );
+
+        if (existingOwner && existingOwner._id !== token.user.toString()) {
+            await userRepository.updateUserById(existingOwner._id, {
+                telegram_chat_id: null,
+            });
+        }
+
         await userRepository.updateUserById(token.user.toString(), {
             telegram_chat_id: String(chatId),
         });

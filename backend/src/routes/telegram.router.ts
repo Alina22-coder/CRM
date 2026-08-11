@@ -3,6 +3,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { commonMiddleware } from "../middleware/common.middleware";
 import { telegramController } from "../controllers/telegram.controller";
 import { TelegramValidator } from "../validators/telegram.validator";
+import { telegramLinkCodeRateLimit } from "../middleware/rate-limit.middleware";
 
 const telegramRouter = Router();
 
@@ -15,6 +16,7 @@ telegramRouter.get(
 telegramRouter.post(
     "/link-code",
     authMiddleware.checkAccessToken,
+    telegramLinkCodeRateLimit,
     telegramController.getLinkCode,
 );
 

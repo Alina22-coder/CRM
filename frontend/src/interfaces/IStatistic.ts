@@ -5,4 +5,5 @@ export interface IStatistic {
     Aggre: number;
     Disaggre: number;
     Dubbing: number;
+    overdueCount?: number;
 }

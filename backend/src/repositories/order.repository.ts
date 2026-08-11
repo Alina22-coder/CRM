@@ -78,13 +78,20 @@ class OrderRepository {
     }
 
     public async getOrderStatistic() {
-        const [total, byStatus] = await Promise.all([
+        const [total, byStatus, overdueCount] = await Promise.all([
             OrderModel.countDocuments(),
             OrderModel.aggregate([
                 { $group: { _id: "$status", count: { $sum: 1 } } },
             ]),
+            OrderModel.countDocuments({ is_overdue: true }),
         ]);
-        return { total, byStatus };
+
+        const statusCounts: Record<string, number> = {};
+        for (const row of byStatus) {
+            statusCounts[row._id] = row.count;
+        }
+
+        return { total, ...statusCounts, overdueCount };
     }
 
     public async getStatisticByManager(managerSurname: string) {
@@ -105,12 +112,12 @@ class OrderRepository {
         const match: Record<string, any> = { status: Status.DISAGGRE };
 
         if (filter.start_date || filter.end_date) {
-            match.created_at = {};
+            match.disagree_at = {};
             if (filter.start_date) {
-                match.created_at.$gte = new Date(filter.start_date);
+                match.disagree_at.$gte = new Date(filter.start_date);
             }
             if (filter.end_date) {
-                match.created_at.$lte = new Date(filter.end_date);
+                match.disagree_at.$lte = new Date(filter.end_date);
             }
         }
 

@@ -2,6 +2,7 @@ import { autoAssignSettingsRepository } from "../repositories/auto-assign-settin
 import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import AutoAssignMode from "../enums/auto-assign-mode.enum";
+import RoleEnum from "../enums/role.enum";
 import IAutoAssignSettings from "../interfaces/IAutoAssignSettings";
 import IUser from "../interfaces/IUser";
 
@@ -33,7 +34,11 @@ class AutoAssignService {
 
         const activeParticipants = participants.filter(
             (user): user is IUser =>
-                !!user && user.is_active && !user.is_banned,
+                !!user &&
+                user.is_active &&
+                !user.is_banned &&
+                !user.isDeleted &&
+                user.role === RoleEnum.Manager,
         );
 
         if (activeParticipants.length === 0) {
@@ -51,11 +56,17 @@ class AutoAssignService {
         settings: IAutoAssignSettings,
         activeParticipants: IUser[],
     ): Promise<string> {
-        const nextIndex =
-            (settings.lastAssignedIndex + 1) % activeParticipants.length;
+        const lastAssignedUserId = settings.lastAssignedUserId?.toString();
+        const lastIndex = lastAssignedUserId
+            ? activeParticipants.findIndex(
+                  (user) => user._id.toString() === lastAssignedUserId,
+              )
+            : -1;
+
+        const nextIndex = (lastIndex + 1) % activeParticipants.length;
         const manager = activeParticipants[nextIndex];
 
-        await autoAssignSettingsRepository.setLastAssignedIndex(nextIndex);
+        await autoAssignSettingsRepository.setLastAssignedUserId(manager._id);
 
         return manager.surname;
     }
