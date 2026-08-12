@@ -69,7 +69,7 @@ export const NotificationBell: FC = () => {
         }
 
         setOpen(false);
-        navigate("/orders");
+        navigate("/admin/history");
     };
 
     const handleMarkAllRead = () => {
