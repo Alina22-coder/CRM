@@ -36,11 +36,16 @@ class AutoAssignSettingsRepository {
         return settings as IAutoAssignSettings;
     }
 
-    public async setLastAssignedUserId(userId: string): Promise<void> {
-        await AutoAssignSettingsModel.updateOne(
-            {},
-            { lastAssignedUserId: userId },
+    public async trySetLastAssignedUserId(
+        previousUserId: string | null,
+        nextUserId: string,
+    ): Promise<boolean> {
+        const result = await AutoAssignSettingsModel.updateOne(
+            { lastAssignedUserId: previousUserId },
+            { lastAssignedUserId: nextUserId },
         );
+
+        return result.modifiedCount === 1;
     }
 }
 

@@ -55,8 +55,9 @@ class AutoAssignService {
     private async pickByRoundRobin(
         settings: IAutoAssignSettings,
         activeParticipants: IUser[],
+        attemptsLeft = 5,
     ): Promise<string> {
-        const lastAssignedUserId = settings.lastAssignedUserId?.toString();
+        const lastAssignedUserId = settings.lastAssignedUserId?.toString() ?? null;
         const lastIndex = lastAssignedUserId
             ? activeParticipants.findIndex(
                   (user) => user._id.toString() === lastAssignedUserId,
@@ -66,7 +67,23 @@ class AutoAssignService {
         const nextIndex = (lastIndex + 1) % activeParticipants.length;
         const manager = activeParticipants[nextIndex];
 
-        await autoAssignSettingsRepository.setLastAssignedUserId(manager._id);
+        const applied = await autoAssignSettingsRepository.trySetLastAssignedUserId(
+            lastAssignedUserId,
+            manager._id,
+        );
+
+        if (!applied) {
+            if (attemptsLeft <= 0) {
+                return manager.surname;
+            }
+
+            const freshSettings = await autoAssignSettingsRepository.getSettings();
+            return this.pickByRoundRobin(
+                freshSettings,
+                activeParticipants,
+                attemptsLeft - 1,
+            );
+        }
 
         return manager.surname;
     }
@@ -78,14 +95,12 @@ class AutoAssignService {
         const counts =
             await orderRepository.getActiveOrderCountsByManagers(surnames);
 
-        let selected = surnames[0];
-        for (const surname of surnames) {
-            if (counts[surname] < counts[selected]) {
-                selected = surname;
-            }
-        }
+        const minCount = Math.min(...surnames.map((surname) => counts[surname]));
+        const leastLoaded = surnames.filter(
+            (surname) => counts[surname] === minCount,
+        );
 
-        return selected;
+        return leastLoaded[Math.floor(Math.random() * leastLoaded.length)];
     }
 }
 

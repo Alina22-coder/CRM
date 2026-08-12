@@ -15,3 +15,19 @@ export const telegramLinkCodeRateLimit = rateLimit({
     legacyHeaders: false,
     message: { message: "Too many link code requests, try again later" },
 });
+
+export const loginRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many login attempts, try again later" },
+});
+
+export const setPasswordRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many attempts, try again later" },
+});

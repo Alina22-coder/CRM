@@ -3,16 +3,18 @@ import { OverdueSettingsModel } from "../models/overdue-settings.model";
 
 class OverdueSettingsRepository {
     public async getSettings(): Promise<IOverdueSettings> {
-        let settings = await OverdueSettingsModel.findOne();
+        const settings = await OverdueSettingsModel.findOneAndUpdate(
+            {},
+            {
+                $setOnInsert: {
+                    enabled: false,
+                    thresholdHours: 24,
+                },
+            },
+            { new: true, upsert: true },
+        );
 
-        if (!settings) {
-            settings = await OverdueSettingsModel.create({
-                enabled: false,
-                thresholdHours: 24,
-            });
-        }
-
-        return settings;
+        return settings as IOverdueSettings;
     }
 
     public async updateSettings(

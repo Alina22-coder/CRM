@@ -43,10 +43,10 @@ export class OrderValidator {
     });
 
     public static update = joi.object({
-        name: joi.string().allow(null, ""),
-        surname: joi.string().allow(null, ""),
-        email: joi.string().email().allow(null, ""),
-        phone: joi.string().allow(null, ""),
+        name: joi.string().max(100).allow(null, ""),
+        surname: joi.string().max(100).allow(null, ""),
+        email: joi.string().email().max(200).allow(null, ""),
+        phone: joi.string().max(30).allow(null, ""),
         age: joi.number().min(0).allow(null),
         sum: joi.number().min(0).allow(null),
         already_paid: joi.number().min(0).allow(null),
@@ -66,8 +66,8 @@ export class OrderValidator {
             .string()
             .valid(...Object.values(CourseFormat))
             .allow(null),
-        group: joi.string().allow(null, ""),
-        msg: joi.string().allow(null, ""),
+        group: joi.string().max(100).allow(null, ""),
+        msg: joi.string().max(2000).allow(null, ""),
         disagree_reason: joi
             .string()
             .trim()
@@ -86,10 +86,10 @@ export class OrderValidator {
     });
 
     public static create = joi.object({
-        name: joi.string().required(),
-        surname: joi.string().required(),
-        email: joi.string().email().required(),
-        phone: joi.string().required(),
+        name: joi.string().max(100).required(),
+        surname: joi.string().max(100).required(),
+        email: joi.string().email().max(200).required(),
+        phone: joi.string().max(30).required(),
         age: joi.number().min(0),
         course: joi
             .string()
@@ -105,8 +105,8 @@ export class OrderValidator {
             .required(),
         sum: joi.number().min(0),
         already_paid: joi.number().min(0),
-        utm: joi.string().allow(""),
-        msg: joi.string().allow(""),
-        group: joi.string().allow(null, ""),
+        utm: joi.string().max(500).allow(""),
+        msg: joi.string().max(2000).allow(""),
+        group: joi.string().max(100).allow(null, ""),
     });
 }
