@@ -8,8 +8,10 @@ function SettingsPage() {
     return (
         <div className={styles.settings__page}>
             <Header />
-            <AutoAssignSettings />
-            <OverdueSettings />
+            <div className={styles.settings__content}>
+                <AutoAssignSettings />
+                <OverdueSettings />
+            </div>
             <Footer />
         </div>
     );
