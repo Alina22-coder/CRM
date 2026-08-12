@@ -8,6 +8,7 @@ import { Workbook } from "exceljs";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
+import { notificationService } from "./notification.service";
 import { autoAssignService } from "./auto-assign.service";
 import NotificationEvent from "../enums/notification-event.enum";
 import Status from "../enums/status.enum";
@@ -46,18 +47,34 @@ class OrderService {
             }
         }
 
+        const newOrderText = `New order: ${createdOrder.name} ${createdOrder.surname}${
+            manager ? ` (auto-assigned to ${manager})` : ""
+        }`;
+
         await telegramService.notifyAdmins(
             NotificationEvent.NEW_ORDER,
-            `New order: ${createdOrder.name} ${createdOrder.surname}${
-                manager ? ` (auto-assigned to ${manager})` : ""
-            }`,
+            newOrderText,
+        );
+        await notificationService.notifyAdmins(
+            NotificationEvent.NEW_ORDER,
+            newOrderText,
+            undefined,
+            createdOrder._id.toString(),
         );
 
         if (manager) {
+            const assignedText = `New order assigned to you: ${createdOrder.name} ${createdOrder.surname}`;
+
             await telegramService.notifyManagerBySurname(
                 manager,
                 NotificationEvent.NEW_ORDER,
-                `New order assigned to you: ${createdOrder.name} ${createdOrder.surname}`,
+                assignedText,
+            );
+            await notificationService.notifyManagerBySurname(
+                manager,
+                NotificationEvent.NEW_ORDER,
+                assignedText,
+                createdOrder._id.toString(),
             );
         }
 
@@ -163,12 +180,24 @@ class OrderService {
                     NotificationEvent.STATUS_CHANGE,
                     text,
                 );
+                await notificationService.notifyManagerBySurname(
+                    updatedOrder.manager,
+                    NotificationEvent.STATUS_CHANGE,
+                    text,
+                    orderId,
+                );
             }
 
             await telegramService.notifyAdmins(
                 NotificationEvent.STATUS_CHANGE,
                 text,
                 userId,
+            );
+            await notificationService.notifyAdmins(
+                NotificationEvent.STATUS_CHANGE,
+                text,
+                userId,
+                orderId,
             );
         }
 

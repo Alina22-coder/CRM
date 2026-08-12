@@ -10,6 +10,7 @@ import telegramRouter from "./telegram.router.js";
 import autoAssignRouter from "./auto-assign.router.js";
 import overdueSettingsRouter from "./overdue-settings.router.js";
 import taskRouter from "./task.router.js";
+import notificationRouter from "./notification.router.js";
 
 const router = Router();
 
@@ -34,6 +35,8 @@ router.use("/auto-assign", autoAssignRouter);
 router.use("/overdue-settings", overdueSettingsRouter);
 
 router.use("/tasks", taskRouter);
+
+router.use("/notifications", notificationRouter);
 
 router.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 

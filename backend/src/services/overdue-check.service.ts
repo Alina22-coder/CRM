@@ -2,6 +2,7 @@ import { orderRepository } from "../repositories/order.repository";
 import { commentRepository } from "../repositories/comment.repository";
 import { overdueSettingsRepository } from "../repositories/overdue-settings.repository";
 import { telegramService } from "./telegram.service";
+import { notificationService } from "./notification.service";
 import NotificationEvent from "../enums/notification-event.enum";
 
 class OverdueCheckService {
@@ -33,11 +34,23 @@ class OverdueCheckService {
                     NotificationEvent.ORDER_OVERDUE,
                     text,
                 );
+                await notificationService.notifyManagerBySurname(
+                    order.manager,
+                    NotificationEvent.ORDER_OVERDUE,
+                    text,
+                    order._id.toString(),
+                );
             }
 
             await telegramService.notifyAdmins(
                 NotificationEvent.ORDER_OVERDUE,
                 text,
+            );
+            await notificationService.notifyAdmins(
+                NotificationEvent.ORDER_OVERDUE,
+                text,
+                undefined,
+                order._id.toString(),
             );
         }
     }

@@ -1,3 +1,4 @@
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
@@ -5,10 +6,21 @@ import { authService } from "../../services/auth.service";
 import RoleEnum from "../../enums/role.enum";
 import { Logo } from "../Logo/Logo";
 import { toast } from "sonner";
+import { NotificationBell } from "./NotificationBell/NotificationBell.component";
 
 export const Header = () => {
     const navigate = useNavigate();
     const user = useCurrentUser();
+    const [search, setSearch] = useState("");
+
+    const handleSearch = (e: FormEvent) => {
+        e.preventDefault();
+
+        const trimmed = search.trim();
+        if (!trimmed) return;
+
+        navigate(`/orders?surname=${encodeURIComponent(trimmed)}`);
+    };
 
     const handleLogout = async () => {
         try {
@@ -33,7 +45,10 @@ export const Header = () => {
             </Link>
 
             <div className={styles.header__content}>
-                <div className={styles.header__search}>
+                <form
+                    className={styles.header__search}
+                    onSubmit={handleSearch}
+                >
                     <svg
                         width="16"
                         height="16"
@@ -48,23 +63,13 @@ export const Header = () => {
                     <input
                         className={styles.search__input}
                         type="text"
-                        placeholder="Search orders, managers..."
+                        placeholder="Search orders by surname..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
-                </div>
+                </form>
 
-                <button className={styles.header__notification}>
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                    </svg>
-                </button>
+                <NotificationBell />
 
                 <div className={styles.header__account}>
                     <Link to="/account">

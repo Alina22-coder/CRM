@@ -9,6 +9,7 @@ import { userRepository } from "../repositories/user.repository";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
+import { notificationService } from "./notification.service";
 import NotificationEvent from "../enums/notification-event.enum";
 
 type StatusUpdate = Pick<
@@ -104,12 +105,24 @@ class CommentService {
                 notificationEvent,
                 notificationText,
             );
+            await notificationService.notifyManagerBySurname(
+                managerSurname,
+                notificationEvent,
+                notificationText,
+                orderId,
+            );
         }
 
         await telegramService.notifyAdmins(
             notificationEvent,
             notificationText,
             userId,
+        );
+        await notificationService.notifyAdmins(
+            notificationEvent,
+            notificationText,
+            userId,
+            orderId,
         );
 
         return comment;

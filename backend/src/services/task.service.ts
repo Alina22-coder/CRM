@@ -4,6 +4,7 @@ import ITask from "../interfaces/ITask";
 import { taskRepository } from "../repositories/task.repository";
 import { orderRepository } from "../repositories/order.repository";
 import { telegramService } from "./telegram.service";
+import { notificationService } from "./notification.service";
 import NotificationEvent from "../enums/notification-event.enum";
 
 class TaskService {
@@ -59,6 +60,12 @@ class TaskService {
                     assignee._id,
                     NotificationEvent.TASK_REMINDER,
                     text,
+                );
+                await notificationService.notify(
+                    assignee._id,
+                    NotificationEvent.TASK_REMINDER,
+                    text,
+                    order._id,
                 );
             }
 

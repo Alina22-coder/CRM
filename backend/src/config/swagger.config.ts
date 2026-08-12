@@ -1500,6 +1500,135 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/notifications": {
+            get: {
+                tags: ["Notifications"],
+                summary: "Get paginated in-app notifications for the current user",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "pageSize", in: "query", schema: { type: "integer", default: 20 } },
+                    { name: "page", in: "query", schema: { type: "integer", default: 1 } },
+                ],
+                responses: {
+                    "200": {
+                        description: "Paginated list of notifications",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        data: {
+                                            type: "array",
+                                            items: { $ref: "#/components/schemas/Notification" },
+                                        },
+                                        total: { type: "integer" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/notifications/unread-count": {
+            get: {
+                tags: ["Notifications"],
+                summary: "Get the count of unread notifications for the current user",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "Unread notification count",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: { count: { type: "integer" } },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/notifications/read-all": {
+            patch: {
+                tags: ["Notifications"],
+                summary: "Mark all notifications as read for the current user",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    "200": {
+                        description: "All notifications marked as read",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: { success: { type: "boolean" } },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/notifications/{notificationId}/read": {
+            patch: {
+                tags: ["Notifications"],
+                summary: "Mark a single notification as read",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "notificationId", in: "path", required: true, schema: { type: "string" } },
+                ],
+                responses: {
+                    "200": {
+                        description: "Notification marked as read",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: { success: { type: "boolean" } },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/users": {
             get: {
                 tags: ["Users"],
@@ -2105,6 +2234,21 @@ const swaggerDocument: OpenAPIV3.Document = {
                     statusAtCreation: { type: "string" },
                     isDone: { type: "boolean" },
                     reminderSentAt: { type: "string", format: "date-time", nullable: true },
+                    createdAt: { type: "string", format: "date-time" },
+                },
+            },
+            Notification: {
+                type: "object",
+                properties: {
+                    _id: { type: "string" },
+                    user: { type: "string" },
+                    event: {
+                        type: "string",
+                        enum: ["new_order", "status_change", "comment_added", "order_overdue", "task_reminder"],
+                    },
+                    text: { type: "string" },
+                    order: { type: "string", nullable: true },
+                    read: { type: "boolean" },
                     createdAt: { type: "string", format: "date-time" },
                 },
             },

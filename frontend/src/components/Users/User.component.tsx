@@ -113,7 +113,7 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
                     <div className={styles.info__meta__id}>id: {user._id}</div>
                     <div className={styles.info__meta__email}>{user.email}</div>
                     <div className={styles.info__meta__login}>
-                        last login:
+                        last login:{" "}
                         {user.last_login
                             ? new Date(user.last_login).toLocaleDateString()
                             : "Never"}

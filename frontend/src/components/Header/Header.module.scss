@@ -38,22 +38,6 @@
         }
     }
 
-    &__notification {
-        width: 36px;
-        height: 36px;
-        color: $grey;
-        background: transparent;
-
-        &:hover {
-            background: rgba(28, 29, 33, 0.06);
-        }
-
-        svg {
-            width: 20px;
-            height: 20px;
-        }
-    }
-
     &__account {
         display: flex;
         align-items: center;

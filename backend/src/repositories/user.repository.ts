@@ -70,6 +70,10 @@ class UserRepository {
             telegram_chat_id: { $ne: null },
         });
     }
+
+    public getAllAdmins(): Promise<IUser[]> {
+        return UserModel.find({ role: RoleEnum.Admin });
+    }
 }
 
 export const userRepository = new UserRepository();
