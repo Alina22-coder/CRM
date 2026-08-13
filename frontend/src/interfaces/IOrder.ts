@@ -18,6 +18,7 @@ export interface IOrder {
     disagree_reason_comment?: string | null;
     manager?: string;
     group?: string;
+    tags?: string[];
 }
 
 export interface IOrderQuery {

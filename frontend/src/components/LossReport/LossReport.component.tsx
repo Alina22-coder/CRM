@@ -90,6 +90,7 @@ export const LossReport = () => {
                             </ResponsiveContainer>
                         </div>
 
+                        <div className={styles.loss__report__table__wrap}>
                         <table className={styles.loss__report__table}>
                             <thead>
                                 <tr>
@@ -120,6 +121,7 @@ export const LossReport = () => {
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </>
                 )}
             </div>

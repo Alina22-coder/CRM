@@ -182,7 +182,9 @@ export const OrderTable: FC<OrderPropType> = ({
                 className={`${styles.order} ${expanded ? styles["order--active"] : ""}`}
                 onClick={() => onExpand(currentOrder._id)}
             >
-                <td>{currentOrder._id}</td>
+                <td title={currentOrder._id}>
+                    #{currentOrder._id.slice(-6)}
+                </td>
                 <td>{currentOrder.name}</td>
                 <td>{currentOrder.surname}</td>
                 <td>{currentOrder.email}</td>
@@ -370,7 +372,16 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <div
                                         className={styles.comment__info__value}
                                     >
-                                        <TagInput />
+                                        <TagInput
+                                            orderId={currentOrder._id}
+                                            tags={currentOrder.tags ?? []}
+                                            onChange={(tags) =>
+                                                setCurrentOrder((prev) => ({
+                                                    ...prev,
+                                                    tags,
+                                                }))
+                                            }
+                                        />
                                     </div>
                                 </div>
                             </div>

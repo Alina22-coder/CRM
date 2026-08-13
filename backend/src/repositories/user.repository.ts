@@ -37,6 +37,10 @@ class UserRepository {
         return UserModel.findById(userId);
     }
 
+    public getUserByIdWithPassword(userId: string): Promise<IUser | null> {
+        return UserModel.findById(userId).select("+password");
+    }
+
     public createUser(user: Partial<IUser>): Promise<IUser> {
         return UserModel.create(user);
     }

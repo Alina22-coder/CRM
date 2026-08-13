@@ -1,7 +1,10 @@
+import fs from "fs";
+import path from "path";
 import StatusCodes from "../enums/status-codes.enum";
 import ApiError from "../errors/api.error";
 import IUser, { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
+import { AVATAR_URL_PREFIX } from "../config/upload.config";
 
 class UserService {
     public getAllUsers(query: IUserQuery) {
@@ -38,11 +41,46 @@ class UserService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        return userRepository.updateUserById(userId, update);
+        if (update.email && update.email !== user.email) {
+            await this.isEmailUnique(update.email);
+        }
+
+        try {
+            return await userRepository.updateUserById(userId, update);
+        } catch (e) {
+            if ((e as { code?: number }).code === 11000) {
+                throw new ApiError("User already exists!", StatusCodes.BAD_REQUEST);
+            }
+            throw e;
+        }
     }
 
     public deleteUserById(userId: string) {
         return userRepository.deleteUserById(userId);
+    }
+
+    public async updateAvatar(userId: string, filename: string) {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        if (user.avatarUrl) {
+            const previousFilename = path.basename(user.avatarUrl);
+            const previousPath = path.join(
+                process.cwd(),
+                "uploads",
+                "avatars",
+                previousFilename,
+            );
+
+            fs.unlink(previousPath, () => {});
+        }
+
+        return userRepository.updateUserById(userId, {
+            avatarUrl: `${AVATAR_URL_PREFIX}/${filename}`,
+        });
     }
 
     public async isEmailUnique(email: string): Promise<void> {

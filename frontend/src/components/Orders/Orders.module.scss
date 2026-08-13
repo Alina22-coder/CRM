@@ -1,10 +1,14 @@
 @use "../../styles/variables/colors" as *;
 @use "../../styles/variables/typography" as *;
 
+.orders {
+    padding: 24px 40px;
+}
+
 .table {
     background: $white;
     border-radius: $br-12;
-    overflow: hidden;
+    overflow-x: auto;
     box-shadow: $shadow-card;
     table {
         width: 100%;

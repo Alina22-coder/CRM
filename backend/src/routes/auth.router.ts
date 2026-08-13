@@ -5,7 +5,11 @@ import { UserValidator } from "../validators/user.validator";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { roleMiddleware } from "../middleware/role.middleware";
 import RoleEnum from "../enums/role.enum";
-import { loginRateLimit, setPasswordRateLimit } from "../middleware/rate-limit.middleware";
+import {
+    loginRateLimit,
+    setPasswordRateLimit,
+    changePasswordRateLimit,
+} from "../middleware/rate-limit.middleware";
 const authRouter = express.Router();
 
 authRouter.post("/login", loginRateLimit, authController.login);
@@ -31,6 +35,13 @@ authRouter.post(
 );
 
 authRouter.post("/set-password", setPasswordRateLimit, authController.setPassword);
+
+authRouter.post(
+    "/change-password",
+    authMiddleware.checkAccessToken,
+    changePasswordRateLimit,
+    authController.changePassword,
+);
 
 authRouter.post(
     "/recovery/:userId",

@@ -65,6 +65,23 @@ orderRouter.patch(
     orderController.updateOrderById,
 );
 
+orderRouter.patch(
+    "/:id/tags",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
+    commonMiddleware.validateBody(OrderValidator.tags),
+    orderController.updateOrderTags,
+);
+
+orderRouter.patch(
+    "/:id/reassign",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.isValidate("id"),
+    commonMiddleware.validateBody(OrderValidator.reassign),
+    orderController.reassignOrder,
+);
+
 orderRouter.post(
     "/:id/comments",
     authMiddleware.checkAccessToken,

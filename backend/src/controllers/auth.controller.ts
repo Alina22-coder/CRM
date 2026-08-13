@@ -75,6 +75,29 @@ class AuthController {
         }
     }
 
+    public async changePassword(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const { currentPassword, newPassword } = req.body;
+
+            await authService.changePassword(
+                userId,
+                currentPassword,
+                newPassword,
+            );
+
+            res.status(StatusCodes.OK).json({
+                message: "Password changed successfully",
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async recoveryPassword(
         req: Request,
         res: Response,

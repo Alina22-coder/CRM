@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "cdc085c2-1bb3-4103-b6d1-d3d7107593a8",
     "name": "CRM",
-    "description": "CRM Programming School — API колекція.\n\n**Base URL**: http://localhost:5000 (див. PORT в backend/.env)\n\n**Як почати:**\n1. Виконати `auth/login` з дефолтним admin (email: admin@gmail.com, password: admin) — у відповіді прийдуть `accessToken` і `refreshToken`.\n2. Скопіювати `accessToken` у змінну колекції `adminAccessToken` (для admin-only запитів: users, orders/statistic, orders/loss-report, history, auto-assign, overdue-settings, auth/activate, auth/recovery) або `accessToken` (для решти запитів, доступних і менеджеру, включно з telegram/*, tasks/*).\n3. Для перевірки менеджерського флоу: створити менеджера через `users (create manager)`, активувати через `auth/activate/:userId` (поверне токен активації), викликати `auth/set-password` з цим токеном, потім залогінитись новим менеджером — отриманий `accessToken` покласти у змінну `accessToken`.\n4. `refreshToken` (auth/refresh) не потребує bearer-токена — refresh token передається в тілі запиту.\n5. `orders (create)` не потребує авторизації — це публічний вхід для лідів. Якщо в `/admin/settings` (auto-assign) увімкнено авторозподіл, менеджер призначиться автоматично.\n6. Cron-джоби (кожні 15 хв — прострочені заявки, щохвилини — нагадування задач) стартують автоматично разом з бекендом, окремого виклику не потребують.\n\n**Папки**: auth, users, orders (CRUD + history + loss-report + tasks), groups, history (повний журнал), telegram (прив'язка бота і сповіщення), auto-assign (налаштування авторозподілу), overdue-settings (налаштування простроченості), tasks (нагадування по заявці).\n\n**Змінні колекції**: accessToken, adminAccessToken, refreshToken — заповнюються вручну після логіну (Postman не оновлює їх автоматично, автотести/скрипти для цього не налаштовані).",
+    "description": "CRM Programming School \u2014 API \u043a\u043e\u043b\u0435\u043a\u0446\u0456\u044f.\n\n**Base URL**: http://localhost:5000 (\u0434\u0438\u0432. PORT \u0432 backend/.env)\n\n**\u042f\u043a \u043f\u043e\u0447\u0430\u0442\u0438:**\n1. \u0412\u0438\u043a\u043e\u043d\u0430\u0442\u0438 `auth/login` \u0437 \u0434\u0435\u0444\u043e\u043b\u0442\u043d\u0438\u043c admin (email: admin@gmail.com, password: admin) \u2014 \u0443 \u0432\u0456\u0434\u043f\u043e\u0432\u0456\u0434\u0456 \u043f\u0440\u0438\u0439\u0434\u0443\u0442\u044c `accessToken` \u0456 `refreshToken`.\n2. \u0421\u043a\u043e\u043f\u0456\u044e\u0432\u0430\u0442\u0438 `accessToken` \u0443 \u0437\u043c\u0456\u043d\u043d\u0443 \u043a\u043e\u043b\u0435\u043a\u0446\u0456\u0457 `adminAccessToken` (\u0434\u043b\u044f admin-only \u0437\u0430\u043f\u0438\u0442\u0456\u0432: users, orders/statistic, orders/loss-report, history, auto-assign, overdue-settings, auth/activate, auth/recovery) \u0430\u0431\u043e `accessToken` (\u0434\u043b\u044f \u0440\u0435\u0448\u0442\u0438 \u0437\u0430\u043f\u0438\u0442\u0456\u0432, \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0445 \u0456 \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0443, \u0432\u043a\u043b\u044e\u0447\u043d\u043e \u0437 telegram/*, tasks/*).\n3. \u0414\u043b\u044f \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u043a\u0438 \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0441\u044c\u043a\u043e\u0433\u043e \u0444\u043b\u043e\u0443: \u0441\u0442\u0432\u043e\u0440\u0438\u0442\u0438 \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0430 \u0447\u0435\u0440\u0435\u0437 `users (create manager)`, \u0430\u043a\u0442\u0438\u0432\u0443\u0432\u0430\u0442\u0438 \u0447\u0435\u0440\u0435\u0437 `auth/activate/:userId` (\u043f\u043e\u0432\u0435\u0440\u043d\u0435 \u0442\u043e\u043a\u0435\u043d \u0430\u043a\u0442\u0438\u0432\u0430\u0446\u0456\u0457), \u0432\u0438\u043a\u043b\u0438\u043a\u0430\u0442\u0438 `auth/set-password` \u0437 \u0446\u0438\u043c \u0442\u043e\u043a\u0435\u043d\u043e\u043c, \u043f\u043e\u0442\u0456\u043c \u0437\u0430\u043b\u043e\u0433\u0456\u043d\u0438\u0442\u0438\u0441\u044c \u043d\u043e\u0432\u0438\u043c \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u043e\u043c \u2014 \u043e\u0442\u0440\u0438\u043c\u0430\u043d\u0438\u0439 `accessToken` \u043f\u043e\u043a\u043b\u0430\u0441\u0442\u0438 \u0443 \u0437\u043c\u0456\u043d\u043d\u0443 `accessToken`.\n4. `refreshToken` (auth/refresh) \u043d\u0435 \u043f\u043e\u0442\u0440\u0435\u0431\u0443\u0454 bearer-\u0442\u043e\u043a\u0435\u043d\u0430 \u2014 refresh token \u043f\u0435\u0440\u0435\u0434\u0430\u0454\u0442\u044c\u0441\u044f \u0432 \u0442\u0456\u043b\u0456 \u0437\u0430\u043f\u0438\u0442\u0443.\n5. `orders (create)` \u043d\u0435 \u043f\u043e\u0442\u0440\u0435\u0431\u0443\u0454 \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0456\u0457 \u2014 \u0446\u0435 \u043f\u0443\u0431\u043b\u0456\u0447\u043d\u0438\u0439 \u0432\u0445\u0456\u0434 \u0434\u043b\u044f \u043b\u0456\u0434\u0456\u0432. \u042f\u043a\u0449\u043e \u0432 `/admin/settings` (auto-assign) \u0443\u0432\u0456\u043c\u043a\u043d\u0435\u043d\u043e \u0430\u0432\u0442\u043e\u0440\u043e\u0437\u043f\u043e\u0434\u0456\u043b, \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440 \u043f\u0440\u0438\u0437\u043d\u0430\u0447\u0438\u0442\u044c\u0441\u044f \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u043d\u043e.\n6. Cron-\u0434\u0436\u043e\u0431\u0438 (\u043a\u043e\u0436\u043d\u0456 15 \u0445\u0432 \u2014 \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u0456 \u0437\u0430\u044f\u0432\u043a\u0438, \u0449\u043e\u0445\u0432\u0438\u043b\u0438\u043d\u0438 \u2014 \u043d\u0430\u0433\u0430\u0434\u0443\u0432\u0430\u043d\u043d\u044f \u0437\u0430\u0434\u0430\u0447) \u0441\u0442\u0430\u0440\u0442\u0443\u044e\u0442\u044c \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u043d\u043e \u0440\u0430\u0437\u043e\u043c \u0437 \u0431\u0435\u043a\u0435\u043d\u0434\u043e\u043c, \u043e\u043a\u0440\u0435\u043c\u043e\u0433\u043e \u0432\u0438\u043a\u043b\u0438\u043a\u0443 \u043d\u0435 \u043f\u043e\u0442\u0440\u0435\u0431\u0443\u044e\u0442\u044c.\n\n**\u041f\u0430\u043f\u043a\u0438**: auth, users, orders (CRUD + history + loss-report + tasks), groups, history (\u043f\u043e\u0432\u043d\u0438\u0439 \u0436\u0443\u0440\u043d\u0430\u043b), telegram (\u043f\u0440\u0438\u0432'\u044f\u0437\u043a\u0430 \u0431\u043e\u0442\u0430 \u0456 \u0441\u043f\u043e\u0432\u0456\u0449\u0435\u043d\u043d\u044f), auto-assign (\u043d\u0430\u043b\u0430\u0448\u0442\u0443\u0432\u0430\u043d\u043d\u044f \u0430\u0432\u0442\u043e\u0440\u043e\u0437\u043f\u043e\u0434\u0456\u043b\u0443), overdue-settings (\u043d\u0430\u043b\u0430\u0448\u0442\u0443\u0432\u0430\u043d\u043d\u044f \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u043e\u0441\u0442\u0456), tasks (\u043d\u0430\u0433\u0430\u0434\u0443\u0432\u0430\u043d\u043d\u044f \u043f\u043e \u0437\u0430\u044f\u0432\u0446\u0456).\n\n**\u0417\u043c\u0456\u043d\u043d\u0456 \u043a\u043e\u043b\u0435\u043a\u0446\u0456\u0457**: accessToken, adminAccessToken, refreshToken \u2014 \u0437\u0430\u043f\u043e\u0432\u043d\u044e\u044e\u0442\u044c\u0441\u044f \u0432\u0440\u0443\u0447\u043d\u0443 \u043f\u0456\u0441\u043b\u044f \u043b\u043e\u0433\u0456\u043d\u0443 (Postman \u043d\u0435 \u043e\u043d\u043e\u0432\u043b\u044e\u0454 \u0457\u0445 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u043d\u043e, \u0430\u0432\u0442\u043e\u0442\u0435\u0441\u0442\u0438/\u0441\u043a\u0440\u0438\u043f\u0442\u0438 \u0434\u043b\u044f \u0446\u044c\u043e\u0433\u043e \u043d\u0435 \u043d\u0430\u043b\u0430\u0448\u0442\u043e\u0432\u0430\u043d\u0456).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "51254694"
   },
@@ -15,19 +15,31 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/auth/login",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "login"]
+              "path": [
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -37,19 +49,31 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/auth/refresh",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "refresh"]
+              "path": [
+                "auth",
+                "refresh"
+              ]
             }
           },
           "response": []
@@ -59,16 +83,27 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/auth/logout",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "logout"]
+              "path": [
+                "auth",
+                "logout"
+              ]
             }
           },
           "response": []
@@ -78,17 +113,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/auth/activate/:userId",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "activate", ":userId"],
-              "variable": [{ "key": "userId", "value": "" }]
+              "path": [
+                "auth",
+                "activate",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -98,19 +150,75 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"token\": \"\",\n  \"password\": \"\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/auth/set-password",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "set-password"]
+              "path": [
+                "auth",
+                "set-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "auth/change-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/auth/change-password",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"\",\n  \"newPassword\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -120,17 +228,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/auth/recovery/:userId",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auth", "recovery", ":userId"],
-              "variable": [{ "key": "userId", "value": "" }]
+              "path": [
+                "auth",
+                "recovery",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -145,20 +270,39 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users?page=1&pageSize=25&order=-_id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users"],
+              "path": [
+                "users"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "pageSize", "value": "25" },
-                { "key": "order", "value": "-_id" }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                },
+                {
+                  "key": "order",
+                  "value": "-_id"
+                }
               ]
             }
           },
@@ -169,17 +313,33 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -189,50 +349,137 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Oleg\",\n  \"surname\": \"Popov\",\n  \"email\": \"oleg.popov@example.com\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/users",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users"]
+              "path": [
+                "users"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "users/:id (update name/surname)",
+          "name": "users/:id (update profile)",
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Oleh\",\n  \"surname\": \"Popov\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "raw": "{\n  \"name\": \"\",\n  \"surname\": \"\",\n  \"email\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/users/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users/:id/avatar",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/users/:id/avatar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "users",
+                ":id",
+                "avatar"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": []
+                }
+              ]
             }
           },
           "response": []
@@ -242,17 +489,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users/:id/ban",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id", "ban"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id",
+                "ban"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -262,17 +526,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users/:id/unban",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id", "unban"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id",
+                "unban"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -282,17 +563,33 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -302,17 +599,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/users/:id/statistic",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["users", ":id", "statistic"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "users",
+                ":id",
+                "statistic"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -327,20 +641,39 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders?page=1&pageSize=25&order=-_id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders"],
+              "path": [
+                "orders"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "pageSize", "value": "25" },
-                { "key": "order", "value": "-_id" }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                },
+                {
+                  "key": "order",
+                  "value": "-_id"
+                }
               ]
             }
           },
@@ -351,20 +684,31 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Jane\",\n  \"surname\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"phone\": \"380991234567\",\n  \"age\": 25,\n  \"course\": \"QACX\",\n  \"course_type\": \"minimal\",\n  \"course_format\": \"online\",\n  \"sum\": 500,\n  \"already_paid\": 0,\n  \"utm\": \"utm_source=facebook\",\n  \"msg\": \"Interested in QA course\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "Публічний ендпоінт (без авторизації) — призначений для зовнішніх форм/вебхуків з лідами. Якщо авторозподіл увімкнено в /admin/settings, менеджер призначається автоматично.",
+            "description": "\u041f\u0443\u0431\u043b\u0456\u0447\u043d\u0438\u0439 \u0435\u043d\u0434\u043f\u043e\u0456\u043d\u0442 (\u0431\u0435\u0437 \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0456\u0457) \u2014 \u043f\u0440\u0438\u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0439 \u0434\u043b\u044f \u0437\u043e\u0432\u043d\u0456\u0448\u043d\u0456\u0445 \u0444\u043e\u0440\u043c/\u0432\u0435\u0431\u0445\u0443\u043a\u0456\u0432 \u0437 \u043b\u0456\u0434\u0430\u043c\u0438. \u042f\u043a\u0449\u043e \u0430\u0432\u0442\u043e\u0440\u043e\u0437\u043f\u043e\u0434\u0456\u043b \u0443\u0432\u0456\u043c\u043a\u043d\u0435\u043d\u043e \u0432 /admin/settings, \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440 \u043f\u0440\u0438\u0437\u043d\u0430\u0447\u0430\u0454\u0442\u044c\u0441\u044f \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u043d\u043e.",
             "url": {
               "raw": "http://localhost:5000/orders",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders"]
+              "path": [
+                "orders"
+              ]
             }
           },
           "response": []
@@ -374,23 +718,51 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders?name=Oleg&status=New&course=QACX&my=true&start_date=2022-01-01&end_date=2022-12-31",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders"],
+              "path": [
+                "orders"
+              ],
               "query": [
-                { "key": "name", "value": "Oleg" },
-                { "key": "status", "value": "New" },
-                { "key": "course", "value": "QACX" },
-                { "key": "my", "value": "true" },
-                { "key": "start_date", "value": "2022-01-01" },
-                { "key": "end_date", "value": "2022-12-31" }
+                {
+                  "key": "name",
+                  "value": "Oleg"
+                },
+                {
+                  "key": "status",
+                  "value": "New"
+                },
+                {
+                  "key": "course",
+                  "value": "QACX"
+                },
+                {
+                  "key": "my",
+                  "value": "true"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2022-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2022-12-31"
+                }
               ]
             }
           },
@@ -401,17 +773,33 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -421,24 +809,47 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"In work\",\n  \"sum\": 5000,\n  \"already_paid\": 1000\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/orders/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -448,25 +859,150 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"Disaggre\",\n  \"disagree_reason\": \"High price\",\n  \"disagree_reason_comment\": \"Client said the price is too high compared to competitors\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "disagree_reason є обов'язковим, коли status = Disaggre.",
+            "description": "disagree_reason \u0454 \u043e\u0431\u043e\u0432'\u044f\u0437\u043a\u043e\u0432\u0438\u043c, \u043a\u043e\u043b\u0438 status = Disaggre.",
             "url": {
               "raw": "http://localhost:5000/orders/:id",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id/tags",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/orders/:id/tags",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders",
+                ":id",
+                "tags"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tags\": [\n    \"vip\",\n    \"urgent\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "orders/:id/reassign",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:5000/orders/:id/reassign",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "orders",
+                ":id",
+                "reassign"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"manager\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -476,24 +1012,48 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"text\": \"Called the client, waiting for confirmation\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/orders/:id/comments",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id", "comments"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -503,25 +1063,49 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"text\": \"Client refused after the call\",\n  \"status\": \"Disaggre\",\n  \"disagree_reason\": \"Not answering calls\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "Коментар може одночасно змінювати статус заявки; disagree_reason обов'язковий, коли status = Disaggre.",
+            "description": "\u041a\u043e\u043c\u0435\u043d\u0442\u0430\u0440 \u043c\u043e\u0436\u0435 \u043e\u0434\u043d\u043e\u0447\u0430\u0441\u043d\u043e \u0437\u043c\u0456\u043d\u044e\u0432\u0430\u0442\u0438 \u0441\u0442\u0430\u0442\u0443\u0441 \u0437\u0430\u044f\u0432\u043a\u0438; disagree_reason \u043e\u0431\u043e\u0432'\u044f\u0437\u043a\u043e\u0432\u0438\u0439, \u043a\u043e\u043b\u0438 status = Disaggre.",
             "url": {
               "raw": "http://localhost:5000/orders/:id/comments",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id", "comments"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -531,17 +1115,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/:id/history",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id", "history"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id",
+                "history"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -551,16 +1152,27 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/statistic",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", "statistic"]
+              "path": [
+                "orders",
+                "statistic"
+              ]
             }
           },
           "response": []
@@ -570,19 +1182,36 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/loss-report?start_date=2026-01-01&end_date=2026-12-31",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", "loss-report"],
+              "path": [
+                "orders",
+                "loss-report"
+              ],
               "query": [
-                { "key": "start_date", "value": "2026-01-01" },
-                { "key": "end_date", "value": "2026-12-31" }
+                {
+                  "key": "start_date",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2026-12-31"
+                }
               ]
             }
           },
@@ -593,19 +1222,36 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/excel?status=New&course=QACX",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", "excel"],
+              "path": [
+                "orders",
+                "excel"
+              ],
               "query": [
-                { "key": "status", "value": "New" },
-                { "key": "course", "value": "QACX" }
+                {
+                  "key": "status",
+                  "value": "New"
+                },
+                {
+                  "key": "course",
+                  "value": "QACX"
+                }
               ]
             }
           },
@@ -621,16 +1267,26 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/groups",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["groups"]
+              "path": [
+                "groups"
+              ]
             }
           },
           "response": []
@@ -640,23 +1296,40 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"sep-2022\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/groups",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["groups"]
+              "path": [
+                "groups"
+              ]
             }
           },
           "response": []
@@ -671,23 +1344,51 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
-            "description": "Admin only. Повний журнал подій по всій системі з фільтром по автору та даті.",
+            "description": "Admin only. \u041f\u043e\u0432\u043d\u0438\u0439 \u0436\u0443\u0440\u043d\u0430\u043b \u043f\u043e\u0434\u0456\u0439 \u043f\u043e \u0432\u0441\u0456\u0439 \u0441\u0438\u0441\u0442\u0435\u043c\u0456 \u0437 \u0444\u0456\u043b\u044c\u0442\u0440\u043e\u043c \u043f\u043e \u0430\u0432\u0442\u043e\u0440\u0443 \u0442\u0430 \u0434\u0430\u0442\u0456.",
             "url": {
               "raw": "http://localhost:5000/history?page=1&pageSize=25",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["history"],
+              "path": [
+                "history"
+              ],
               "query": [
-                { "key": "page", "value": "1" },
-                { "key": "pageSize", "value": "25" },
-                { "key": "author", "value": "", "disabled": true },
-                { "key": "start_date", "value": "", "disabled": true },
-                { "key": "end_date", "value": "", "disabled": true }
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "25"
+                },
+                {
+                  "key": "author",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "start_date",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "end_date",
+                  "value": "",
+                  "disabled": true
+                }
               ]
             }
           },
@@ -703,17 +1404,28 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
-            "description": "Поточний стан прив'язки Telegram та підписки на сповіщення для авторизованого користувача.",
+            "description": "\u041f\u043e\u0442\u043e\u0447\u043d\u0438\u0439 \u0441\u0442\u0430\u043d \u043f\u0440\u0438\u0432'\u044f\u0437\u043a\u0438 Telegram \u0442\u0430 \u043f\u0456\u0434\u043f\u0438\u0441\u043a\u0438 \u043d\u0430 \u0441\u043f\u043e\u0432\u0456\u0449\u0435\u043d\u043d\u044f \u0434\u043b\u044f \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u043e\u0432\u0430\u043d\u043e\u0433\u043e \u043a\u043e\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430.",
             "url": {
               "raw": "http://localhost:5000/telegram/status",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["telegram", "status"]
+              "path": [
+                "telegram",
+                "status"
+              ]
             }
           },
           "response": []
@@ -723,17 +1435,28 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [],
-            "description": "Генерує одноразовий код. Надіслати боту /start <код>, щоб прив'язати акаунт.",
+            "description": "\u0413\u0435\u043d\u0435\u0440\u0443\u0454 \u043e\u0434\u043d\u043e\u0440\u0430\u0437\u043e\u0432\u0438\u0439 \u043a\u043e\u0434. \u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0431\u043e\u0442\u0443 /start <\u043a\u043e\u0434>, \u0449\u043e\u0431 \u043f\u0440\u0438\u0432'\u044f\u0437\u0430\u0442\u0438 \u0430\u043a\u0430\u0443\u043d\u0442.",
             "url": {
               "raw": "http://localhost:5000/telegram/link-code",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["telegram", "link-code"]
+              "path": [
+                "telegram",
+                "link-code"
+              ]
             }
           },
           "response": []
@@ -743,16 +1466,27 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/telegram/link",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["telegram", "link"]
+              "path": [
+                "telegram",
+                "link"
+              ]
             }
           },
           "response": []
@@ -762,23 +1496,41 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"new_order\": true,\n  \"status_change\": true,\n  \"comment_added\": false\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:5000/telegram/preferences",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["telegram", "preferences"]
+              "path": [
+                "telegram",
+                "preferences"
+              ]
             }
           },
           "response": []
@@ -793,16 +1545,26 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/auto-assign",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auto-assign"]
+              "path": [
+                "auto-assign"
+              ]
             }
           },
           "response": []
@@ -812,24 +1574,41 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"enabled\": true,\n  \"mode\": \"round_robin\",\n  \"participantIds\": [\"<managerId1>\", \"<managerId2>\"]\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "mode: round_robin | load_based. participantIds — ObjectId менеджерів, що беруть участь в авторозподілі.",
+            "description": "mode: round_robin | load_based. participantIds \u2014 ObjectId \u043c\u0435\u043d\u0435\u0434\u0436\u0435\u0440\u0456\u0432, \u0449\u043e \u0431\u0435\u0440\u0443\u0442\u044c \u0443\u0447\u0430\u0441\u0442\u044c \u0432 \u0430\u0432\u0442\u043e\u0440\u043e\u0437\u043f\u043e\u0434\u0456\u043b\u0456.",
             "url": {
               "raw": "http://localhost:5000/auto-assign",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["auto-assign"]
+              "path": [
+                "auto-assign"
+              ]
             }
           },
           "response": []
@@ -844,16 +1623,26 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/overdue-settings",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["overdue-settings"]
+              "path": [
+                "overdue-settings"
+              ]
             }
           },
           "response": []
@@ -863,24 +1652,41 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{adminAccessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminAccessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"enabled\": true,\n  \"thresholdHours\": 24\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "Заявка в статусі New без коментаря довше thresholdHours позначається як прострочена (is_overdue) і про це надсилається сповіщення.",
+            "description": "\u0417\u0430\u044f\u0432\u043a\u0430 \u0432 \u0441\u0442\u0430\u0442\u0443\u0441\u0456 New \u0431\u0435\u0437 \u043a\u043e\u043c\u0435\u043d\u0442\u0430\u0440\u044f \u0434\u043e\u0432\u0448\u0435 thresholdHours \u043f\u043e\u0437\u043d\u0430\u0447\u0430\u0454\u0442\u044c\u0441\u044f \u044f\u043a \u043f\u0440\u043e\u0441\u0442\u0440\u043e\u0447\u0435\u043d\u0430 (is_overdue) \u0456 \u043f\u0440\u043e \u0446\u0435 \u043d\u0430\u0434\u0441\u0438\u043b\u0430\u0454\u0442\u044c\u0441\u044f \u0441\u043f\u043e\u0432\u0456\u0449\u0435\u043d\u043d\u044f.",
             "url": {
               "raw": "http://localhost:5000/overdue-settings",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["overdue-settings"]
+              "path": [
+                "overdue-settings"
+              ]
             }
           },
           "response": []
@@ -895,25 +1701,49 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"title\": \"Call the client back\",\n  \"assignee\": \"<userId>\",\n  \"dueDate\": \"2026-08-10T12:00:00.000Z\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "description": "Якщо статус заявки не змінився до dueDate, виконавцю прийде нагадування (в Telegram, за налаштуванням).",
+            "description": "\u042f\u043a\u0449\u043e \u0441\u0442\u0430\u0442\u0443\u0441 \u0437\u0430\u044f\u0432\u043a\u0438 \u043d\u0435 \u0437\u043c\u0456\u043d\u0438\u0432\u0441\u044f \u0434\u043e dueDate, \u0432\u0438\u043a\u043e\u043d\u0430\u0432\u0446\u044e \u043f\u0440\u0438\u0439\u0434\u0435 \u043d\u0430\u0433\u0430\u0434\u0443\u0432\u0430\u043d\u043d\u044f (\u0432 Telegram, \u0437\u0430 \u043d\u0430\u043b\u0430\u0448\u0442\u0443\u0432\u0430\u043d\u043d\u044f\u043c).",
             "url": {
               "raw": "http://localhost:5000/orders/:id/tasks",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id", "tasks"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id",
+                "tasks"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -923,17 +1753,34 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/orders/:id/tasks",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["orders", ":id", "tasks"],
-              "variable": [{ "key": "id", "value": "" }]
+              "path": [
+                "orders",
+                ":id",
+                "tasks"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
             }
           },
           "response": []
@@ -943,17 +1790,28 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "GET",
             "header": [],
-            "description": "Відкриті (isDone: false) задачі поточного користувача.",
+            "description": "\u0412\u0456\u0434\u043a\u0440\u0438\u0442\u0456 (isDone: false) \u0437\u0430\u0434\u0430\u0447\u0456 \u043f\u043e\u0442\u043e\u0447\u043d\u043e\u0433\u043e \u043a\u043e\u0440\u0438\u0441\u0442\u0443\u0432\u0430\u0447\u0430.",
             "url": {
               "raw": "http://localhost:5000/tasks/my",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["tasks", "my"]
+              "path": [
+                "tasks",
+                "my"
+              ]
             }
           },
           "response": []
@@ -963,17 +1821,165 @@
           "request": {
             "auth": {
               "type": "bearer",
-              "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             },
             "method": "PATCH",
             "header": [],
             "url": {
               "raw": "http://localhost:5000/tasks/:taskId/done",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "5000",
-              "path": ["tasks", ":taskId", "done"],
-              "variable": [{ "key": "taskId", "value": "" }]
+              "path": [
+                "tasks",
+                ":taskId",
+                "done"
+              ],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "notifications (list, paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/notifications",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "notifications"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "notifications/unread-count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/notifications/unread-count",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "notifications",
+                "unread-count"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "notifications/read-all",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/notifications/read-all",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "notifications",
+                "read-all"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "notifications/:notificationId/read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/notifications/:notificationId/read",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "notifications",
+                ":notificationId",
+                "read"
+              ],
+              "variable": [
+                {
+                  "key": "notificationId",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
             }
           },
           "response": []
@@ -988,7 +1994,9 @@
         "url": {
           "raw": "http://localhost:5000",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "5000"
         }
       },
@@ -996,8 +2004,17 @@
     }
   ],
   "variable": [
-    { "key": "accessToken", "value": "" },
-    { "key": "adminAccessToken", "value": "" },
-    { "key": "refreshToken", "value": "" }
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "adminAccessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    }
   ]
 }

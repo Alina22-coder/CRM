@@ -29,7 +29,7 @@ export const Orders = () => {
     const totalPage = Math.ceil(total / 25);
 
     return (
-        <div>
+        <div className={styles.orders}>
             {loading ? (
                 <LogoLoader />
             ) : (

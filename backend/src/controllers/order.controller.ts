@@ -58,6 +58,37 @@ class OrderController {
         }
     }
 
+    public async updateOrderTags(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const id = req.params.id as string;
+            const { tags } = req.body;
+            const data = await orderService.updateOrderTags(id, tags);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async reassignOrder(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const id = req.params.id as string;
+            const { manager } = req.body;
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const data = await orderService.reassignOrder(id, manager, userId);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async getOrderStatistic(
         _req: Request,
         res: Response,

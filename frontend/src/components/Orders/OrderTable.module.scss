@@ -131,17 +131,13 @@
     }
 
     &--dubbing {
-        // background-color: #f3e8fd;
-        // color: #9334e6;
-
-        // TODO
+        background: $purple-light;
+        color: $purple-dark;
     }
 
     &--default {
-        // background-color: #f1f3f4;
-        // color: #5f6368;
-
-        // TODO
+        background: $outline;
+        color: $grey;
     }
 }
 

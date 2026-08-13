@@ -12,6 +12,10 @@ import { useEffect, useState } from "react";
 import { groupService } from "../../services/group.service";
 import type { IGroup } from "../../interfaces/IGroup";
 import { orderService } from "../../services/orders.service";
+import userService from "../../services/users.service";
+import type { IUser } from "../../interfaces/IUser";
+import { useCurrentUser } from "../../hooks/useCurrectUser";
+import RoleEnum from "../../enums/role.enum";
 import { toast } from "sonner";
 
 interface EditOrderModalProps {
@@ -35,6 +39,7 @@ type EditOrderForm = {
     course: string;
     course_format: string;
     course_type: string;
+    msg: string;
 };
 
 const DISAGREE_STATUS = "Disaggre";
@@ -60,6 +65,12 @@ export const EditOrderModal = ({
     const selectedStatus = watch("status");
     const [isCustomReason, setIsCustomReason] = useState(false);
 
+    const currentUser = useCurrentUser();
+    const isAdmin = currentUser?.role === RoleEnum.Admin;
+    const [managers, setManagers] = useState<IUser[]>([]);
+    const [selectedManager, setSelectedManager] = useState(order.manager ?? "");
+    const [isReassigning, setIsReassigning] = useState(false);
+
     useEffect(() => {
         reset({
             name: order.name ?? "",
@@ -76,6 +87,7 @@ export const EditOrderModal = ({
             sum: order.sum ?? "",
             already_paid: order.already_paid ?? "",
             group: order.group ?? "",
+            msg: order.msg ?? "",
         });
         setIsCustomReason(
             !!order.disagree_reason &&
@@ -89,6 +101,41 @@ export const EditOrderModal = ({
     useEffect(() => {
         groupService.getAllGroups().then((res) => setGroups(res.data));
     }, []);
+
+    useEffect(() => {
+        setSelectedManager(order.manager ?? "");
+    }, [order._id, order.manager]);
+
+    useEffect(() => {
+        if (!isAdmin) return;
+        userService
+            .getAllUsers({ page: 1, pageSize: 100 })
+            .then((res) =>
+                setManagers(
+                    (res.data.data ?? []).filter(
+                        (u: IUser) => u.role === RoleEnum.Manager,
+                    ),
+                ),
+            );
+    }, [isAdmin]);
+
+    const handleReassign = () => {
+        if (!selectedManager || selectedManager === order.manager) return;
+
+        setIsReassigning(true);
+        orderService
+            .reassignOrder(order._id, selectedManager)
+            .then(() => {
+                toast.success("Order reassigned");
+                onSuccess();
+            })
+            .catch((err) => {
+                toast.error(
+                    err.response?.data?.message ?? "Failed to reassign order",
+                );
+            })
+            .finally(() => setIsReassigning(false));
+    };
 
     const onSubmit = (data: EditOrderForm) => {
         orderService
@@ -144,6 +191,43 @@ export const EditOrderModal = ({
 
                 <div className={styles.modal__grid}>
                     <div>
+                        {isAdmin && (
+                            <div className={styles.grid__field}>
+                                <label>Manager</label>
+                                <select
+                                    value={selectedManager}
+                                    onChange={(e) =>
+                                        setSelectedManager(e.target.value)
+                                    }
+                                >
+                                    <option value="">unassigned</option>
+                                    {managers.map((manager) => (
+                                        <option
+                                            key={manager._id}
+                                            value={manager.surname}
+                                        >
+                                            {manager.name} {manager.surname}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <button
+                                    type="button"
+                                    className={styles.btn_select}
+                                    onClick={handleReassign}
+                                    disabled={
+                                        isReassigning ||
+                                        !selectedManager ||
+                                        selectedManager === order.manager
+                                    }
+                                >
+                                    {isReassigning
+                                        ? "Reassigning..."
+                                        : "Reassign"}
+                                </button>
+                            </div>
+                        )}
+
                         <div className={styles.grid__field}>
                             <label>Group</label>
                             <select {...register("group")}>
@@ -382,6 +466,14 @@ export const EditOrderModal = ({
                                     </option>
                                 ))}
                             </select>
+                        </div>
+
+                        <div className={styles.grid__field}>
+                            <label>Message</label>
+                            <textarea
+                                placeholder="Client message"
+                                {...register("msg")}
+                            />
                         </div>
                     </div>
                 </div>

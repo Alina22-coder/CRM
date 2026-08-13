@@ -21,6 +21,7 @@ interface IOrder {
     disagree_at?: Date | null;
     manager?: any;
     group?: string;
+    tags?: string[];
 }
 
 export interface IOrderQuery {

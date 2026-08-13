@@ -43,6 +43,7 @@
         top: calc(100% + 8px);
         right: 0;
         width: 340px;
+        max-width: calc(100vw - 32px);
         max-height: 420px;
         background: $white;
         border-radius: $br-12;

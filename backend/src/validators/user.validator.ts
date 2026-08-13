@@ -17,6 +17,7 @@ export class UserValidator {
     public static update = joi.object({
         name: this.firstName,
         surname: this.surname,
+        email: joi.string().email(),
     });
 
     public static query = joi.object({

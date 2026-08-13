@@ -80,6 +80,14 @@ export class OrderValidator {
         disagree_reason_comment: joi.string().max(1000).allow(null, ""),
     });
 
+    public static tags = joi.object({
+        tags: joi.array().items(joi.string().trim().max(30)).max(20).required(),
+    });
+
+    public static reassign = joi.object({
+        manager: joi.string().trim().min(1).required(),
+    });
+
     public static lossReportQuery = joi.object({
         start_date: joi.string().isoDate(),
         end_date: joi.string().isoDate(),

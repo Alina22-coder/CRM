@@ -8,6 +8,7 @@ export interface IUser extends IBase {
     password: string;
     name: string;
     surname: string;
+    avatarUrl?: string | null;
     role: RoleEnum;
     is_active: boolean;
     is_banned: boolean;

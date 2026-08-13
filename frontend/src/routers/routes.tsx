@@ -6,7 +6,6 @@ import AuthPage from "../pages/auth/AuthPage";
 import { PrivateRoute } from "../components/PrivateRoute/PrivateRoute";
 import LoginPage from "../pages/auth/LoginPage";
 import { AdminRoute } from "../components/AdminRoute/AdminRoute";
-import SetPasswordPage from "../pages/auth/SetPasswordPage";
 import AccountPage from "../pages/account/AccountPage";
 import ActivatePage from "../pages/auth/ActivatePage";
 import HistoryPage from "../pages/history/HistoryPage";
@@ -31,10 +30,6 @@ const routes = createBrowserRouter([
                         element: <LoginPage />,
                     },
                 ],
-            },
-            {
-                path: "set-password",
-                element: <SetPasswordPage />,
             },
             {
                 path: "activate/:token",

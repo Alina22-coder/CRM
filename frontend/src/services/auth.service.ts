@@ -22,6 +22,13 @@ export const authService = {
         return api.post("/auth/set-password", { token, password });
     },
 
+    changePassword: (currentPassword: string, newPassword: string) => {
+        return api.post("/auth/change-password", {
+            currentPassword,
+            newPassword,
+        });
+    },
+
     recovery: (userId: string) => {
         return api.post(`/auth/recovery/${userId}`);
     },

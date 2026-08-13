@@ -313,6 +313,62 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/auth/change-password": {
+            post: {
+                tags: ["Auth"],
+                summary: "Change the current user's password",
+                description:
+                    "Requires the current password. Invalidates the user's existing sessions by bumping tokenVersion.",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["currentPassword", "newPassword"],
+                                properties: {
+                                    currentPassword: { type: "string" },
+                                    newPassword: { type: "string" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Password changed successfully",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    properties: {
+                                        message: { type: "string" },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Current password is incorrect, or unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "429": {
+                        description: "Too many attempts, try again later",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/auth/recovery/{userId}": {
             post: {
                 tags: ["Auth"],
@@ -828,6 +884,143 @@ const swaggerDocument: OpenAPIV3.Document = {
                     "403": {
                         description:
                             "Forbidden - the order is already assigned to a different manager",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "404": {
+                        description: "Order not found",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/orders/{id}/tags": {
+            patch: {
+                tags: ["Orders"],
+                summary: "Set the tags on an order",
+                description:
+                    "Replaces the order's tag list. Up to 20 tags, 30 characters each. Not subject to manager ownership checks.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["tags"],
+                                properties: {
+                                    tags: {
+                                        type: "array",
+                                        items: { type: "string" },
+                                        maxItems: 20,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Tags updated successfully",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Order" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "404": {
+                        description: "Order not found",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/orders/{id}/reassign": {
+            patch: {
+                tags: ["Orders"],
+                summary: "Reassign an order to a different manager (Admin only)",
+                description:
+                    "Logs the change to the history log and notifies the new manager via Telegram and in-app notification.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["manager"],
+                                properties: {
+                                    manager: {
+                                        type: "string",
+                                        description: "Surname of the target manager",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Order reassigned successfully",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Order" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Validation error, or manager not found",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - Admin role required",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -1780,7 +1973,9 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
             put: {
                 tags: ["Users"],
-                summary: "Update a user's name and surname",
+                summary: "Update a user's name, surname, and email",
+                description:
+                    "Users may update their own profile; admins may update any profile.",
                 security: [{ bearerAuth: [] }],
                 parameters: [
                     { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -1791,10 +1986,10 @@ const swaggerDocument: OpenAPIV3.Document = {
                         "application/json": {
                             schema: {
                                 type: "object",
-                                required: ["name", "surname"],
                                 properties: {
                                     name: { type: "string" },
                                     surname: { type: "string" },
+                                    email: { type: "string", format: "email" },
                                 },
                             },
                         },
@@ -1874,6 +2069,67 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "403": {
                         description: "Forbidden - Admin role required",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
+        "/users/{id}/avatar": {
+            post: {
+                tags: ["Users"],
+                summary: "Upload a profile avatar",
+                description:
+                    "Users may upload their own avatar; admins may upload for any user. Accepts JPEG, PNG, or WEBP, up to 5MB.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    { name: "id", in: "path", required: true, schema: { type: "string" } },
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "multipart/form-data": {
+                            schema: {
+                                type: "object",
+                                required: ["avatar"],
+                                properties: {
+                                    avatar: { type: "string", format: "binary" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    "200": {
+                        description: "Avatar uploaded successfully",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/User" },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Invalid file type, file too large, or no file uploaded",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "401": {
+                        description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description: "Forbidden - can only upload your own avatar",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -2130,6 +2386,11 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     name: { type: "string" },
                     surname: { type: "string" },
+                    avatarUrl: {
+                        type: "string",
+                        nullable: true,
+                        description: "Relative path under /uploads/avatars, or null",
+                    },
                     role: { type: "string", enum: ["admin", "manager"] },
                     is_active: { type: "boolean", default: false },
                     is_banned: { type: "boolean", default: false },
@@ -2186,9 +2447,14 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "string",
                         nullable: true,
                         description:
-                            "Surname of the manager assigned to this order. Set automatically to the current user's surname on first update or first comment, or by the auto-assign feature on creation.",
+                            "Surname of the manager assigned to this order. Set automatically to the current user's surname on first update or first comment, by the auto-assign feature on creation, or explicitly via PATCH /orders/{id}/reassign (Admin only).",
                     },
                     group: { type: "string", nullable: true },
+                    tags: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Free-form labels, up to 20 tags of 30 characters each",
+                    },
                 },
             },
             AutoAssignSettings: {

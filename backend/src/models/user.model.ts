@@ -21,6 +21,10 @@ const userSchema = new Schema(
         surname: {
             type: String,
         },
+        avatarUrl: {
+            type: String,
+            default: null,
+        },
         role: {
             type: String,
             enum: RoleEnum,

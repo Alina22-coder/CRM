@@ -12,6 +12,7 @@ import { notificationService } from "./notification.service";
 import { autoAssignService } from "./auto-assign.service";
 import NotificationEvent from "../enums/notification-event.enum";
 import Status from "../enums/status.enum";
+import RoleEnum from "../enums/role.enum";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
@@ -200,6 +201,62 @@ class OrderService {
                 orderId,
             );
         }
+
+        return updatedOrder;
+    }
+
+    public async updateOrderTags(orderId: string, tags: string[]) {
+        const order = await orderRepository.getOrderById(orderId);
+
+        if (!order) {
+            throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
+        }
+
+        return orderRepository.updateOrderById(orderId, { tags });
+    }
+
+    public async reassignOrder(
+        orderId: string,
+        managerSurname: string,
+        adminUserId: string,
+    ) {
+        const order = await orderRepository.getOrderById(orderId);
+
+        if (!order) {
+            throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
+        }
+
+        const manager = await userRepository.getUserBySurname(managerSurname);
+
+        if (!manager || manager.role !== RoleEnum.Manager) {
+            throw new ApiError("Manager not found", StatusCodes.BAD_REQUEST);
+        }
+
+        const previousManager = order.manager;
+        const updatedOrder = await orderRepository.updateOrderById(orderId, {
+            manager: managerSurname,
+        });
+
+        await historyService.logOrderChanges(
+            orderId,
+            adminUserId,
+            { manager: previousManager },
+            { manager: managerSurname },
+        );
+
+        const text = `Order reassigned to you: ${order.name} ${order.surname}`;
+
+        await telegramService.notifyManagerBySurname(
+            managerSurname,
+            NotificationEvent.STATUS_CHANGE,
+            text,
+        );
+        await notificationService.notifyManagerBySurname(
+            managerSurname,
+            NotificationEvent.STATUS_CHANGE,
+            text,
+            orderId,
+        );
 
         return updatedOrder;
     }

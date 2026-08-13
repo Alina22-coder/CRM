@@ -6,6 +6,7 @@ import { commonMiddleware } from "../middleware/common.middleware";
 import { UserValidator } from "../validators/user.validator";
 import RoleEnum from "../enums/role.enum";
 import { orderController } from "../controllers/order.controller";
+import { avatarUpload } from "../config/upload.config";
 
 const userRouter = Router();
 
@@ -39,6 +40,14 @@ userRouter.put(
     commonMiddleware.isValidate("id"),
     commonMiddleware.validateBody(UserValidator.update),
     userController.updateUserById,
+);
+
+userRouter.post(
+    "/:id/avatar",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isValidate("id"),
+    avatarUpload.single("avatar"),
+    userController.updateAvatar,
 );
 
 userRouter.patch(

@@ -47,7 +47,6 @@ export const CreateManagerModal = ({
             <div className={styles.modal}>
                 <div className={styles.modal__header}>
                     <div className={styles.header__title}>New manager</div>
-                    {/* TODO add btn */}
                     <button className={styles.header__btn} onClick={onClose}>
                         ✕
                     </button>

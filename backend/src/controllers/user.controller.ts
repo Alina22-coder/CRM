@@ -61,6 +61,29 @@ class UserController {
         }
     }
 
+    public async updateAvatar(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = req.params.id as string;
+            const { userId, role } = res.locals.tokenPayload as ITokenPayload;
+
+            if (role !== RoleEnum.Admin && id !== userId) {
+                throw new ApiError(
+                    "You can only edit your own profile",
+                    StatusCodes.FORBIDDEN,
+                );
+            }
+
+            if (!req.file) {
+                throw new ApiError("No file uploaded", StatusCodes.BAD_REQUEST);
+            }
+
+            const data = await userService.updateAvatar(id, req.file.filename);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async banUser(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.params.id as string;

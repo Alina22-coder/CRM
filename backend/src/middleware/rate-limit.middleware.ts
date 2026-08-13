@@ -31,3 +31,11 @@ export const setPasswordRateLimit = rateLimit({
     legacyHeaders: false,
     message: { message: "Too many attempts, try again later" },
 });
+
+export const changePasswordRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many attempts, try again later" },
+});

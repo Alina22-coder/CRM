@@ -82,6 +82,10 @@ const orderSchema = new Schema({
         type: String,
         default: null,
     },
+    tags: {
+        type: [String],
+        default: [],
+    },
 });
 
 export const OrderModel = mongoose.model<IOrder>("order", orderSchema);

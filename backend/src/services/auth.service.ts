@@ -112,6 +112,37 @@ class AuthService {
         });
     }
 
+    public async changePassword(
+        userId: string,
+        currentPassword: string,
+        newPassword: string,
+    ): Promise<void> {
+        const user = await userRepository.getUserByIdWithPassword(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        const isValidPassword = await passwordService.comparePassword(
+            currentPassword,
+            user.password,
+        );
+
+        if (!isValidPassword) {
+            throw new ApiError(
+                "Current password is incorrect",
+                StatusCodes.UNAUTHORIZED,
+            );
+        }
+
+        const hashedPassword = await passwordService.hashPassword(newPassword);
+
+        await userRepository.updateUserById(userId, {
+            password: hashedPassword,
+            tokenVersion: user.tokenVersion + 1,
+        });
+    }
+
     public async recoveryPassword(userId: string): Promise<string> {
         const user = await userRepository.getUserById(userId);
 

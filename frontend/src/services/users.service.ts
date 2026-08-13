@@ -18,6 +18,14 @@ const userService = {
         return api.put(`/users/${userId}`, update);
     },
 
+    uploadAvatar: (userId: string, file: File) => {
+        const formData = new FormData();
+        formData.append("avatar", file);
+        return api.post(`/users/${userId}/avatar`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+
     deleteUserById: (userId: string) => {
         return api.delete(`/users/${userId}`);
     },
