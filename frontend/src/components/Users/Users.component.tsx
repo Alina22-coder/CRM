@@ -68,49 +68,57 @@ export const Users = () => {
                                     {
                                         label: "Total",
                                         value: statistic?.total,
-                                        color: "#1c1d21",
+                                        icon: "📋",
+                                        colorVar: "dark",
                                     },
                                     {
                                         label: "In work",
                                         value: statistic?.["In work"],
-                                        color: "#5e81f4",
+                                        icon: "⚙️",
+                                        colorVar: "primary",
                                     },
                                     {
                                         label: "New",
                                         value: statistic?.New,
-                                        color: "#f4be5e",
+                                        icon: "✨",
+                                        colorVar: "yellow",
                                     },
                                     {
                                         label: "Agree",
                                         value: statistic?.Aggre,
-                                        color: "#7ce7ac",
+                                        icon: "✅",
+                                        colorVar: "green",
                                     },
                                     {
                                         label: "Disagree",
                                         value: statistic?.Disaggre,
-                                        color: "#ff808b",
+                                        icon: "✕",
+                                        colorVar: "pink",
                                     },
                                     {
                                         label: "Dubbing",
                                         value: statistic?.Dubbing,
-                                        color: "#9698d6",
+                                        icon: "🎬",
+                                        colorVar: "purple",
                                     },
                                     {
                                         label: "Overdue",
                                         value: statistic?.overdueCount,
-                                        color: "#d63048",
+                                        icon: "⏰",
+                                        colorVar: "pinkDark",
                                     },
                                 ] as const
-                            ).map(({ label, value, color }) => (
+                            ).map(({ label, value, icon, colorVar }) => (
                                 <div
                                     key={label}
                                     className={styles.status__item}
                                 >
-                                    <div className={styles.status__item__wrap}>
-                                        <div
-                                            className={styles.status__item__dot}
-                                            style={{ background: color }}
-                                        ></div>
+                                    <div
+                                        className={`${styles.status__item__icon} ${styles[`status__item__icon--${colorVar}`]}`}
+                                    >
+                                        {icon}
+                                    </div>
+                                    <div className={styles.status__item__body}>
                                         <div
                                             className={
                                                 styles.status__item__title
@@ -118,12 +126,11 @@ export const Users = () => {
                                         >
                                             {label}
                                         </div>
-                                    </div>
-                                    <div
-                                        className={styles.status__item__text}
-                                        style={{ color: color }}
-                                    >
-                                        {value ?? "0"}
+                                        <div
+                                            className={`${styles.status__item__text} ${styles[`status__item__text--${colorVar}`]}`}
+                                        >
+                                            {value ?? "0"}
+                                        </div>
                                     </div>
                                 </div>
                             ))}

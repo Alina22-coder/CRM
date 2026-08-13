@@ -1,19 +1,17 @@
 @use "../../styles/variables/colors" as *;
 @use "../../styles/variables/typography" as *;
+@use "../../styles/variables/mixins" as *;
 
 .manager {
     &__card {
-        background: $white;
-        border-radius: $br-12;
-        padding: 18px 24px;
-        box-shadow: $card-shadow;
+        @include card($spacing-6 $spacing-8);
         display: flex;
         align-items: center;
-        gap: 18px;
+        gap: $spacing-6;
         transition: box-shadow 150ms;
 
         &:hover {
-            box-shadow: $dropdown-shadow;
+            box-shadow: $shadow-dropdown;
         }
 
         .card__avatar {
@@ -27,6 +25,13 @@
             font-weight: $font-weight-bold;
             color: $white;
             flex-shrink: 0;
+
+            &--purple {
+                background: $purple;
+            }
+            &--primary {
+                background: $primary;
+            }
         }
 
         .card__info {
@@ -43,20 +48,21 @@
                     font-weight: $font-weight-bold;
                 }
 
-                .card__status {
-                    display: inline-block;
-                    border-radius: $br-4;
-                    padding: 2px 10px;
-                    font-size: $font-size-xs;
-                    font-weight: $font-weight-semibold;
+                .card__role {
+                    &--purple {
+                        @include badge($purple-light, $purple-dark);
+                    }
+                    &--primary {
+                        @include badge($primary-light, $primary);
+                    }
+                }
 
+                .card__status {
                     &__active {
-                        background: $green-light;
-                        color: $green-dark;
+                        @include badge($green-light, $green-dark);
                     }
                     &__inactive {
-                        background: $pink-light;
-                        color: $pink-dark;
+                        @include badge($pink-light, $pink-dark);
                     }
                 }
             }
@@ -84,18 +90,10 @@
                 margin-top: 10px;
 
                 span {
-                    display: inline-flex;
-                    align-items: center;
-                    border-radius: $br-4;
-                    padding: 3px 10px;
-                    background: $background-light;
-                    color: $dark;
-                    font-size: $font-size-xs;
-                    font-weight: $font-weight-semibold;
+                    @include badge($background-light, $dark);
 
                     &:first-child {
-                        background: $primary-light;
-                        color: $primary;
+                        @include badge($primary-light, $primary);
                     }
                 }
             }

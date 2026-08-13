@@ -1,17 +1,6 @@
 @use "../../../styles/variables/colors" as *;
 @use "../../../styles/variables/typography" as *;
 
-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    border-radius: $br-8;
-    transition: all 150ms;
-}
-
 .primary {
     height: 44px;
     padding: 0 32px;
@@ -51,8 +40,4 @@ button {
     &:hover {
         background: rgba(255, 128, 139, 0.2);
     }
-}
-
-button:active {
-    background: $primary-darker;
 }

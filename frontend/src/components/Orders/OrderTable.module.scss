@@ -1,5 +1,6 @@
 @use "../../styles/variables/colors" as *;
 @use "../../styles/variables/typography" as *;
+@use "../../styles/variables/mixins" as *;
 
 .order {
     border-bottom: 1px solid $outline;
@@ -26,8 +27,6 @@
 
 .manager__tooltip {
     position: absolute;
-    // top: calc(100% + 8px);
-    // bottom: calc(100% + 10px);
     top: calc(100% - 10px);
     left: 50%;
     transform: translateX(-50%);
@@ -37,7 +36,7 @@
     border: 1px solid $outline;
     border-radius: $br-8;
     box-shadow: $shadow-modal;
-    padding: 14px;
+    padding: $spacing-5;
 
     &__header {
         display: flex;
@@ -269,26 +268,11 @@
             gap: 10px;
 
             .comment__btn__edit {
-                height: 36px;
-                padding: 0 16px;
-
-                font-size: $font-size-xs;
-                font-weight: $font-weight-semibold;
-
-                border: 1.5px solid $outline;
-                background: transparent;
-                color: $dark;
+                @include btn-outline();
             }
 
             .comment__btn__submit {
-                height: 36px;
-                padding: 0 16px;
-
-                font-size: $font-size-xs;
-                font-weight: $font-weight-semibold;
-
-                background: $primary;
-                color: $white;
+                @include btn-primary-sm();
             }
         }
     }
@@ -383,8 +367,39 @@
     }
 
     &__item {
+        display: flex;
+        gap: 8px;
         border-left: 2px solid $outline;
         padding-left: 10px;
+
+        &__icon {
+            flex-shrink: 0;
+            width: 8px;
+            height: 8px;
+            margin-top: 5px;
+            border-radius: $br-50;
+
+            &--purple {
+                background: $purple;
+            }
+            &--green {
+                background: $green;
+            }
+            &--primary {
+                background: $primary;
+            }
+            &--yellow {
+                background: $yellow;
+            }
+            &--pink {
+                background: $pink;
+            }
+        }
+
+        &__body {
+            flex: 1;
+            min-width: 0;
+        }
 
         &__author {
             display: flex;
@@ -394,9 +409,19 @@
             margin-bottom: 2px;
         }
 
+        &__authorName {
+            font-weight: $font-weight-bold;
+            color: $dark;
+        }
+
         &__text {
             font-size: $font-size-xs;
             color: $dark;
+        }
+
+        &__value {
+            color: $primary-dark;
+            font-weight: $font-weight-semibold;
         }
     }
 }

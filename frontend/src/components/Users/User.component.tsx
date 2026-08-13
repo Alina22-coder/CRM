@@ -1,16 +1,16 @@
 import { useEffect, useState, type FC } from "react";
 import type { IUser } from "../../interfaces/IUser";
 import styles from "./User.module.scss";
-import { AVATAR_COLORS } from "../../constants/avatar.constant";
 import userService from "../../services/users.service";
 import { authService } from "../../services/auth.service";
 import { toast } from "sonner";
 import { ConfirmModal } from "../Modal/ConfirmModal.component";
 import type { IStatistic } from "../../interfaces/IStatistic";
+import RoleEnum from "../../enums/role.enum";
 
-const getAvatarColor = (name: string) => {
-    const index = name.charCodeAt(0) % AVATAR_COLORS.length;
-    return AVATAR_COLORS[index];
+const ROLE_META: Record<RoleEnum, { colorVar: string; label: string }> = {
+    [RoleEnum.Admin]: { colorVar: "purple", label: "Admin" },
+    [RoleEnum.Manager]: { colorVar: "primary", label: "Manager" },
 };
 
 type UserPropType = {
@@ -86,11 +86,12 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
         });
     }, [user._id]);
 
+    const roleMeta = ROLE_META[user.role];
+
     return (
         <div className={styles.manager__card}>
             <div
-                className={styles.card__avatar}
-                style={{ background: getAvatarColor(user.name ?? "") }}
+                className={`${styles.card__avatar} ${styles[`card__avatar--${roleMeta.colorVar}`]}`}
             >
                 {user?.name?.charAt(0).toUpperCase()}
                 {user?.surname?.charAt(0).toUpperCase()}
@@ -100,6 +101,12 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
                 <div className={styles.info__user}>
                     <div className={styles.card__user}>
                         {user.name} {user.surname}
+                    </div>
+
+                    <div
+                        className={`${styles.card__role} ${styles[`card__role--${roleMeta.colorVar}`]}`}
+                    >
+                        {roleMeta.label}
                     </div>
 
                     <div

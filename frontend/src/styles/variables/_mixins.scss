@@ -1,0 +1,47 @@
+@use "colors" as *;
+@use "typography" as *;
+
+@mixin card($padding: $spacing-8) {
+    background: $white;
+    border-radius: $br-12;
+    box-shadow: $shadow-card;
+    padding: $padding;
+}
+
+@mixin badge($bg, $color) {
+    display: inline-flex;
+    align-items: center;
+    border-radius: $br-4;
+    padding: 3px $spacing-4;
+    background: $bg;
+    color: $color;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+}
+
+@mixin btn-outline($height: 36px) {
+    height: $height;
+    padding: 0 $spacing-6;
+    border: 1.5px solid $outline;
+    background: transparent;
+    color: $dark;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+        background: $background-light;
+    }
+}
+
+@mixin btn-primary-sm($height: 36px) {
+    height: $height;
+    padding: 0 $spacing-6;
+    background: $primary;
+    color: $white;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+        background: $primary-dark;
+    }
+}

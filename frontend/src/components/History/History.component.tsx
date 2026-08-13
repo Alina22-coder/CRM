@@ -7,9 +7,11 @@ import type { IUser } from "../../interfaces/IUser";
 import { LogoLoader } from "../Logo/Logo";
 import { Pagination } from "../Pagination/Pagination";
 import {
-    formatHistoryText,
+    formatHistoryAction,
+    formatHistoryValueChange,
     getHistoryAuthor,
     getHistoryOrder,
+    getHistoryTypeMeta,
     isHiddenHistoryEntry,
 } from "../../helpers/formatHistoryEntry";
 import styles from "./History.module.scss";
@@ -130,22 +132,63 @@ export const History = () => {
                             .map((entry) => {
                             const entryAuthor = getHistoryAuthor(entry);
                             const order = getHistoryOrder(entry);
+                            const meta = getHistoryTypeMeta(entry);
+                            const valueChange = formatHistoryValueChange(entry);
 
                             return (
                                 <div
                                     key={entry._id}
                                     className={styles.history__item}
                                 >
-                                    <div className={styles.history__item__row}>
+                                    <div
+                                        className={`${styles.history__item__icon} ${styles[`history__item__icon--${meta.colorVar}`]}`}
+                                    >
+                                        {meta.icon}
+                                    </div>
+
+                                    <div
+                                        className={styles.history__item__body}
+                                    >
                                         <div
                                             className={
-                                                styles.history__item__author
+                                                styles.history__item__line
                                             }
                                         >
-                                            {entryAuthor
-                                                ? entryAuthor.surname
-                                                : ""}
+                                            <span
+                                                className={
+                                                    styles.history__item__author
+                                                }
+                                            >
+                                                {entryAuthor?.surname ?? ""}
+                                            </span>{" "}
+                                            {formatHistoryAction(entry)}
+                                            {order && (
+                                                <>
+                                                    {" "}
+                                                    <Link
+                                                        className={
+                                                            styles.history__item__order
+                                                        }
+                                                        to={`/orders?surname=${encodeURIComponent(order.surname)}`}
+                                                    >
+                                                        #{order._id.slice(-6)}
+                                                    </Link>
+                                                </>
+                                            )}
+                                            {valueChange && (
+                                                <>
+                                                    {" "}
+                                                    <span
+                                                        className={
+                                                            styles.history__item__value
+                                                        }
+                                                    >
+                                                        {valueChange}
+                                                    </span>
+                                                </>
+                                            )}
                                         </div>
+
                                         <div
                                             className={
                                                 styles.history__item__date
@@ -155,23 +198,6 @@ export const History = () => {
                                                 entry.created_at,
                                             ).toLocaleString()}
                                         </div>
-                                    </div>
-
-                                    {order && (
-                                        <div
-                                            className={
-                                                styles.history__item__order
-                                            }
-                                        >
-                                            {order.name} {order.surname} ·{" "}
-                                            {order.email}
-                                        </div>
-                                    )}
-
-                                    <div
-                                        className={styles.history__item__text}
-                                    >
-                                        {formatHistoryText(entry)}
                                     </div>
                                 </div>
                             );

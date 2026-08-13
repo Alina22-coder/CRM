@@ -5,15 +5,15 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 22px;
+    gap: $spacing-8;
     padding: 32px;
     align-content: start;
 
     &__block {
         background: $white;
         border-radius: $br-12;
-        padding: 30px;
-        box-shadow: $modal-shadow;
+        padding: $spacing-8;
+        box-shadow: $shadow-modal;
     }
 
     &__title {

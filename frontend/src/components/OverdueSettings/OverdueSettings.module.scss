@@ -1,17 +1,15 @@
 @use "../../styles/variables/colors" as *;
 @use "../../styles/variables/typography" as *;
+@use "../../styles/variables/mixins" as *;
 
 .overdue {
+    @include card();
     flex: 1;
-    background: $white;
-    border-radius: $br-12;
-    padding: 24px;
-    box-shadow: $shadow-card;
 
     &__title {
         font-size: $font-size-lg;
         font-weight: $font-weight-extrabold;
-        margin-bottom: 22px;
+        margin-bottom: $spacing-8;
     }
 
     &__toggle {

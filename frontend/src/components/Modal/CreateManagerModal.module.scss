@@ -21,20 +21,19 @@
         width: 700px;
         max-width: 100%;
         background: $white;
-        border-radius: 14px;
+        border-radius: $br-12;
         padding: 32px 40px;
-        box-shadow: $modal-shadow;
+        box-shadow: $shadow-modal;
 
         &__header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 26px;
+            margin-bottom: 28px;
 
             .header__title {
                 font-size: $font-size-2xl;
-                font-weight: $font-weight-extrabold;
-                letter-spacing: -0.3px;
+                font-weight: $font-weight-bold;
             }
 
             .header__btn {

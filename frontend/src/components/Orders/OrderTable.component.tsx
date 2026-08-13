@@ -12,7 +12,13 @@ import { TagInput } from "../ui/tag/TagInput.ui";
 import { EditOrderModal } from "../Modal/EditOrderModal.component";
 import { toast } from "sonner";
 import type { IHistory } from "../../interfaces/IHistory";
-import { formatHistoryText, getHistoryAuthor, isHiddenHistoryEntry } from "../../helpers/formatHistoryEntry";
+import {
+    formatHistoryAction,
+    formatHistoryValueChange,
+    getHistoryAuthor,
+    getHistoryTypeMeta,
+    isHiddenHistoryEntry,
+} from "../../helpers/formatHistoryEntry";
 import type { ITask } from "../../interfaces/ITask";
 import { taskService } from "../../services/task.service";
 
@@ -615,6 +621,9 @@ export const OrderTable: FC<OrderPropType> = ({
                                         .filter((h) => !isHiddenHistoryEntry(h))
                                         .map((h) => {
                                         const author = getHistoryAuthor(h);
+                                        const meta = getHistoryTypeMeta(h);
+                                        const valueChange =
+                                            formatHistoryValueChange(h);
 
                                         return (
                                             <div
@@ -622,25 +631,57 @@ export const OrderTable: FC<OrderPropType> = ({
                                                 className={styles.history__item}
                                             >
                                                 <div
-                                                    className={
-                                                        styles.history__item__author
-                                                    }
-                                                >
-                                                    {author
-                                                        ? author.surname
-                                                        : ""}
-                                                    <span>
-                                                        {new Date(
-                                                            h.created_at,
-                                                        ).toLocaleString()}
-                                                    </span>
-                                                </div>
+                                                    className={`${styles.history__item__icon} ${styles[`history__item__icon--${meta.colorVar}`]}`}
+                                                ></div>
                                                 <div
                                                     className={
-                                                        styles.history__item__text
+                                                        styles.history__item__body
                                                     }
                                                 >
-                                                    {formatHistoryText(h)}
+                                                    <div
+                                                        className={
+                                                            styles.history__item__author
+                                                        }
+                                                    >
+                                                        <span
+                                                            className={
+                                                                styles.history__item__authorName
+                                                            }
+                                                        >
+                                                            {author
+                                                                ? author.surname
+                                                                : ""}
+                                                        </span>
+                                                        <span>
+                                                            {new Date(
+                                                                h.created_at,
+                                                            ).toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            styles.history__item__text
+                                                        }
+                                                    >
+                                                        {formatHistoryAction(
+                                                            h,
+                                                            false,
+                                                        )}
+                                                        {valueChange && (
+                                                            <>
+                                                                {" "}
+                                                                <span
+                                                                    className={
+                                                                        styles.history__item__value
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        valueChange
+                                                                    }
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         );
