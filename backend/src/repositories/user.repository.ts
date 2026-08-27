@@ -64,6 +64,14 @@ class UserRepository {
         return UserModel.findOne({ telegram_chat_id: chatId });
     }
 
+    public unsetTelegramChatId(userId: string): Promise<IUser | null> {
+        return UserModel.findByIdAndUpdate(
+            userId,
+            { $unset: { telegram_chat_id: 1 } },
+            { new: true },
+        );
+    }
+
     public getUserBySurname(surname: string): Promise<IUser | null> {
         return UserModel.findOne({ surname });
     }

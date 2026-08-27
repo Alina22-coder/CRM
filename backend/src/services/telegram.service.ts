@@ -37,9 +37,7 @@ class TelegramService {
         );
 
         if (existingOwner && existingOwner._id !== token.user.toString()) {
-            await userRepository.updateUserById(existingOwner._id, {
-                telegram_chat_id: null,
-            });
+            await userRepository.unsetTelegramChatId(existingOwner._id);
         }
 
         await userRepository.updateUserById(token.user.toString(), {
@@ -71,9 +69,7 @@ class TelegramService {
     }
 
     public async unlink(userId: string): Promise<void> {
-        await userRepository.updateUserById(userId, {
-            telegram_chat_id: null,
-        });
+        await userRepository.unsetTelegramChatId(userId);
         await telegramRepository.deleteTokensByUserId(userId);
     }
 

@@ -56,7 +56,6 @@ const userSchema = new Schema(
         },
         telegram_chat_id: {
             type: String,
-            default: null,
             unique: true,
             sparse: true,
         },
