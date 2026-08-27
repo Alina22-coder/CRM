@@ -158,6 +158,10 @@ class OrderService {
             if (updatedFields.status === Status.DISAGGRE) {
                 updatedFields.disagree_at = new Date();
             }
+
+            if (updatedFields.status === Status.NEW) {
+                updatedFields.manager = null;
+            }
         }
 
         const updatedOrder = await orderRepository.updateOrderById(
