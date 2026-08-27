@@ -3,13 +3,20 @@ import IOrder from "../interfaces/IOrder";
 import IUser from "../interfaces/IUser";
 import ApiError from "../errors/api.error";
 import Status from "../enums/status.enum";
+import RoleEnum from "../enums/role.enum";
 
 export const applyAutoAssignDefaults = (
     order: IOrder,
     user: IUser,
     action: "edit" | "comment",
 ): Partial<IOrder> => {
-    if (order.manager && order.manager !== user.surname) {
+    const isAdmin = user.role === RoleEnum.Admin;
+
+    if (
+        !isAdmin &&
+        order.manager &&
+        order.manager !== user.surname
+    ) {
         throw new ApiError(
             `You can only ${action} your own orders`,
             StatusCodes.FORBIDDEN,
@@ -18,7 +25,7 @@ export const applyAutoAssignDefaults = (
 
     const updatedFields: Partial<IOrder> = {};
 
-    if (!order.manager) {
+    if (!isAdmin && !order.manager) {
         updatedFields.manager = user.surname;
     }
 
