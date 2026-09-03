@@ -26,6 +26,7 @@ backend/    — API сервер
 frontend/   — клієнтський застосунок
 docs/       — Postman-колекція
 dump/       — дамп колекції orders для MongoDB
+docker-compose.yml — піднімає mongo + backend + frontend одразу (див. розділ Docker)
 ```
 
 ## Передумови
@@ -96,6 +97,32 @@ dump/       — дамп колекції orders для MongoDB
    ```
 
 Фронтенд піднімається на `http://localhost:3000` і проксіює всі запити `/api/*` на бекенд (`http://localhost:5000`), маршрутизація прописана в `vite.config.ts`.
+
+## Запуск через Docker
+
+Альтернатива ручному запуску backend/frontend — весь стек (MongoDB + backend + frontend) одразу:
+
+```
+docker compose up --build -d
+```
+
+Піднімає три контейнери:
+
+- **mongo** — локальна MongoDB 7 у контейнері (дані зберігаються у volume `mongo_data`, доступ лише всередині docker-мережі, без зовнішнього порту).
+- **backend** — збирається з `backend/Dockerfile`, доступний на `http://localhost:5000`. Використовує `backend/.env`, але `MONGODB_URI` примусово перевизначено на локальний `mongo` контейнер (`mongodb://mongo:27017/crm`), а не на Atlas з `.env`.
+- **frontend** — збирається з `frontend/Dockerfile` (білд + nginx), доступний на `http://localhost:3000`. nginx проксіює `/api/*` та `/uploads/*` на `backend:5000` (аналог dev-проксі з `vite.config.ts`).
+
+Корисні команди:
+
+```
+docker compose ps                # статус контейнерів
+docker compose logs -f backend   # логи одного сервісу
+docker compose stop              # зупинити, зберігши контейнери й дані
+docker compose down              # зупинити і прибрати контейнери (volume з даними Mongo залишається)
+docker compose down -v           # + видалити дані Mongo з volume
+```
+
+Це production-подібна збірка без live-reload — після зміни коду для оновлення контейнерів потрібно повторити `docker compose up --build -d`. Для розробки з гарячим перезавантаженням використовуйте ручний запуск (`npm run dev`) з розділів вище.
 
 ## Вхід у систему
 
