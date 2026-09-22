@@ -1,4 +1,6 @@
 import { historyRepository } from "../repositories/history.repository";
+import { userRepository } from "../repositories/user.repository";
+import { getManagerId } from "../helpers/getManagerId";
 import IOrder from "../interfaces/IOrder";
 import HistoryType from "../enums/history-type.enum";
 
@@ -29,17 +31,38 @@ class HistoryService {
             const oldValue = before[field];
             const newValue = after[field];
 
-            if (oldValue === newValue) continue;
+            const unchanged =
+                field === "manager"
+                    ? getManagerId(oldValue as IOrder["manager"]) ===
+                      getManagerId(newValue as IOrder["manager"])
+                    : String(oldValue ?? "") === String(newValue ?? "");
+
+            if (unchanged) continue;
 
             const type = TRACKED_FIELD_TO_TYPE[field] ?? HistoryType.FIELD_EDIT;
+
+            const [oldDisplay, newDisplay] =
+                field === "manager"
+                    ? await Promise.all([
+                          this.resolveManagerDisplay(
+                              oldValue as IOrder["manager"],
+                          ),
+                          this.resolveManagerDisplay(
+                              newValue as IOrder["manager"],
+                          ),
+                      ])
+                    : [
+                          oldValue != null ? String(oldValue) : null,
+                          newValue != null ? String(newValue) : null,
+                      ];
 
             entries.push({
                 order: orderId,
                 author: authorId,
                 type,
                 field: field as string,
-                old_value: oldValue != null ? String(oldValue) : null,
-                new_value: newValue != null ? String(newValue) : null,
+                old_value: oldDisplay,
+                new_value: newDisplay,
             });
         }
 
@@ -48,6 +71,23 @@ class HistoryService {
                 entries.map((entry) => historyRepository.createHistory(entry)),
             );
         }
+    }
+
+    private async resolveManagerDisplay(
+        value: IOrder["manager"],
+    ): Promise<string | null> {
+        if (value == null) return null;
+
+        if (typeof value === "object" && "surname" in value) {
+            return `${value.name ?? ""} ${value.surname ?? ""}`.trim();
+        }
+
+        const id = typeof value === "object" && "_id" in value
+            ? String((value as { _id: unknown })._id)
+            : String(value);
+
+        const user = await userRepository.getUserById(id);
+        return user ? `${user.name} ${user.surname}`.trim() : id;
     }
 
     public async logCommentAdded(orderId: string, authorId: string) {

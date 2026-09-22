@@ -66,7 +66,8 @@ class OrderController {
         try {
             const id = req.params.id as string;
             const { tags } = req.body;
-            const data = await orderService.updateOrderTags(id, tags);
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            const data = await orderService.updateOrderTags(id, tags, userId);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

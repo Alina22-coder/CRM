@@ -1,3 +1,6 @@
+import { Types } from "mongoose";
+import IUser from "./IUser";
+
 interface IOrder {
     _id: string;
     name: string;
@@ -19,7 +22,7 @@ interface IOrder {
     disagree_reason?: string | null;
     disagree_reason_comment?: string | null;
     disagree_at?: Date | null;
-    manager?: any;
+    manager?: Types.ObjectId | string | IUser | null;
     group?: string;
     tags?: string[];
 }

@@ -68,7 +68,9 @@ export const EditOrderModal = ({
     const currentUser = useCurrentUser();
     const isAdmin = currentUser?.role === RoleEnum.Admin;
     const [managers, setManagers] = useState<IUser[]>([]);
-    const [selectedManager, setSelectedManager] = useState(order.manager ?? "");
+    const [selectedManager, setSelectedManager] = useState(
+        order.manager?._id ?? "",
+    );
     const [isReassigning, setIsReassigning] = useState(false);
 
     useEffect(() => {
@@ -103,7 +105,7 @@ export const EditOrderModal = ({
     }, []);
 
     useEffect(() => {
-        setSelectedManager(order.manager ?? "");
+        setSelectedManager(order.manager?._id ?? "");
     }, [order._id, order.manager]);
 
     useEffect(() => {
@@ -120,7 +122,7 @@ export const EditOrderModal = ({
     }, [isAdmin]);
 
     const handleReassign = () => {
-        if (!selectedManager || selectedManager === order.manager) return;
+        if (!selectedManager || selectedManager === order.manager?._id) return;
 
         setIsReassigning(true);
         orderService
@@ -204,7 +206,7 @@ export const EditOrderModal = ({
                                     {managers.map((manager) => (
                                         <option
                                             key={manager._id}
-                                            value={manager.surname}
+                                            value={manager._id}
                                         >
                                             {manager.name} {manager.surname}
                                         </option>
@@ -218,7 +220,7 @@ export const EditOrderModal = ({
                                     disabled={
                                         isReassigning ||
                                         !selectedManager ||
-                                        selectedManager === order.manager
+                                        selectedManager === order.manager?._id
                                     }
                                 >
                                     {isReassigning

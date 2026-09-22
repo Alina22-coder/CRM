@@ -1,3 +1,9 @@
+export interface IOrderManager {
+    _id: string;
+    name: string;
+    surname: string;
+}
+
 export interface IOrder {
     _id: string;
     name: string;
@@ -16,7 +22,7 @@ export interface IOrder {
     status: string;
     disagree_reason?: string | null;
     disagree_reason_comment?: string | null;
-    manager?: string;
+    manager?: IOrderManager | null;
     group?: string;
     tags?: string[];
 }

@@ -18,8 +18,8 @@ export const orderService = {
         return api.patch(`/orders/${orderId}/tags`, { tags });
     },
 
-    reassignOrder: (orderId: string, manager: string) => {
-        return api.patch(`/orders/${orderId}/reassign`, { manager });
+    reassignOrder: (orderId: string, managerId: string) => {
+        return api.patch(`/orders/${orderId}/reassign`, { manager: managerId });
     },
 
     getOrderStatistic: () => {

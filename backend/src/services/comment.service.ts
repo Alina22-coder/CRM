@@ -7,6 +7,7 @@ import { commentRepository } from "../repositories/comment.repository";
 import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
+import { getManagerId } from "../helpers/getManagerId";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
 import { notificationService } from "./notification.service";
@@ -90,7 +91,7 @@ class CommentService {
 
         await historyService.logCommentAdded(orderId, userId);
 
-        const managerSurname = update.manager ?? order.manager;
+        const managerId = getManagerId(update.manager ?? order.manager);
         const statusChanged = update.status && update.status !== order.status;
         const notificationText = statusChanged
             ? `Order status for ${order.name} ${order.surname}: ${order.status} → ${update.status}`
@@ -99,14 +100,14 @@ class CommentService {
             ? NotificationEvent.STATUS_CHANGE
             : NotificationEvent.COMMENT_ADDED;
 
-        if (managerSurname && managerSurname !== user.surname) {
-            await telegramService.notifyManagerBySurname(
-                managerSurname,
+        if (managerId && managerId !== String(user._id)) {
+            await telegramService.notifyManagerById(
+                managerId,
                 notificationEvent,
                 notificationText,
             );
-            await notificationService.notifyManagerBySurname(
-                managerSurname,
+            await notificationService.notifyManagerById(
+                managerId,
                 notificationEvent,
                 notificationText,
                 orderId,

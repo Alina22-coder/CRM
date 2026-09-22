@@ -18,17 +18,13 @@ class NotificationService {
         });
     }
 
-    public async notifyManagerBySurname(
-        surname: string,
+    public async notifyManagerById(
+        managerId: string,
         event: NotificationEvent,
         text: string,
         orderId?: string,
     ): Promise<void> {
-        const manager = await userRepository.getUserBySurname(surname);
-
-        if (!manager) return;
-
-        await this.notify(manager._id, event, text, orderId);
+        await this.notify(managerId, event, text, orderId);
     }
 
     public async notifyAdmins(

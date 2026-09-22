@@ -75,7 +75,8 @@ const orderSchema = new Schema({
         default: null,
     },
     manager: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "user",
         default: null,
     },
     group: {

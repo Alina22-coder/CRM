@@ -106,18 +106,14 @@ class TelegramService {
         await bot.sendMessage(user.telegram_chat_id, text);
     }
 
-    public async notifyManagerBySurname(
-        surname: string,
+    public async notifyManagerById(
+        managerId: string,
         event: NotificationEvent,
         text: string,
     ): Promise<void> {
         if (!bot) return;
 
-        const manager = await userRepository.getUserBySurname(surname);
-
-        if (!manager) return;
-
-        await this.notify(manager._id, event, text);
+        await this.notify(managerId, event, text);
     }
 
     public async notifyAdmins(

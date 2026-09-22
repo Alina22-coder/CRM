@@ -219,13 +219,9 @@ export const OrderTable: FC<OrderPropType> = ({
                         setTooltipVisible(true);
                         if (currentOrder.manager && !managerInfo) {
                             userService
-                                .getAllUsers({
-                                    pageSize: 1,
-                                    page: 1,
-                                    search: currentOrder.manager,
-                                })
+                                .getUserById(currentOrder.manager._id)
                                 .then((res) => {
-                                    const found = res.data.data?.[0];
+                                    const found = res.data;
                                     if (found) {
                                         setManagerInfo(found);
                                         return userService.getStatisticByManager(
@@ -238,7 +234,9 @@ export const OrderTable: FC<OrderPropType> = ({
                     }}
                     onMouseLeave={() => setTooltipVisible(false)}
                 >
-                    {currentOrder.manager}
+                    {currentOrder.manager
+                        ? `${currentOrder.manager.name} ${currentOrder.manager.surname}`
+                        : ""}
                     {tooltipVisible && currentOrder.manager && (
                         <div className={styles.manager__tooltip}>
                             <div className={styles.manager__tooltip__header}>
@@ -257,7 +255,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     >
                                         {managerInfo
                                             ? `${managerInfo.name} ${managerInfo.surname}`
-                                            : currentOrder.manager}
+                                            : `${currentOrder.manager.name} ${currentOrder.manager.surname}`}
                                     </div>
                                     <div
                                         className={
@@ -456,7 +454,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                 </div>
 
                                 {(!currentOrder.manager ||
-                                    currentOrder.manager === user?.surname) && (
+                                    currentOrder.manager._id === user?._id) && (
                                         <>
                                             <div className={styles.comment__field}>
                                                 <label>Status</label>
@@ -740,7 +738,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                 </div>
 
                                 {(!currentOrder.manager ||
-                                    currentOrder.manager === user?.surname) && (
+                                    currentOrder.manager._id === user?._id) && (
                                     <div className={styles.tasks__form}>
                                         <input
                                             type="text"

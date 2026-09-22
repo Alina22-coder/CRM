@@ -85,7 +85,7 @@ export class OrderValidator {
     });
 
     public static reassign = joi.object({
-        manager: joi.string().trim().min(1).required(),
+        manager: joi.string().hex().length(24).required(),
     });
 
     public static lossReportQuery = joi.object({

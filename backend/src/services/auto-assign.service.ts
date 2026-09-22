@@ -74,7 +74,7 @@ class AutoAssignService {
 
         if (!applied) {
             if (attemptsLeft <= 0) {
-                return manager.surname;
+                return String(manager._id);
             }
 
             const freshSettings = await autoAssignSettingsRepository.getSettings();
@@ -85,20 +85,18 @@ class AutoAssignService {
             );
         }
 
-        return manager.surname;
+        return String(manager._id);
     }
 
     private async pickByLoad(
         activeParticipants: IUser[],
     ): Promise<string> {
-        const surnames = activeParticipants.map((user) => user.surname);
+        const ids = activeParticipants.map((user) => String(user._id));
         const counts =
-            await orderRepository.getActiveOrderCountsByManagers(surnames);
+            await orderRepository.getActiveOrderCountsByManagers(ids);
 
-        const minCount = Math.min(...surnames.map((surname) => counts[surname]));
-        const leastLoaded = surnames.filter(
-            (surname) => counts[surname] === minCount,
-        );
+        const minCount = Math.min(...ids.map((id) => counts[id]));
+        const leastLoaded = ids.filter((id) => counts[id] === minCount);
 
         return leastLoaded[Math.floor(Math.random() * leastLoaded.length)];
     }

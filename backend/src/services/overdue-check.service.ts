@@ -29,13 +29,13 @@ class OverdueCheckService {
             const text = `Order overdue: ${order.name} ${order.surname} has been New for more than ${settings.thresholdHours}h without a comment.`;
 
             if (order.manager) {
-                await telegramService.notifyManagerBySurname(
-                    order.manager,
+                await telegramService.notifyManagerById(
+                    String(order.manager),
                     NotificationEvent.ORDER_OVERDUE,
                     text,
                 );
-                await notificationService.notifyManagerBySurname(
-                    order.manager,
+                await notificationService.notifyManagerById(
+                    String(order.manager),
                     NotificationEvent.ORDER_OVERDUE,
                     text,
                     order._id.toString(),

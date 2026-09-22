@@ -987,7 +987,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                                 properties: {
                                     manager: {
                                         type: "string",
-                                        description: "Surname of the target manager",
+                                        description: "ObjectId of the target manager (User._id)",
                                     },
                                 },
                             },
@@ -2444,10 +2444,10 @@ const swaggerDocument: OpenAPIV3.Document = {
                         description: "Timestamp of the most recent transition into Disaggre status; used by the loss report period filter",
                     },
                     manager: {
-                        type: "string",
+                        type: "object",
                         nullable: true,
                         description:
-                            "Surname of the manager assigned to this order. Set automatically to the current user's surname on first update or first comment, by the auto-assign feature on creation, or explicitly via PATCH /orders/{id}/reassign (Admin only).",
+                            "User assigned to this order (populated with _id, name, surname). Set automatically to the current user on first update or first comment (including by an Admin), by the auto-assign feature on creation, or explicitly via PATCH /orders/{id}/reassign (Admin only). Once set, only that manager can edit, comment on, or reassign the order.",
                     },
                     group: { type: "string", nullable: true },
                     tags: {

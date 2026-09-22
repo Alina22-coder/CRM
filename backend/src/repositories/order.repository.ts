@@ -1,9 +1,10 @@
+import mongoose from "mongoose";
 import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 import Status from "../enums/status.enum";
 
 class OrderRepository {
-    private buildFilter(query: IOrderQuery, managerSurname?: string): object {
+    private buildFilter(query: IOrderQuery, managerId?: string): object {
         const filter: Record<string, any> = {};
 
         const textFields: Array<keyof IOrderQuery> = [
@@ -38,8 +39,8 @@ class OrderRepository {
             }
         }
 
-        if (query.my && managerSurname) {
-            filter.manager = managerSurname;
+        if (query.my && managerId) {
+            filter.manager = managerId;
         }
 
         return filter;
@@ -47,10 +48,10 @@ class OrderRepository {
 
     public async getAllOrders(
         query: IOrderQuery,
-        managerSurname?: string,
+        managerId?: string,
     ): Promise<{ data: IOrder[]; total: number }> {
         const { page, pageSize, order } = query;
-        const filter = this.buildFilter(query, managerSurname);
+        const filter = this.buildFilter(query, managerId);
 
         const sortField = order?.startsWith("-") ? order.slice(1) : order;
         const sortDir = order?.startsWith("-") ? -1 : 1;
@@ -59,7 +60,8 @@ class OrderRepository {
             OrderModel.find(filter)
                 .sort(sortField ? { [sortField]: sortDir } : { created_at: -1 })
                 .skip((page - 1) * pageSize)
-                .limit(pageSize),
+                .limit(pageSize)
+                .populate("manager", "name surname"),
             OrderModel.countDocuments(filter),
         ]);
 
@@ -67,7 +69,7 @@ class OrderRepository {
     }
 
     public getOrderById(orderId: string) {
-        return OrderModel.findById(orderId);
+        return OrderModel.findById(orderId).populate("manager", "name surname");
     }
 
     public updateOrderById(
@@ -94,11 +96,11 @@ class OrderRepository {
         return { total, ...statusCounts, overdueCount };
     }
 
-    public async getStatisticByManager(managerSurname: string) {
+    public async getStatisticByManager(managerId: string) {
         const [total, byStatus] = await Promise.all([
-            OrderModel.countDocuments({ manager: managerSurname }),
+            OrderModel.countDocuments({ manager: managerId }),
             OrderModel.aggregate([
-                { $match: { manager: managerSurname } },
+                { $match: { manager: new mongoose.Types.ObjectId(managerId) } },
                 { $group: { _id: "$status", count: { $sum: 1 } } },
             ]),
         ]);
@@ -136,12 +138,16 @@ class OrderRepository {
     }
 
     public async getActiveOrderCountsByManagers(
-        managerSurnames: string[],
+        managerIds: string[],
     ): Promise<Record<string, number>> {
         const result = await OrderModel.aggregate([
             {
                 $match: {
-                    manager: { $in: managerSurnames },
+                    manager: {
+                        $in: managerIds.map(
+                            (id) => new mongoose.Types.ObjectId(id),
+                        ),
+                    },
                     status: Status.IN_WORK,
                 },
             },
@@ -149,11 +155,11 @@ class OrderRepository {
         ]);
 
         const counts: Record<string, number> = {};
-        for (const surname of managerSurnames) {
-            counts[surname] = 0;
+        for (const id of managerIds) {
+            counts[id] = 0;
         }
         for (const row of result) {
-            counts[row._id] = row.count;
+            counts[String(row._id)] = row.count;
         }
 
         return counts;
@@ -185,16 +191,16 @@ class OrderRepository {
 
     public async getAllOrdersForExcel(
         query: IOrderQuery,
-        managerSurname?: string,
+        managerId?: string,
     ): Promise<IOrder[]> {
         const { order } = query;
-        const filter = this.buildFilter(query, managerSurname);
+        const filter = this.buildFilter(query, managerId);
         const sortField = order?.startsWith("-") ? order.slice(1) : order;
         const sortDir = order?.startsWith("-") ? -1 : 1;
 
-        const data = await OrderModel.find(filter).sort(
-            sortField ? { [sortField]: sortDir } : { created_at: -1 },
-        );
+        const data = await OrderModel.find(filter)
+            .sort(sortField ? { [sortField]: sortDir } : { created_at: -1 })
+            .populate("manager", "name surname");
 
         return data;
     }

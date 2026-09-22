@@ -6,6 +6,7 @@ import StatusCodes from "../enums/status-codes.enum";
 import { commentRepository } from "../repositories/comment.repository";
 import { Workbook } from "exceljs";
 import { applyAutoAssignDefaults } from "../helpers/applyAutoAssignDefaults";
+import { getManagerId } from "../helpers/getManagerId";
 import { historyService } from "./history.service";
 import { telegramService } from "./telegram.service";
 import { notificationService } from "./notification.service";
@@ -16,41 +17,30 @@ import RoleEnum from "../enums/role.enum";
 
 class OrderService {
     public async getAllOrders(query: IOrderQuery, userId: string) {
-        let managerSurname: string | undefined;
-        if (query.my) {
-            const user = await userRepository.getUserById(userId);
-            managerSurname = user?.surname;
-        }
-        return orderRepository.getAllOrders(query, managerSurname);
+        return orderRepository.getAllOrders(query, query.my ? userId : undefined);
     }
 
     public async createOrder(order: Partial<IOrder>) {
-        const manager = await autoAssignService.pickManager();
+        const managerId = await autoAssignService.pickManager();
 
         const createdOrder = await orderRepository.createOrder({
             ...order,
             created_at: new Date(),
             status: Status.NEW,
             status_updated_at: new Date(),
-            manager: manager ?? undefined,
+            manager: managerId ?? undefined,
         });
 
-        if (manager) {
-            const managerUser = await userRepository.getUserBySurname(manager);
-
-            if (managerUser) {
-                await historyService.logOrderChanges(
-                    createdOrder._id,
-                    managerUser._id,
-                    {},
-                    { manager },
-                );
-            }
+        if (managerId) {
+            await historyService.logOrderChanges(
+                createdOrder._id,
+                managerId,
+                {},
+                { manager: managerId },
+            );
         }
 
-        const newOrderText = `New order: ${createdOrder.name} ${createdOrder.surname}${
-            manager ? ` (auto-assigned to ${manager})` : ""
-        }`;
+        const newOrderText = `New order: ${createdOrder.name} ${createdOrder.surname}`;
 
         await telegramService.notifyAdmins(
             NotificationEvent.NEW_ORDER,
@@ -63,16 +53,16 @@ class OrderService {
             createdOrder._id.toString(),
         );
 
-        if (manager) {
+        if (managerId) {
             const assignedText = `New order assigned to you: ${createdOrder.name} ${createdOrder.surname}`;
 
-            await telegramService.notifyManagerBySurname(
-                manager,
+            await telegramService.notifyManagerById(
+                managerId,
                 NotificationEvent.NEW_ORDER,
                 assignedText,
             );
-            await notificationService.notifyManagerBySurname(
-                manager,
+            await notificationService.notifyManagerById(
+                managerId,
                 NotificationEvent.NEW_ORDER,
                 assignedText,
                 createdOrder._id.toString(),
@@ -179,14 +169,15 @@ class OrderService {
         if (updatedFields.status && updatedFields.status !== order.status) {
             const text = `Order status for ${updatedOrder?.name} ${updatedOrder?.surname}: ${order.status} → ${updatedFields.status}`;
 
-            if (updatedOrder?.manager) {
-                await telegramService.notifyManagerBySurname(
-                    updatedOrder.manager,
+            const notifyManagerId = getManagerId(updatedOrder?.manager);
+            if (notifyManagerId) {
+                await telegramService.notifyManagerById(
+                    notifyManagerId,
                     NotificationEvent.STATUS_CHANGE,
                     text,
                 );
-                await notificationService.notifyManagerBySurname(
-                    updatedOrder.manager,
+                await notificationService.notifyManagerById(
+                    notifyManagerId,
                     NotificationEvent.STATUS_CHANGE,
                     text,
                     orderId,
@@ -209,11 +200,19 @@ class OrderService {
         return updatedOrder;
     }
 
-    public async updateOrderTags(orderId: string, tags: string[]) {
+    public async updateOrderTags(orderId: string, tags: string[], userId: string) {
         const order = await orderRepository.getOrderById(orderId);
 
         if (!order) {
             throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
+        }
+
+        const orderManagerId = getManagerId(order.manager);
+        if (orderManagerId && orderManagerId !== userId) {
+            throw new ApiError(
+                "You can only edit tags of your own orders",
+                StatusCodes.FORBIDDEN,
+            );
         }
 
         return orderRepository.updateOrderById(orderId, { tags });
@@ -221,7 +220,7 @@ class OrderService {
 
     public async reassignOrder(
         orderId: string,
-        managerSurname: string,
+        managerId: string,
         adminUserId: string,
     ) {
         const order = await orderRepository.getOrderById(orderId);
@@ -230,33 +229,33 @@ class OrderService {
             throw new ApiError("Order not found", StatusCodes.NOT_FOUND);
         }
 
-        const manager = await userRepository.getUserBySurname(managerSurname);
+        const manager = await userRepository.getUserById(managerId);
 
         if (!manager || manager.role !== RoleEnum.Manager) {
             throw new ApiError("Manager not found", StatusCodes.BAD_REQUEST);
         }
 
-        const previousManager = order.manager;
+        const previousManagerId = getManagerId(order.manager);
         const updatedOrder = await orderRepository.updateOrderById(orderId, {
-            manager: managerSurname,
+            manager: managerId,
         });
 
         await historyService.logOrderChanges(
             orderId,
             adminUserId,
-            { manager: previousManager },
-            { manager: managerSurname },
+            { manager: previousManagerId },
+            { manager: managerId },
         );
 
         const text = `Order reassigned to you: ${order.name} ${order.surname}`;
 
-        await telegramService.notifyManagerBySurname(
-            managerSurname,
+        await telegramService.notifyManagerById(
+            managerId,
             NotificationEvent.STATUS_CHANGE,
             text,
         );
-        await notificationService.notifyManagerBySurname(
-            managerSurname,
+        await notificationService.notifyManagerById(
+            managerId,
             NotificationEvent.STATUS_CHANGE,
             text,
             orderId,
@@ -283,18 +282,13 @@ class OrderService {
             throw new ApiError("User not found", StatusCodes.NOT_FOUND);
         }
 
-        return orderRepository.getStatisticByManager(user.surname);
+        return orderRepository.getStatisticByManager(userId);
     }
 
     public async getAllOrdersForExcel(query: IOrderQuery, userId: string) {
-        let managerSurname: string | undefined;
-        if (query.my) {
-            const user = await userRepository.getUserById(userId);
-            managerSurname = user?.surname;
-        }
         const orders = await orderRepository.getAllOrdersForExcel(
             query,
-            managerSurname,
+            query.my ? userId : undefined,
         );
 
         const workbook = new Workbook();
@@ -319,7 +313,20 @@ class OrderService {
             { header: "Group", key: "group" },
         ];
 
-        worksheet.addRows(orders);
+        worksheet.addRows(
+            orders.map((order) => {
+                const manager = order.manager as unknown as
+                    | { name?: string; surname?: string }
+                    | null
+                    | undefined;
+                return {
+                    ...order,
+                    manager: manager?.surname
+                        ? `${manager.name ?? ""} ${manager.surname}`.trim()
+                        : "",
+                };
+            }),
+        );
 
         return workbook;
     }
