@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { IOrder } from "../interfaces/IOrder";
 import { orderService } from "../services/orders.service";
@@ -53,6 +53,7 @@ export const useOrders = () => {
         filtersFromSearchParams(searchParams),
     );
     const [refreshKey, setRefreshKey] = useState(0);
+    const isFirstFiltersRender = useRef(true);
 
     const page = Number(searchParams.get("page")) || 1;
     const order = searchParams.get("order") || "-_id";
@@ -122,6 +123,11 @@ export const useOrders = () => {
     }, [page, order, searchParams, refreshKey]);
 
     useEffect(() => {
+        if (isFirstFiltersRender.current) {
+            isFirstFiltersRender.current = false;
+            return;
+        }
+
         const timeout = setTimeout(() => {
             setSearchParams((prev) => {
                 const next = new URLSearchParams(prev);
