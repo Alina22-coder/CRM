@@ -16,7 +16,14 @@ const seedOrders = async () => {
         process.exit(1);
     }
 
-    const dumpOrders: Record<string, any>[] = JSON.parse(match[1]);
+    const dumpOrders: Record<string, any>[] = JSON.parse(match[1]).map(
+        (order: Record<string, any>) => ({
+            ...order,
+            created_at: order.created_at
+                ? new Date(order.created_at)
+                : order.created_at,
+        }),
+    );
 
     const existingEmails = await OrderModel.distinct("email");
     const existingSet = new Set(existingEmails.filter(Boolean));

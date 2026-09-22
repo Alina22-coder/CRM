@@ -62,6 +62,9 @@
     &_reset {
         @include btn-outline();
     }
+    &_refresh {
+        @include btn-outline();
+    }
     &_excel {
         height: 36px;
         padding: 0 16px;

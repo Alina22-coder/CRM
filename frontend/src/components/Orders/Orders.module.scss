@@ -6,6 +6,7 @@
 }
 
 .table {
+    position: relative;
     background: $white;
     border-radius: $br-12;
     overflow-x: auto;
@@ -13,6 +14,19 @@
     table {
         width: 100%;
         border-collapse: collapse;
+    }
+
+    &--loading {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__tr {

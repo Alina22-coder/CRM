@@ -19,6 +19,7 @@ export const Orders = () => {
         handlePageChange,
         handleChangeFilters,
         handleResetFilters,
+        handleRefresh,
     } = useOrders();
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -30,54 +31,57 @@ export const Orders = () => {
 
     return (
         <div className={styles.orders}>
-            {loading ? (
-                <LogoLoader />
-            ) : (
-                <>
-                    <OrderFilters
-                        filters={filters}
-                        onChange={handleChangeFilters}
-                        onReset={handleResetFilters}
-                    />
+            <OrderFilters
+                filters={filters}
+                onChange={handleChangeFilters}
+                onReset={handleResetFilters}
+                onRefresh={handleRefresh}
+            />
 
-                    <div className={styles.table}>
-                        <table>
-                            <thead className={styles.table__thead}>
-                                <tr className={styles.table__tr}>
-                                    {ORDER_COLUMNS.map((col) => (
-                                        <th
-                                            className={styles.table__th}
-                                            key={col.field}
-                                            onClick={() =>
-                                                handleSort(col.field)
-                                            }
-                                        >
-                                            {col.label}
-                                            {order === col.field && " ▲"}
-                                            {order === `-${col.field}` && " ▼"}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order) => (
-                                    <OrderTable
-                                        key={order._id}
-                                        order={order}
-                                        expanded={expandedId === order._id}
-                                        onExpand={handleExpand}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
+            <div
+                className={
+                    loading ? `${styles.table} ${styles["table--loading"]}` : styles.table
+                }
+            >
+                <table>
+                    <thead className={styles.table__thead}>
+                        <tr className={styles.table__tr}>
+                            {ORDER_COLUMNS.map((col) => (
+                                <th
+                                    className={styles.table__th}
+                                    key={col.field}
+                                    onClick={() => handleSort(col.field)}
+                                >
+                                    {col.label}
+                                    {order === col.field && " ▲"}
+                                    {order === `-${col.field}` && " ▼"}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {orders.map((order) => (
+                            <OrderTable
+                                key={order._id}
+                                order={order}
+                                expanded={expandedId === order._id}
+                                onExpand={handleExpand}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+
+                {loading && (
+                    <div className={styles.table__overlay}>
+                        <LogoLoader />
                     </div>
-                    <Pagination
-                        page={page}
-                        totalPage={totalPage}
-                        onPageChange={handlePageChange}
-                    />
-                </>
-            )}
+                )}
+            </div>
+            <Pagination
+                page={page}
+                totalPage={totalPage}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };

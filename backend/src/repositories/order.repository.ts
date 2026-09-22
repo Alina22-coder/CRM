@@ -3,6 +3,9 @@ import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 import Status from "../enums/status.enum";
 
+const escapeRegex = (value: string): string =>
+    value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 class OrderRepository {
     private buildFilter(query: IOrderQuery, managerId?: string): object {
         const filter: Record<string, any> = {};
@@ -12,17 +15,27 @@ class OrderRepository {
         ];
         for (const field of textFields) {
             if (query[field]) {
-                filter[field] = { $regex: query[field], $options: "i" };
+                filter[field] = {
+                    $regex: escapeRegex(String(query[field])),
+                    $options: "i",
+                };
             }
         }
 
         const exactFields: Array<keyof IOrderQuery> = [
-            "course", "course_format", "course_type", "status",
+            "course", "course_format", "course_type",
         ];
         for (const field of exactFields) {
             if (query[field]) {
                 filter[field] = query[field];
             }
+        }
+
+        if (query.status) {
+            filter.status =
+                query.status === Status.NEW
+                    ? { $in: [Status.NEW, null] }
+                    : query.status;
         }
 
         if (query.age !== undefined) {

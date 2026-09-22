@@ -32,12 +32,14 @@ interface IOrderFiltersProps {
     };
     onChange: (key: string, value: string | boolean) => void;
     onReset: () => void;
+    onRefresh: () => void;
 }
 
 export const OrderFilters: FC<IOrderFiltersProps> = ({
     filters,
     onChange,
     onReset,
+    onRefresh,
 }) => {
     const [searchParams] = useSearchParams();
     const order = searchParams.get("order") || "-_id";
@@ -228,6 +230,13 @@ export const OrderFilters: FC<IOrderFiltersProps> = ({
 
                 <button className={styles.filters_reset} onClick={onReset}>
                     Reset
+                </button>
+
+                <button
+                    className={styles.filters_refresh}
+                    onClick={onRefresh}
+                >
+                    Refresh
                 </button>
 
                 <button className={styles.filters_excel} onClick={handleExcel}>

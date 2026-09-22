@@ -4,28 +4,55 @@ import { useSearchParams } from "react-router-dom";
 import type { IOrder } from "../interfaces/IOrder";
 import { orderService } from "../services/orders.service";
 
+const EMPTY_FILTERS = {
+    name: "",
+    surname: "",
+    email: "",
+    phone: "",
+    age: "",
+    course: "",
+    course_format: "",
+    course_type: "",
+    status: "",
+    group: "",
+    start_date: "",
+    end_date: "",
+    min_sum: "",
+    max_sum: "",
+    my: false,
+};
+
+type OrderFiltersState = typeof EMPTY_FILTERS;
+
+const filtersFromSearchParams = (
+    searchParams: URLSearchParams,
+): OrderFiltersState => ({
+    name: searchParams.get("name") ?? "",
+    surname: searchParams.get("surname") ?? "",
+    email: searchParams.get("email") ?? "",
+    phone: searchParams.get("phone") ?? "",
+    age: searchParams.get("age") ?? "",
+    course: searchParams.get("course") ?? "",
+    course_format: searchParams.get("course_format") ?? "",
+    course_type: searchParams.get("course_type") ?? "",
+    status: searchParams.get("status") ?? "",
+    group: searchParams.get("group") ?? "",
+    start_date: searchParams.get("start_date") ?? "",
+    end_date: searchParams.get("end_date") ?? "",
+    min_sum: searchParams.get("min_sum") ?? "",
+    max_sum: searchParams.get("max_sum") ?? "",
+    my: searchParams.get("my") === "true",
+});
+
 export const useOrders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
-    const [filters, setFilters] = useState({
-        name: "",
-        surname: "",
-        email: "",
-        phone: "",
-        age: "",
-        course: "",
-        course_format: "",
-        course_type: "",
-        status: "",
-        group: "",
-        start_date: "",
-        end_date: "",
-        min_sum: "",
-        max_sum: "",
-        my: false,
-    });
+    const [filters, setFilters] = useState<OrderFiltersState>(() =>
+        filtersFromSearchParams(searchParams),
+    );
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const page = Number(searchParams.get("page")) || 1;
     const order = searchParams.get("order") || "-_id";
@@ -33,11 +60,20 @@ export const useOrders = () => {
     const handleSort = (field: string) => {
         const current = searchParams.get("order");
         const next = current === field ? `-${field}` : field;
-        setSearchParams({ page: "1", order: next });
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            params.set("page", "1");
+            params.set("order", next);
+            return params;
+        });
     };
 
     const handlePageChange = (newPage: number) => {
-        setSearchParams({ page: String(newPage), order: order });
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            params.set("page", String(newPage));
+            return params;
+        });
     };
 
     const handleChangeFilters = (field: string, value: string | boolean) => {
@@ -45,23 +81,11 @@ export const useOrders = () => {
     };
 
     const handleResetFilters = () => {
-        setFilters({
-            name: "",
-            surname: "",
-            email: "",
-            phone: "",
-            age: "",
-            course: "",
-            course_format: "",
-            course_type: "",
-            status: "",
-            group: "",
-            start_date: "",
-            end_date: "",
-            min_sum: "",
-            max_sum: "",
-            my: false,
-        });
+        setFilters(EMPTY_FILTERS);
+    };
+
+    const handleRefresh = () => {
+        setRefreshKey((prev) => prev + 1);
     };
 
     useEffect(() => {
@@ -95,7 +119,7 @@ export const useOrders = () => {
             })
 
             .finally(() => setLoading(false));
-    }, [page, order, searchParams]);
+    }, [page, order, searchParams, refreshKey]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -116,6 +140,8 @@ export const useOrders = () => {
             });
         }, 500);
         return () => clearTimeout(timeout);
+        // setSearchParams is stable across renders (react-router guarantee)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     return {
@@ -129,5 +155,6 @@ export const useOrders = () => {
         handlePageChange,
         handleChangeFilters,
         handleResetFilters,
+        handleRefresh,
     };
 };
