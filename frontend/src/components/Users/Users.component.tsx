@@ -85,13 +85,13 @@ export const Users = () => {
                                     },
                                     {
                                         label: "Agree",
-                                        value: statistic?.Aggre,
+                                        value: statistic?.Agree,
                                         icon: "✅",
                                         colorVar: "green",
                                     },
                                     {
                                         label: "Disagree",
-                                        value: statistic?.Disaggre,
+                                        value: statistic?.Disagree,
                                         icon: "✕",
                                         colorVar: "pink",
                                     },

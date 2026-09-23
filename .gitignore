@@ -14,19 +14,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# ── Database ──────────────────────────────────────────────
-# Knex local SQLite (якщо колись тестуватимеш локально без Postgres)
-*.sqlite
-*.sqlite3
-*.db
-
-# pg_dump бекапи (зберігай окремо, не в репо)
-backups/
-*.sql.gz
-
 # ── Uploads (файли які завантажують користувачі) ──────────
-public/uploads/
-public/assets/avatars/
+# Реальний шлях — backend/uploads/ (ігнорується локально в backend/.gitignore)
+backend/uploads/
 
 # ── Build / compiled ──────────────────────────────────────
 dist/

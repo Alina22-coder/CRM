@@ -1,1 +1,1 @@
-export const STATUSES = ["In work", "New", "Aggre", "Disaggre", "Dubbing"] as const;
+export const STATUSES = ["In work", "New", "Agree", "Disagree", "Dubbing"] as const;

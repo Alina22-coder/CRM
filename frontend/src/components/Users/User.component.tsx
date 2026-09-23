@@ -31,8 +31,8 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
         { label: "Total", value: statistic?.total },
         { label: "In work", value: statistic?.["In work"] },
         { label: "New", value: statistic?.New },
-        { label: "Aggre", value: statistic?.Aggre },
-        { label: "Disaggre", value: statistic?.Disaggre },
+        { label: "Agree", value: statistic?.Agree },
+        { label: "Disagree", value: statistic?.Disagree },
         { label: "Dubbing", value: statistic?.Dubbing },
     ];
 

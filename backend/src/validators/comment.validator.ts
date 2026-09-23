@@ -12,7 +12,7 @@ export class CommentValidator {
             .trim()
             .max(200)
             .when("status", {
-                is: Status.DISAGGRE,
+                is: Status.DISAGREE,
                 then: joi.required(),
                 otherwise: joi.allow(null, ""),
             }),

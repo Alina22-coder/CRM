@@ -2,8 +2,8 @@ export interface IStatistic {
     total: number;
     "In work": number;
     New: number;
-    Aggre: number;
-    Disaggre: number;
+    Agree: number;
+    Disagree: number;
     Dubbing: number;
     overdueCount?: number;
 }

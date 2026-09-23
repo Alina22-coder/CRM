@@ -502,9 +502,11 @@ const swaggerDocument: OpenAPIV3.Document = {
                     {
                         name: "status",
                         in: "query",
+                        description:
+                            "Filtering by 'New' also matches orders with an empty/null status, since the two are treated as equivalent.",
                         schema: {
                             type: "string",
-                            enum: ["In work", "New", "Aggre", "Disaggre", "Dubbing"],
+                            enum: ["In work", "New", "Agree", "Disagree", "Dubbing"],
                         },
                     },
                     { name: "group", in: "query", schema: { type: "string" } },
@@ -709,7 +711,13 @@ const swaggerDocument: OpenAPIV3.Document = {
                     { name: "course", in: "query", schema: { type: "string" } },
                     { name: "course_format", in: "query", schema: { type: "string" } },
                     { name: "course_type", in: "query", schema: { type: "string" } },
-                    { name: "status", in: "query", schema: { type: "string" } },
+                    {
+                        name: "status",
+                        in: "query",
+                        description:
+                            "Filtering by 'New' also matches orders with an empty/null status, since the two are treated as equivalent.",
+                        schema: { type: "string" },
+                    },
                     { name: "group", in: "query", schema: { type: "string" } },
                     { name: "start_date", in: "query", schema: { type: "string", format: "date" } },
                     { name: "end_date", in: "query", schema: { type: "string", format: "date" } },
@@ -810,7 +818,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                 tags: ["Orders"],
                 summary: "Update an order by id",
                 description:
-                    "On first update, assigns the order to the current user's surname as manager and sets status to 'In work' if it was 'New'. Only the assigned manager can update the order afterwards.",
+                    "On first update, assigns the order to the current user (including Admin) as manager and sets status to 'In work' if it was 'New'. Once assigned, only that user can update the order afterwards — this applies to Admin as well.",
                 security: [{ bearerAuth: [] }],
                 parameters: [
                     { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -831,7 +839,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                                     already_paid: { type: "number", minimum: 0, nullable: true },
                                     status: {
                                         type: "string",
-                                        enum: ["In work", "New", "Aggre", "Disaggre", "Dubbing"],
+                                        enum: ["In work", "New", "Agree", "Disagree", "Dubbing"],
                                         nullable: true,
                                     },
                                     course: {
@@ -883,7 +891,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "403": {
                         description:
-                            "Forbidden - the order is already assigned to a different manager",
+                            "Forbidden - the order is already assigned to a different user (including when the requester is an Admin)",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -907,7 +915,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                 tags: ["Orders"],
                 summary: "Set the tags on an order",
                 description:
-                    "Replaces the order's tag list. Up to 20 tags, 30 characters each. Not subject to manager ownership checks.",
+                    "Replaces the order's tag list. Up to 20 tags, 30 characters each. Subject to the same manager ownership check as update/comment — Forbidden if the order is already assigned to a different user (including when the requester is an Admin).",
                 security: [{ bearerAuth: [] }],
                 parameters: [
                     { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -949,6 +957,15 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "401": {
                         description: "Unauthorized",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                    "403": {
+                        description:
+                            "Forbidden - the order is already assigned to a different user (including when the requester is an Admin)",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -1044,7 +1061,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                 tags: ["Orders"],
                 summary: "Add a comment to an order",
                 description:
-                    "On first comment, assigns the order to the current user's surname as manager and sets status to 'In work' if it was 'New'. Only the assigned manager can comment afterwards.",
+                    "On first comment, assigns the order to the current user (including Admin) as manager and sets status to 'In work' if it was 'New'. Once assigned, only that user can comment afterwards — this applies to Admin as well.",
                 security: [{ bearerAuth: [] }],
                 parameters: [
                     { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -1090,7 +1107,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                     },
                     "403": {
                         description:
-                            "Forbidden - the order is already assigned to a different manager",
+                            "Forbidden - the order is already assigned to a different user (including when the requester is an Admin)",
                         content: {
                             "application/json": {
                                 schema: { $ref: "#/components/schemas/Error" },
@@ -2426,7 +2443,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                     msg: { type: "string" },
                     status: {
                         type: "string",
-                        enum: ["In work", "New", "Aggre", "Disaggre", "Dubbing"],
+                        enum: ["In work", "New", "Agree", "Disagree", "Dubbing"],
                     },
                     status_updated_at: {
                         type: "string",
@@ -2441,13 +2458,13 @@ const swaggerDocument: OpenAPIV3.Document = {
                         type: "string",
                         format: "date-time",
                         nullable: true,
-                        description: "Timestamp of the most recent transition into Disaggre status; used by the loss report period filter",
+                        description: "Timestamp of the most recent transition into Disagree status; used by the loss report period filter",
                     },
                     manager: {
                         type: "object",
                         nullable: true,
                         description:
-                            "User assigned to this order (populated with _id, name, surname). Set automatically to the current user on first update or first comment (including by an Admin), by the auto-assign feature on creation, or explicitly via PATCH /orders/{id}/reassign (Admin only). Once set, only that manager can edit, comment on, or reassign the order.",
+                            "User assigned to this order (populated with _id, name, surname). Set automatically to the current user on first update or first comment (including by an Admin), by the auto-assign feature on creation, or explicitly via PATCH /orders/{id}/reassign (Admin only). Once set, only that manager can edit, comment on, tag, or reassign the order — tagging alone does not claim an unassigned order.",
                     },
                     group: { type: "string", nullable: true },
                     tags: {

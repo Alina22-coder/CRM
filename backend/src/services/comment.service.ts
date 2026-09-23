@@ -44,7 +44,7 @@ class CommentService {
         if (statusChanging) {
             update.status = statusUpdate!.status;
 
-            if (statusUpdate!.status === Status.DISAGGRE) {
+            if (statusUpdate!.status === Status.DISAGREE) {
                 update.disagree_reason = statusUpdate!.disagree_reason ?? null;
                 update.disagree_reason_comment =
                     statusUpdate!.disagree_reason_comment ?? null;
@@ -66,7 +66,7 @@ class CommentService {
             ? update.disagree_reason
             : update.disagree_reason ?? order.disagree_reason;
 
-        if (resultingStatus === Status.DISAGGRE && !resultingReason) {
+        if (resultingStatus === Status.DISAGREE && !resultingReason) {
             throw new ApiError(
                 "Disagree reason is required when status is Disagree",
                 StatusCodes.BAD_REQUEST,

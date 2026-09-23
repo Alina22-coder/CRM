@@ -113,15 +113,15 @@ class OrderService {
             !update.status &&
             resultingSum > 0 &&
             resultingAlreadyPaid >= resultingSum &&
-            order.status !== Status.AGGRE
+            order.status !== Status.AGREE
         ) {
-            updatedFields.status = Status.AGGRE;
+            updatedFields.status = Status.AGREE;
         }
 
         const statusChanging =
             !!updatedFields.status && updatedFields.status !== order.status;
 
-        if (statusChanging && updatedFields.status !== Status.DISAGGRE) {
+        if (statusChanging && updatedFields.status !== Status.DISAGREE) {
             updatedFields.disagree_reason = null;
             updatedFields.disagree_reason_comment = null;
             updatedFields.disagree_at = null;
@@ -129,12 +129,12 @@ class OrderService {
 
         const resultingStatus = updatedFields.status ?? order.status;
         const enteringDisagree =
-            statusChanging && updatedFields.status === Status.DISAGGRE;
+            statusChanging && updatedFields.status === Status.DISAGREE;
         const resultingReason = enteringDisagree
             ? update.disagree_reason
             : updatedFields.disagree_reason ?? order.disagree_reason;
 
-        if (resultingStatus === Status.DISAGGRE && !resultingReason) {
+        if (resultingStatus === Status.DISAGREE && !resultingReason) {
             throw new ApiError(
                 "Disagree reason is required when status is Disagree",
                 StatusCodes.BAD_REQUEST,
@@ -145,7 +145,7 @@ class OrderService {
             updatedFields.status_updated_at = new Date();
             updatedFields.is_overdue = false;
 
-            if (updatedFields.status === Status.DISAGGRE) {
+            if (updatedFields.status === Status.DISAGREE) {
                 updatedFields.disagree_at = new Date();
             }
 

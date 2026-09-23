@@ -30,19 +30,54 @@ type EditOrderForm = {
     surname: string;
     email: string;
     phone: string;
-    age: number;
+    age: number | null;
     status: string;
     disagree_reason: string;
     disagree_reason_comment: string;
-    sum: number;
-    already_paid: number;
+    sum: number | null;
+    already_paid: number | null;
     course: string;
     course_format: string;
     course_type: string;
     msg: string;
 };
 
-const DISAGREE_STATUS = "Disaggre";
+const DISAGREE_STATUS = "Disagree";
+
+const toNullable = (value: unknown) =>
+    value === "" || value === undefined || Number.isNaN(value) ? null : value;
+
+const parseNumber = (v: string) =>
+    v === "" || v === null ? null : Number(v);
+
+// Send only changed fields so empty enums don't fail validation and the
+// server can auto-set Agree when status wasn't touched.
+const buildUpdatePayload = (data: EditOrderForm, order: IOrder) => {
+    const payload: Record<string, unknown> = {};
+
+    (Object.keys(data) as (keyof EditOrderForm)[]).forEach((key) => {
+        const next = toNullable(data[key]);
+        const prev = toNullable(order[key as keyof IOrder]);
+        if (next !== prev) payload[key] = next;
+    });
+
+    const resultingStatus =
+        "status" in payload ? payload.status : order.status;
+
+    if (resultingStatus === DISAGREE_STATUS) {
+        if ("status" in payload) {
+            payload.disagree_reason = toNullable(data.disagree_reason);
+            payload.disagree_reason_comment = toNullable(
+                data.disagree_reason_comment,
+            );
+        }
+    } else {
+        delete payload.disagree_reason;
+        delete payload.disagree_reason_comment;
+    }
+
+    return payload;
+};
 
 export const EditOrderModal = ({
     order,
@@ -140,13 +175,23 @@ export const EditOrderModal = ({
     };
 
     const onSubmit = (data: EditOrderForm) => {
+        const payload = buildUpdatePayload(data, order);
+
+        if (Object.keys(payload).length === 0) {
+            onClose();
+            return;
+        }
+
         orderService
-            .updateOrderById(order._id, data)
+            .updateOrderById(order._id, payload as Partial<IOrder>)
             .then(() => {
+                toast.success("Order updated");
                 onSuccess();
             })
-            .catch(() => {
-                toast.error("Failed to update order");
+            .catch((err) => {
+                toast.error(
+                    err.response?.data?.message ?? "Failed to update order",
+                );
             });
     };
 
@@ -307,8 +352,7 @@ export const EditOrderModal = ({
                             <input
                                 type="number"
                                 {...register("age", {
-                                    setValueAs: (v: string) =>
-                                        v === "" ? undefined : Number(v),
+                                    setValueAs: parseNumber,
                                     min: {
                                         value: 0,
                                         message: "Age must be ≥ 0",
@@ -327,6 +371,7 @@ export const EditOrderModal = ({
                         <div className={styles.grid__field}>
                             <label>Status</label>
                             <select {...register("status")}>
+                                <option value="">—</option>
                                 {STATUSES.map((status) => (
                                     <option key={status} value={status}>
                                         {status}
@@ -405,8 +450,7 @@ export const EditOrderModal = ({
                             <input
                                 type="number"
                                 {...register("sum", {
-                                    setValueAs: (v: string) =>
-                                        v === "" ? undefined : Number(v),
+                                    setValueAs: parseNumber,
                                     min: { value: 0, message: "Must be ≥ 0" },
                                 })}
                             />
@@ -422,8 +466,7 @@ export const EditOrderModal = ({
                             <input
                                 type="number"
                                 {...register("already_paid", {
-                                    setValueAs: (v: string) =>
-                                        v === "" ? undefined : Number(v),
+                                    setValueAs: parseNumber,
                                     min: { value: 0, message: "Must be ≥ 0" },
                                 })}
                             />
@@ -437,6 +480,7 @@ export const EditOrderModal = ({
                         <div className={styles.grid__field}>
                             <label>Course</label>
                             <select {...register("course")}>
+                                <option value="">—</option>
                                 {COURSES.map((course) => (
                                     <option key={course} value={course}>
                                         {course}
@@ -448,6 +492,7 @@ export const EditOrderModal = ({
                         <div className={styles.grid__field}>
                             <label>Course Format</label>
                             <select {...register("course_format")}>
+                                <option value="">—</option>
                                 {COURSE_FORMATS.map((courseFormat) => (
                                     <option
                                         key={courseFormat}
@@ -462,6 +507,7 @@ export const EditOrderModal = ({
                         <div className={styles.grid__field}>
                             <label>Course Type</label>
                             <select {...register("course_type")}>
+                                <option value="">—</option>
                                 {COURSE_TYPES.map((courseType) => (
                                     <option key={courseType} value={courseType}>
                                         {courseType}

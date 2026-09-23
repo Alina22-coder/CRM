@@ -31,8 +31,8 @@ type OrderPropType = {
 const STATUS_CLASS_MAP: Record<(typeof STATUSES)[number], string> = {
     New: styles["status--new"],
     "In work": styles["status--in-work"],
-    Aggre: styles["status--aggre"],
-    Disaggre: styles["status--disaggre"],
+    Agree: styles["status--agree"],
+    Disagree: styles["status--disagree"],
     Dubbing: styles["status--dubbing"],
 };
 
@@ -105,7 +105,7 @@ export const OrderTable: FC<OrderPropType> = ({
         setDisagreeComment(currentOrder.disagree_reason_comment ?? "");
     }, [currentOrder.status, currentOrder.disagree_reason, currentOrder.disagree_reason_comment]);
 
-    const isDisagreeSelected = statusDraft === "Disaggre";
+    const isDisagreeSelected = statusDraft === "Disagree";
     const statusChanged = statusDraft !== (currentOrder.status ?? "");
 
     const addComment = () => {
@@ -296,7 +296,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                             styles.manager__tooltip__row__title
                                         }
                                     >
-                                        Aggre:
+                                        Agree:
                                     </span>
                                     <span
                                         className={
@@ -305,7 +305,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                             ]
                                         }
                                     >
-                                        {managerStat?.Aggre ?? 0}
+                                        {managerStat?.Agree ?? 0}
                                     </span>
                                 </div>
 
@@ -333,7 +333,7 @@ export const OrderTable: FC<OrderPropType> = ({
                         </div>
                     )}
                 </td>
-                <td>{order.group}</td>
+                <td>{currentOrder.group}</td>
             </tr>
 
             {expanded && (

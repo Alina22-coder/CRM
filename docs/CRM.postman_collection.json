@@ -997,7 +997,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"manager\": \"\"\n}",
+              "raw": "{\n  \"manager\": \"<managerId>\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

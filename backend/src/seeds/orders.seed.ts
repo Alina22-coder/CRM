@@ -7,7 +7,7 @@ import { OrderModel } from "../models/order.model";
 const seedOrders = async () => {
     await connectDB();
 
-    const dumpPath = path.resolve(__dirname, "../../../../dump/orders.dump");
+    const dumpPath = path.resolve(__dirname, "../../../dump/orders.dump");
     const raw = fs.readFileSync(dumpPath, "utf-8");
 
     const match = raw.match(/db\.orders\.insertMany\((\[[\s\S]*\])\)/);

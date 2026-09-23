@@ -124,7 +124,7 @@ class OrderRepository {
         start_date?: string;
         end_date?: string;
     }): Promise<{ reason: string; count: number }[]> {
-        const match: Record<string, any> = { status: Status.DISAGGRE };
+        const match: Record<string, any> = { status: Status.DISAGREE };
 
         if (filter.start_date || filter.end_date) {
             match.disagree_at = {};
@@ -184,9 +184,14 @@ class OrderRepository {
 
     public getNewOrdersOlderThan(cutoff: Date): Promise<IOrder[]> {
         return OrderModel.find({
-            status: Status.NEW,
+            status: { $in: [Status.NEW, null] },
             is_overdue: false,
-            status_updated_at: { $lte: cutoff },
+            $expr: {
+                $lte: [
+                    { $ifNull: ["$status_updated_at", "$created_at"] },
+                    cutoff,
+                ],
+            },
         });
     }
 
