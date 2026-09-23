@@ -90,7 +90,7 @@ class UserController {
             if (id === userId) {
                 throw new ApiError("You cannot ban yourself", StatusCodes.FORBIDDEN);
             }
-            await userService.updateUserById(id, { is_banned: true });
+            await userService.banUser(id);
             res.status(StatusCodes.OK).json({ message: "User banned" });
         } catch (e) {
             next(e);

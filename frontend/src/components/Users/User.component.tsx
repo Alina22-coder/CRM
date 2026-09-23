@@ -185,49 +185,49 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
                     </button>
                 )}
 
-                {user.is_banned ? (
-                    <button
-                        className="btn-unban"
-                        onClick={() =>
-                            setConfirm({
-                                message: "Unban user",
-                                description: (
-                                    <>
-                                        Are you sure you want to unban{" "}
-                                        <strong>
-                                            {user.name} {user.surname}
-                                        </strong>
-                                        ? They will regain access to the system.
-                                    </>
-                                ),
-                                action: handleUnban,
-                            })
-                        }
-                    >
-                        UNBAN
-                    </button>
-                ) : (
-                    <button
-                        className="btn-ban"
-                        onClick={() =>
-                            setConfirm({
-                                message: "Ban user",
-                                description: (
-                                    <>
-                                        Are you sure you want to ban{" "}
-                                        <strong>
-                                            {user.name} {user.surname}
-                                        </strong>
-                                        ? They will lose access to the system.
-                                    </>
-                                ),
-                                action: handleBan,
-                            })
-                        }
-                    >
-                        BAN
-                    </button>
-                )}
+                <button
+                    className="btn-ban"
+                    disabled={user.is_banned}
+                    onClick={() =>
+                        setConfirm({
+                            message: "Ban user",
+                            description: (
+                                <>
+                                    Are you sure you want to ban{" "}
+                                    <strong>
+                                        {user.name} {user.surname}
+                                    </strong>
+                                    ? They will lose access to the system.
+                                </>
+                            ),
+                            action: handleBan,
+                        })
+                    }
+                >
+                    BAN
+                </button>
+
+                <button
+                    className="btn-unban"
+                    disabled={!user.is_banned}
+                    onClick={() =>
+                        setConfirm({
+                            message: "Unban user",
+                            description: (
+                                <>
+                                    Are you sure you want to unban{" "}
+                                    <strong>
+                                        {user.name} {user.surname}
+                                    </strong>
+                                    ? They will regain access to the system.
+                                </>
+                            ),
+                            action: handleUnban,
+                        })
+                    }
+                >
+                    UNBAN
+                </button>
             </div>
 
             <ConfirmModal

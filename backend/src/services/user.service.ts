@@ -4,6 +4,7 @@ import StatusCodes from "../enums/status-codes.enum";
 import ApiError from "../errors/api.error";
 import IUser, { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
+import { tokenRepository } from "../repositories/token.repository";
 import { AVATAR_URL_PREFIX } from "../config/upload.config";
 
 class UserService {
@@ -53,6 +54,11 @@ class UserService {
             }
             throw e;
         }
+    }
+
+    public async banUser(userId: string) {
+        await this.updateUserById(userId, { is_banned: true });
+        await tokenRepository.deleteAllByUserId(userId);
     }
 
     public deleteUserById(userId: string) {

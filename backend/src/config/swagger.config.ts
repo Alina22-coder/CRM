@@ -281,7 +281,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                                 required: ["token", "password"],
                                 properties: {
                                     token: { type: "string" },
-                                    password: { type: "string" },
+                                    password: { type: "string", minLength: 8, maxLength: 128 },
                                 },
                             },
                         },
@@ -329,7 +329,7 @@ const swaggerDocument: OpenAPIV3.Document = {
                                 required: ["currentPassword", "newPassword"],
                                 properties: {
                                     currentPassword: { type: "string" },
-                                    newPassword: { type: "string" },
+                                    newPassword: { type: "string", minLength: 8, maxLength: 128 },
                                 },
                             },
                         },

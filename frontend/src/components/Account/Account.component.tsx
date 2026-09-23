@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../../hooks/useCurrectUser";
 import { telegramService } from "../../services/telegram.service";
 import userService from "../../services/users.service";
@@ -24,6 +25,8 @@ export const Account = () => {
     const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl ?? null);
     const [isSavingProfile, setIsSavingProfile] = useState(false);
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+    const navigate = useNavigate();
 
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -91,6 +94,10 @@ export const Account = () => {
             toast.error("Fill in all password fields");
             return;
         }
+        if (newPassword.length < 8) {
+            toast.error("Password must be at least 8 characters long");
+            return;
+        }
         if (newPassword !== confirmPassword) {
             toast.error("New password and confirmation do not match");
             return;
@@ -100,10 +107,12 @@ export const Account = () => {
         authService
             .changePassword(currentPassword, newPassword)
             .then(() => {
-                toast.success("Password changed successfully");
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
+                // The server ends all sessions after a password change.
+                toast.success("Password changed, please log in again");
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("user");
+                navigate("/auth/login");
             })
             .catch((err) => {
                 toast.error(

@@ -15,6 +15,10 @@ class TokenRepository {
     public deleteByParams(params: Partial<IToken>): Promise<any> {
         return Token.deleteOne(params);
     }
+
+    public deleteAllByUserId(userId: string): Promise<any> {
+        return Token.deleteMany({ _userId: userId });
+    }
 }
 
 export const tokenRepository = new TokenRepository();

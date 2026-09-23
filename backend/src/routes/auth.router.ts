@@ -34,12 +34,18 @@ authRouter.post(
     authController.activate,
 );
 
-authRouter.post("/set-password", setPasswordRateLimit, authController.setPassword);
+authRouter.post(
+    "/set-password",
+    setPasswordRateLimit,
+    commonMiddleware.validateBody(UserValidator.setPassword),
+    authController.setPassword,
+);
 
 authRouter.post(
     "/change-password",
     authMiddleware.checkAccessToken,
     changePasswordRateLimit,
+    commonMiddleware.validateBody(UserValidator.changePassword),
     authController.changePassword,
 );
 

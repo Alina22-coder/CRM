@@ -60,6 +60,13 @@ class AuthService {
         role: RoleEnum,
         refreshToken: string,
     ): Promise<ITokenPair> {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user || user.is_banned) {
+            await tokenRepository.deleteAllByUserId(userId);
+            throw new ApiError("User is banned", StatusCodes.FORBIDDEN);
+        }
+
         await tokenRepository.deleteByParams({ refreshToken });
         const tokens = tokenService.generateToken({ userId, role });
         await tokenRepository.create({ ...tokens, _userId: userId });
@@ -110,6 +117,7 @@ class AuthService {
             tokenVersion: user.tokenVersion + 1,
             ...(payload.isActivation && { is_active: true }),
         });
+        await tokenRepository.deleteAllByUserId(payload.userId);
     }
 
     public async changePassword(
@@ -141,6 +149,7 @@ class AuthService {
             password: hashedPassword,
             tokenVersion: user.tokenVersion + 1,
         });
+        await tokenRepository.deleteAllByUserId(userId);
     }
 
     public async recoveryPassword(userId: string): Promise<string> {
