@@ -92,13 +92,18 @@ class OrderRepository {
         return OrderModel.findByIdAndUpdate(orderId, update, { new: true });
     }
 
-    public async getOrderStatistic() {
-        const [total, byStatus, overdueCount] = await Promise.all([
-            OrderModel.countDocuments(),
-            OrderModel.aggregate([
-                { $group: { _id: "$status", count: { $sum: 1 } } },
-            ]),
-            OrderModel.countDocuments({ is_overdue: true }),
+    // Orders without a status are counted as New, same as the New filter.
+    private async countByStatus(
+        match: Record<string, any> = {},
+    ): Promise<Record<string, number>> {
+        const byStatus = await OrderModel.aggregate([
+            { $match: match },
+            {
+                $group: {
+                    _id: { $ifNull: ["$status", Status.NEW] },
+                    count: { $sum: 1 },
+                },
+            },
         ]);
 
         const statusCounts: Record<string, number> = {};
@@ -106,18 +111,27 @@ class OrderRepository {
             statusCounts[row._id] = row.count;
         }
 
+        return statusCounts;
+    }
+
+    public async getOrderStatistic() {
+        const [total, statusCounts, overdueCount] = await Promise.all([
+            OrderModel.countDocuments(),
+            this.countByStatus(),
+            OrderModel.countDocuments({ is_overdue: true }),
+        ]);
+
         return { total, ...statusCounts, overdueCount };
     }
 
     public async getStatisticByManager(managerId: string) {
-        const [total, byStatus] = await Promise.all([
-            OrderModel.countDocuments({ manager: managerId }),
-            OrderModel.aggregate([
-                { $match: { manager: new mongoose.Types.ObjectId(managerId) } },
-                { $group: { _id: "$status", count: { $sum: 1 } } },
-            ]),
+        const match = { manager: new mongoose.Types.ObjectId(managerId) };
+        const [total, statusCounts] = await Promise.all([
+            OrderModel.countDocuments(match),
+            this.countByStatus(match),
         ]);
-        return { total, byStatus };
+
+        return { total, ...statusCounts };
     }
 
     public async getLossReport(filter: {

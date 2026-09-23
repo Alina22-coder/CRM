@@ -10,8 +10,7 @@ class UserController {
     public async getAllUsers(_req: Request, res: Response, next: NextFunction) {
         try {
             const query = res.locals.query as IUserQuery;
-            const { userId } = res.locals.tokenPayload as ITokenPayload;
-            const data = await userService.getAllUsers({ ...query, excludeId: userId });
+            const data = await userService.getAllUsers(query);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

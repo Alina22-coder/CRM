@@ -25,7 +25,6 @@ export interface IUserQuery {
     page: number;
     search?: string;
     order?: string;
-    excludeId?: string;
 }
 
 export type IUserLoginDTO = Pick<IUser, "email" | "password">;
