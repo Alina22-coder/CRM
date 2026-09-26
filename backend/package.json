@@ -8,7 +8,8 @@
         "start": "node dist/app.js",
         "dev": "tsc-watch --onSuccess \"node dist/app.js\"",
         "seed:orders": "tsx src/seeds/orders.seed.ts",
-        "migrate:status-typo": "tsx src/seeds/fix-status-typo.seed.ts"
+        "migrate:status-typo": "tsx src/seeds/fix-status-typo.seed.ts",
+        "migrate:manager-ref": "tsx src/seeds/fix-manager-ref.seed.ts"
     },
     "dependencies": {
         "@types/multer": "^2.2.0",
