@@ -47,6 +47,10 @@ class NotificationRepository {
             { read: true },
         );
     }
+
+    public deleteAllByUser(userId: string): Promise<unknown> {
+        return NotificationModel.deleteMany({ user: userId });
+    }
 }
 
 export const notificationRepository = new NotificationRepository();

@@ -42,6 +42,10 @@ class TaskRepository {
             { reminderSentAt: new Date() },
         ).then(() => undefined);
     }
+
+    public deleteOpenByAssignee(assigneeId: string): Promise<unknown> {
+        return TaskModel.deleteMany({ assignee: assigneeId, isDone: false });
+    }
 }
 
 export const taskRepository = new TaskRepository();

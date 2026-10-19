@@ -47,6 +47,17 @@ class AutoAssignSettingsRepository {
 
         return result.modifiedCount === 1;
     }
+
+    public async removeParticipant(userId: string): Promise<void> {
+        await AutoAssignSettingsModel.updateOne(
+            {},
+            { $pull: { participantIds: userId } },
+        );
+        await AutoAssignSettingsModel.updateOne(
+            { lastAssignedUserId: userId },
+            { $set: { lastAssignedUserId: null } },
+        );
+    }
 }
 
 export const autoAssignSettingsRepository =

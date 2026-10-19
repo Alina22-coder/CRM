@@ -114,6 +114,10 @@ class UserController {
     ) {
         try {
             const id = req.params.id as string;
+            const { userId } = res.locals.tokenPayload as ITokenPayload;
+            if (id === userId) {
+                throw new ApiError("You cannot delete yourself", StatusCodes.FORBIDDEN);
+            }
             await userService.deleteUserById(id);
             res.status(StatusCodes.OK).json({ message: "User deleted" });
         } catch (e) {

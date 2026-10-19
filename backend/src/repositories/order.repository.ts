@@ -192,6 +192,23 @@ class OrderRepository {
         return counts;
     }
 
+    public async unassignManager(managerId: string): Promise<void> {
+        await OrderModel.updateMany(
+            { manager: managerId, status: Status.IN_WORK },
+            {
+                $set: {
+                    status: Status.NEW,
+                    status_updated_at: new Date(),
+                    is_overdue: false,
+                },
+            },
+        );
+        await OrderModel.updateMany(
+            { manager: managerId },
+            { $set: { manager: null } },
+        );
+    }
+
     public createOrder(order: Partial<IOrder>): Promise<IOrder> {
         return OrderModel.create(order);
     }

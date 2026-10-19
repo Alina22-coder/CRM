@@ -5,6 +5,12 @@ import ApiError from "../errors/api.error";
 import IUser, { IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 import { userRepository } from "../repositories/user.repository";
 import { tokenRepository } from "../repositories/token.repository";
+import { orderRepository } from "../repositories/order.repository";
+import { taskRepository } from "../repositories/task.repository";
+import { autoAssignSettingsRepository } from "../repositories/auto-assign-settings.repository";
+import { notificationRepository } from "../repositories/notification.repository";
+import { telegramRepository } from "../repositories/telegram.repository";
+import RoleEnum from "../enums/role.enum";
 import { AVATAR_URL_PREFIX } from "../config/upload.config";
 
 class UserService {
@@ -61,8 +67,28 @@ class UserService {
         await tokenRepository.deleteAllByUserId(userId);
     }
 
-    public deleteUserById(userId: string) {
-        return userRepository.deleteUserById(userId);
+    public async deleteUserById(userId: string) {
+        const user = await userRepository.getUserById(userId);
+
+        if (!user) {
+            throw new ApiError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        if (user.role === RoleEnum.Admin) {
+            throw new ApiError("Admin cannot be deleted", StatusCodes.FORBIDDEN);
+        }
+
+        await tokenRepository.deleteAllByUserId(userId);
+
+        await Promise.all([
+            orderRepository.unassignManager(userId),
+            taskRepository.deleteOpenByAssignee(userId),
+            autoAssignSettingsRepository.removeParticipant(userId),
+            notificationRepository.deleteAllByUser(userId),
+            telegramRepository.deleteTokensByUserId(userId),
+        ]);
+
+        await userRepository.deleteUserById(userId);
     }
 
     public async updateAvatar(userId: string, filename: string) {
