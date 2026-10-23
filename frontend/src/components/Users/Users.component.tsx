@@ -18,6 +18,9 @@ export const Users = () => {
     const [users, setUsers] = useState<IUser[]>([]);
     const [total, setTotal] = useState(0);
     const [statistic, setStatistic] = useState<IStatistic | null>(null);
+    const [managerStats, setManagerStats] = useState<
+        Record<string, IStatistic>
+    >({});
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,13 +36,29 @@ export const Users = () => {
         setSearchParams({ page: String(newPage) });
     };
 
+    const fetchManagerStats = (
+        pageUsers: IUser[],
+        signal?: AbortSignal,
+    ): Promise<Record<string, IStatistic>> =>
+        pageUsers.length
+            ? userService
+                  .getStatisticByManagers(
+                      pageUsers.map((u) => u._id),
+                      signal,
+                  )
+                  .then((res) => res.data)
+            : Promise.resolve({});
+
     const loadUsers = () => {
         userService
             .getAllUsers({ page, pageSize: 25 })
-            .then((usersData) => {
-                setUsers(usersData.data.data);
-                setTotal(usersData.data.total);
-            })
+            .then((usersData) =>
+                fetchManagerStats(usersData.data.data).then((stats) => {
+                    setUsers(usersData.data.data);
+                    setTotal(usersData.data.total);
+                    setManagerStats(stats);
+                }),
+            )
             .catch((err) => {
                 toast.error(
                     err.response?.data?.message ?? "Failed to load users",
@@ -53,11 +72,16 @@ export const Users = () => {
             userService.getAllUsers({ page, pageSize: 25 }, controller.signal),
             orderService.getOrderStatistic(controller.signal),
         ])
-            .then(([usersData, statData]) => {
-                setUsers(usersData.data.data);
-                setTotal(usersData.data.total);
-                setStatistic(statData.data);
-            })
+            .then(([usersData, statData]) =>
+                fetchManagerStats(usersData.data.data, controller.signal).then(
+                    (stats) => {
+                        setUsers(usersData.data.data);
+                        setTotal(usersData.data.total);
+                        setStatistic(statData.data);
+                        setManagerStats(stats);
+                    },
+                ),
+            )
             .catch((err) => {
                 if (axios.isCancel(err)) return;
                 toast.error(
@@ -199,6 +223,7 @@ export const Users = () => {
                                 <User
                                     key={user._id}
                                     user={user}
+                                    statistic={managerStats[user._id]}
                                     onUpdate={loadUsers}
                                 />
                             ))}

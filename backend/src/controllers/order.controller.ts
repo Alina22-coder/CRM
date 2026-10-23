@@ -122,6 +122,20 @@ class OrderController {
         }
     }
 
+    public async getStatisticByManagers(
+        _req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const { ids } = res.locals.query as { ids: string[] };
+            const data = await orderService.getStatisticByManagers(ids);
+            res.status(StatusCodes.OK).json(data);
+        } catch (e) {
+            next(e);
+        }
+    }
+
     public async getStatisticByManager(
         req: Request,
         res: Response,

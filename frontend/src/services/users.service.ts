@@ -41,6 +41,13 @@ const userService = {
     getStatisticByManager: (userId: string) => {
         return api.get(`/users/${userId}/statistic`);
     },
+
+    getStatisticByManagers: (userIds: string[], signal?: AbortSignal) => {
+        return api.get("/users/statistic", {
+            params: { ids: userIds.join(",") },
+            signal,
+        });
+    },
 };
 
 export default userService;

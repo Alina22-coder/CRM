@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from "react";
+import { useState, type FC } from "react";
 import type { IUser } from "../../interfaces/IUser";
 import styles from "./User.module.scss";
 import userService from "../../services/users.service";
@@ -15,17 +15,16 @@ const ROLE_META: Record<RoleEnum, { colorVar: string; label: string }> = {
 
 type UserPropType = {
     user: IUser;
+    statistic?: IStatistic;
     onUpdate: () => void;
 };
 
-export const User: FC<UserPropType> = ({ user, onUpdate }) => {
+export const User: FC<UserPropType> = ({ user, statistic, onUpdate }) => {
     const [confirm, setConfirm] = useState<{
         message: string;
         description: React.ReactNode;
         action: () => void;
     } | null>(null);
-
-    const [statistic, setStatistic] = useState<IStatistic | null>(null);
 
     const stats = [
         { label: "Total", value: statistic?.total },
@@ -80,12 +79,6 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
         }
     };
 
-    useEffect(() => {
-        userService.getStatisticByManager(user._id).then((res) => {
-            setStatistic(res.data);
-        });
-    }, [user._id]);
-
     const roleMeta = ROLE_META[user.role];
 
     return (
@@ -128,11 +121,10 @@ export const User: FC<UserPropType> = ({ user, onUpdate }) => {
                 </div>
 
                 <div className={styles.card__statistic}>
-                    {stats
-                        .filter((s) => s.value && s.value > 0)
-                        .map((s) => (
+                    {statistic &&
+                        stats.map((s) => (
                             <span key={s.label}>
-                                {s.label}: {s.value}
+                                {s.label}: {s.value ?? 0}
                             </span>
                         ))}
                 </div>

@@ -2157,6 +2157,48 @@ const swaggerDocument: OpenAPIV3.Document = {
             },
         },
 
+        "/users/statistic": {
+            get: {
+                tags: ["Users"],
+                summary: "Get order statistics for several managers at once (Admin only)",
+                description:
+                    "Returns a map of manager id → statistics. Managers without orders get { total: 0 }.",
+                security: [{ bearerAuth: [] }],
+                parameters: [
+                    {
+                        name: "ids",
+                        in: "query",
+                        required: true,
+                        description: "Comma-separated user ids (up to 100)",
+                        schema: { type: "string" },
+                    },
+                ],
+                responses: {
+                    "200": {
+                        description: "Statistics keyed by manager id",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object",
+                                    additionalProperties: {
+                                        $ref: "#/components/schemas/OrderStatistic",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    "400": {
+                        description: "Invalid ids",
+                        content: {
+                            "application/json": {
+                                schema: { $ref: "#/components/schemas/Error" },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+
         "/users/{id}/statistic": {
             get: {
                 tags: ["Users"],

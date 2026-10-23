@@ -27,6 +27,14 @@ userRouter.post(
 );
 
 userRouter.get(
+    "/statistic",
+    authMiddleware.checkAccessToken,
+    roleMiddleware.checkRole(RoleEnum.Admin),
+    commonMiddleware.query(UserValidator.statisticQuery),
+    orderController.getStatisticByManagers,
+);
+
+userRouter.get(
     "/:id",
     authMiddleware.checkAccessToken,
     roleMiddleware.checkRole(RoleEnum.Admin),

@@ -151,6 +151,43 @@ class OrderRepository {
         return result.map((row) => ({ reason: row._id, count: row.count }));
     }
 
+    public async getStatisticByManagers(
+        managerIds: string[],
+    ): Promise<Record<string, Record<string, number>>> {
+        const rows = await OrderModel.aggregate([
+            {
+                $match: {
+                    manager: {
+                        $in: managerIds.map(
+                            (id) => new mongoose.Types.ObjectId(id),
+                        ),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        manager: "$manager",
+                        status: { $ifNull: ["$status", Status.NEW] },
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+
+        const result: Record<string, Record<string, number>> = {};
+        for (const id of managerIds) {
+            result[id] = { total: 0 };
+        }
+        for (const row of rows) {
+            const stat = result[String(row._id.manager)];
+            stat[row._id.status] = row.count;
+            stat.total += row.count;
+        }
+
+        return result;
+    }
+
     public async getActiveOrderCountsByManagers(
         managerIds: string[],
     ): Promise<Record<string, number>> {

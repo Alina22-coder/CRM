@@ -279,6 +279,10 @@ class OrderService {
         return orderRepository.getLossReport(filter);
     }
 
+    public async getStatisticByManagers(userIds: string[]) {
+        return orderRepository.getStatisticByManagers(userIds);
+    }
+
     public async getStatisticByManager(userId: string) {
         const user = await userRepository.getUserById(userId);
 
