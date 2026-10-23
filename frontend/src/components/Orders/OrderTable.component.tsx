@@ -55,6 +55,12 @@ export const OrderTable: FC<OrderPropType> = ({
     const [history, setHistory] = useState<IHistory[]>([])
 
     const [currentOrder, setCurrentOrder] = useState(order);
+    const [syncedOrder, setSyncedOrder] = useState(order);
+
+    if (order !== syncedOrder) {
+        setSyncedOrder(order);
+        setCurrentOrder(order);
+    }
 
     const [tooltipVisible, setTooltipVisible] = useState(false);
     const [managerInfo, setManagerInfo] = useState<{
@@ -68,10 +74,36 @@ export const OrderTable: FC<OrderPropType> = ({
     const [managerStat, setManagerStat] = useState<IStatistic | null>(null);
     const [isCommenting, setIsCommenting] = useState(false);
 
+    const managerId = currentOrder.manager?._id;
+    const [prevManagerId, setPrevManagerId] = useState(managerId);
+
+    if (managerId !== prevManagerId) {
+        setPrevManagerId(managerId);
+        setManagerInfo(null);
+        setManagerStat(null);
+    }
+
     const [statusDraft, setStatusDraft] = useState(order.status ?? "");
-    const [disagreeReason, setDisagreeReason] = useState("");
-    const [disagreeComment, setDisagreeComment] = useState("");
+    const [disagreeReason, setDisagreeReason] = useState(
+        order.disagree_reason ?? "",
+    );
+    const [disagreeComment, setDisagreeComment] = useState(
+        order.disagree_reason_comment ?? "",
+    );
     const [isCustomReason, setIsCustomReason] = useState(false);
+    const [statusSource, setStatusSource] = useState(currentOrder);
+
+    if (
+        currentOrder.status !== statusSource.status ||
+        currentOrder.disagree_reason !== statusSource.disagree_reason ||
+        currentOrder.disagree_reason_comment !==
+            statusSource.disagree_reason_comment
+    ) {
+        setStatusSource(currentOrder);
+        setStatusDraft(currentOrder.status ?? "");
+        setDisagreeReason(currentOrder.disagree_reason ?? "");
+        setDisagreeComment(currentOrder.disagree_reason_comment ?? "");
+    }
 
     const [tasks, setTasks] = useState<ITask[]>([]);
     const [taskTitle, setTaskTitle] = useState("");
@@ -97,13 +129,7 @@ export const OrderTable: FC<OrderPropType> = ({
         });
         loadHistory();
         loadTasks();
-    }, [expanded, order._id]);
-
-    useEffect(() => {
-        setStatusDraft(currentOrder.status ?? "");
-        setDisagreeReason(currentOrder.disagree_reason ?? "");
-        setDisagreeComment(currentOrder.disagree_reason_comment ?? "");
-    }, [currentOrder.status, currentOrder.disagree_reason, currentOrder.disagree_reason_comment]);
+    }, [expanded, order]);
 
     const isDisagreeSelected = statusDraft === "Disagree";
     const statusChanged = statusDraft !== (currentOrder.status ?? "");
