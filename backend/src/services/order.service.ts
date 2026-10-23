@@ -105,6 +105,10 @@ class OrderService {
         const autoFields = applyAutoAssignDefaults(order, user, "edit");
         const updatedFields: Partial<IOrder> = { ...autoFields, ...update };
 
+        if (update.status === Status.NEW && !getManagerId(order.manager)) {
+            delete updatedFields.manager;
+        }
+
         const resultingSum = updatedFields.sum ?? order.sum;
         const resultingAlreadyPaid =
             updatedFields.already_paid ?? order.already_paid;
