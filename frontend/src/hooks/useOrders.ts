@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { IOrder } from "../interfaces/IOrder";
 import { orderService } from "../services/orders.service";
@@ -44,6 +44,11 @@ const filtersFromSearchParams = (
     my: searchParams.get("my") === "true",
 });
 
+const isSameFilters = (a: OrderFiltersState, b: OrderFiltersState) =>
+    (Object.keys(a) as (keyof OrderFiltersState)[]).every(
+        (key) => a[key] === b[key],
+    );
+
 export const useOrders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [total, setTotal] = useState(0);
@@ -53,7 +58,20 @@ export const useOrders = () => {
         filtersFromSearchParams(searchParams),
     );
     const [refreshKey, setRefreshKey] = useState(0);
-    const isFirstFiltersRender = useRef(true);
+
+    const searchKey = searchParams.toString();
+    const [syncedSearchKey, setSyncedSearchKey] = useState(searchKey);
+
+    // URL changed outside the filter inputs (Back button, header search):
+    // pull the new values into the inputs so the debounce below doesn't
+    // write the stale ones back.
+    if (searchKey !== syncedSearchKey) {
+        setSyncedSearchKey(searchKey);
+        const urlFilters = filtersFromSearchParams(searchParams);
+        if (!isSameFilters(urlFilters, filters)) {
+            setFilters(urlFilters);
+        }
+    }
 
     const page = Number(searchParams.get("page")) || 1;
     const order = searchParams.get("order") || "-_id";
@@ -123,8 +141,7 @@ export const useOrders = () => {
     }, [page, order, searchParams, refreshKey]);
 
     useEffect(() => {
-        if (isFirstFiltersRender.current) {
-            isFirstFiltersRender.current = false;
+        if (isSameFilters(filters, filtersFromSearchParams(searchParams))) {
             return;
         }
 
