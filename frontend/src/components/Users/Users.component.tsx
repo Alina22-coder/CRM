@@ -9,6 +9,8 @@ import styles from "./Users.module.scss";
 import type { IStatistic } from "../../interfaces/IStatistic";
 import { CreateManagerModal } from "../Modal/CreateManagerModal.component";
 import { Pagination } from "../Pagination/Pagination";
+import axios from "axios";
+import { toast } from "sonner";
 
 export const Users = () => {
     const navigate = useNavigate();
@@ -18,11 +20,12 @@ export const Users = () => {
     const [statistic, setStatistic] = useState<IStatistic | null>(null);
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const [loading, setLoading] = useState(false);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const page = Number(searchParams.get("page")) || 1;
+
+    const [loadedPage, setLoadedPage] = useState<number | null>(null);
+    const loading = loadedPage !== page;
 
     const totalPages = Math.ceil(total / 25);
 
@@ -31,24 +34,41 @@ export const Users = () => {
     };
 
     const loadUsers = () => {
-        userService.getAllUsers({ page, pageSize: 25 }).then((usersData) => {
-            setUsers(usersData.data.data);
-            setTotal(usersData.data.total);
-        });
+        userService
+            .getAllUsers({ page, pageSize: 25 })
+            .then((usersData) => {
+                setUsers(usersData.data.data);
+                setTotal(usersData.data.total);
+            })
+            .catch((err) => {
+                toast.error(
+                    err.response?.data?.message ?? "Failed to load users",
+                );
+            });
     };
 
     useEffect(() => {
-        setLoading(true);
+        const controller = new AbortController();
         Promise.all([
-            userService.getAllUsers({ page, pageSize: 25 }),
-            orderService.getOrderStatistic(),
+            userService.getAllUsers({ page, pageSize: 25 }, controller.signal),
+            orderService.getOrderStatistic(controller.signal),
         ])
             .then(([usersData, statData]) => {
                 setUsers(usersData.data.data);
                 setTotal(usersData.data.total);
                 setStatistic(statData.data);
             })
-            .finally(() => setLoading(false));
+            .catch((err) => {
+                if (axios.isCancel(err)) return;
+                toast.error(
+                    err.response?.data?.message ?? "Failed to load users",
+                );
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setLoadedPage(page);
+            });
+
+        return () => controller.abort();
     }, [page]);
 
     return (

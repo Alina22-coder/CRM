@@ -2,8 +2,8 @@ import api from "../api/axios";
 import type { IOrder, IOrderQuery } from "../interfaces/IOrder";
 
 export const orderService = {
-    getAllOrders: (query: IOrderQuery) => {
-        return api.get("/orders", { params: query });
+    getAllOrders: (query: IOrderQuery, signal?: AbortSignal) => {
+        return api.get("/orders", { params: query, signal });
     },
 
     getOrderById: (orderId: string) => {
@@ -22,8 +22,8 @@ export const orderService = {
         return api.patch(`/orders/${orderId}/reassign`, { manager: managerId });
     },
 
-    getOrderStatistic: () => {
-        return api.get("/orders/statistic");
+    getOrderStatistic: (signal?: AbortSignal) => {
+        return api.get("/orders/statistic", { signal });
     },
 
     getLossReport: (query: { start_date?: string; end_date?: string }) => {

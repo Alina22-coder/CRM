@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
 import type { IOrder } from "../interfaces/IOrder";
 import { orderService } from "../services/orders.service";
 
@@ -52,7 +54,6 @@ const isSameFilters = (a: OrderFiltersState, b: OrderFiltersState) =>
 export const useOrders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [filters, setFilters] = useState<OrderFiltersState>(() =>
         filtersFromSearchParams(searchParams),
@@ -75,6 +76,10 @@ export const useOrders = () => {
 
     const page = Number(searchParams.get("page")) || 1;
     const order = searchParams.get("order") || "-_id";
+
+    const requestKey = `${searchKey}#${refreshKey}`;
+    const [loadedKey, setLoadedKey] = useState<string | null>(null);
+    const loading = loadedKey !== requestKey;
 
     const handleSort = (field: string) => {
         const current = searchParams.get("order");
@@ -108,7 +113,7 @@ export const useOrders = () => {
     };
 
     useEffect(() => {
-        setLoading(true);
+        const controller = new AbortController();
 
         orderService
             .getAllOrders({
@@ -130,15 +135,26 @@ export const useOrders = () => {
                 start_date: searchParams.get("start_date") || undefined,
                 end_date: searchParams.get("end_date") || undefined,
                 my: searchParams.get("my") === "true" || undefined,
-            })
+            }, controller.signal)
 
             .then((data) => {
                 setOrders(data.data.data);
                 setTotal(data.data.total);
             })
 
-            .finally(() => setLoading(false));
-    }, [page, order, searchParams, refreshKey]);
+            .catch((err) => {
+                if (axios.isCancel(err)) return;
+                toast.error(
+                    err.response?.data?.message ?? "Failed to load orders",
+                );
+            })
+
+            .finally(() => {
+                if (!controller.signal.aborted) setLoadedKey(requestKey);
+            });
+
+        return () => controller.abort();
+    }, [page, order, searchParams, requestKey]);
 
     useEffect(() => {
         if (isSameFilters(filters, filtersFromSearchParams(searchParams))) {

@@ -2,8 +2,8 @@ import api from "../api/axios";
 import type { IUser, IUserQuery, IUserRegisterDTO } from "../interfaces/IUser";
 
 const userService = {
-    getAllUsers: (query: IUserQuery) => {
-        return api.get("/users", { params: query });
+    getAllUsers: (query: IUserQuery, signal?: AbortSignal) => {
+        return api.get("/users", { params: query, signal });
     },
 
     getUserById: (userId: string) => {
