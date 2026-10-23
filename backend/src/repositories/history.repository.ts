@@ -1,5 +1,6 @@
 import IHistory, { IHistoryDto } from "../interfaces/IHistory";
 import { HistoryModel } from "../models/history.model";
+import { buildDateRange } from "../helpers/buildDateRange";
 
 class HistoryRepository {
     public createHistory(data: IHistoryDto): Promise<IHistory> {
@@ -26,15 +27,7 @@ class HistoryRepository {
         }
 
         if (filter.start_date || filter.end_date) {
-            query.created_at = {};
-
-            if (filter.start_date) {
-                query.created_at.$gte = new Date(filter.start_date);
-            }
-
-            if (filter.end_date) {
-                query.created_at.$lte = new Date(filter.end_date);
-            }
+            query.created_at = buildDateRange(filter.start_date, filter.end_date);
         }
 
         const [data, total] = await Promise.all([

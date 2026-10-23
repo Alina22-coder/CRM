@@ -3,6 +3,7 @@ import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 import Status from "../enums/status.enum";
 import { escapeRegex } from "../helpers/escapeRegex";
+import { buildDateRange } from "../helpers/buildDateRange";
 
 class OrderRepository {
     private buildFilter(query: IOrderQuery, managerId?: string): object {
@@ -41,13 +42,7 @@ class OrderRepository {
         }
 
         if (query.start_date || query.end_date) {
-            filter.created_at = {};
-            if (query.start_date) {
-                filter.created_at.$gte = new Date(query.start_date);
-            }
-            if (query.end_date) {
-                filter.created_at.$lte = new Date(query.end_date);
-            }
+            filter.created_at = buildDateRange(query.start_date, query.end_date);
         }
 
         if (query.my && managerId) {
@@ -139,13 +134,7 @@ class OrderRepository {
         const match: Record<string, any> = { status: Status.DISAGREE };
 
         if (filter.start_date || filter.end_date) {
-            match.disagree_at = {};
-            if (filter.start_date) {
-                match.disagree_at.$gte = new Date(filter.start_date);
-            }
-            if (filter.end_date) {
-                match.disagree_at.$lte = new Date(filter.end_date);
-            }
+            match.disagree_at = buildDateRange(filter.start_date, filter.end_date);
         }
 
         const result = await OrderModel.aggregate([
