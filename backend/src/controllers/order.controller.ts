@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
 import { IOrderQuery } from "../interfaces/IOrder";
 import { ITokenPayload } from "../interfaces/IToken";
+import ApiError from "../errors/api.error";
+import RoleEnum from "../enums/role.enum";
 
 class OrderController {
     public async getAllOrders(
@@ -127,6 +129,16 @@ class OrderController {
     ) {
         try {
             const userId = req.params.id as string;
+            const { userId: currentUserId, role } = res.locals
+                .tokenPayload as ITokenPayload;
+
+            if (role !== RoleEnum.Admin && userId !== currentUserId) {
+                throw new ApiError(
+                    "You can only view your own statistic",
+                    StatusCodes.FORBIDDEN,
+                );
+            }
+
             const data = await orderService.getStatisticByManager(userId);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
