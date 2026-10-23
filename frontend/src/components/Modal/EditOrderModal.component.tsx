@@ -344,7 +344,7 @@ export const EditOrderModal = ({
 
                         <div className={styles.grid__field}>
                             <label>Phone</label>
-                            <input type="number" {...register("phone")} />
+                            <input type="tel" {...register("phone")} />
                         </div>
 
                         <div className={styles.grid__field}>

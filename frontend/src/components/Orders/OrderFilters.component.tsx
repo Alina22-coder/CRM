@@ -125,7 +125,7 @@ export const OrderFilters: FC<IOrderFiltersProps> = ({
                 />
                 <input
                     className={styles.filter__input}
-                    type="number"
+                    type="tel"
                     placeholder="Phone"
                     value={filters.phone}
                     onChange={(e) => onChange("phone", e.target.value)}
