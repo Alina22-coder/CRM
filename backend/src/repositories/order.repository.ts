@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 import Status from "../enums/status.enum";
-
-const escapeRegex = (value: string): string =>
-    value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+import { escapeRegex } from "../helpers/escapeRegex";
 
 class OrderRepository {
     private buildFilter(query: IOrderQuery, managerId?: string): object {

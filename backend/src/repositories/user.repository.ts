@@ -1,6 +1,7 @@
 import IUser, { IUserQuery } from "../interfaces/IUser";
 import { UserModel } from "../models/user.model";
 import RoleEnum from "../enums/role.enum";
+import { escapeRegex } from "../helpers/escapeRegex";
 
 class UserRepository {
     public async getAllUsers(
@@ -10,8 +11,8 @@ class UserRepository {
         const filter: Record<string, any> = search
             ? {
                   $or: [
-                      { name: { $regex: search, $options: "i" } },
-                      { email: { $regex: search, $options: "i" } },
+                      { name: { $regex: escapeRegex(search), $options: "i" } },
+                      { email: { $regex: escapeRegex(search), $options: "i" } },
                   ],
               }
             : {};
