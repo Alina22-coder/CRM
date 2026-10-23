@@ -5,6 +5,20 @@ import Course from "../enums/course.enum";
 import CourseType from "../enums/course-type.enum";
 import CourseFormat from "../enums/course-format.enum";
 
+const UPDATE_ENUM_FIELDS = [
+    "status",
+    "course",
+    "course_type",
+    "course_format",
+] as const;
+
+const emptyEnumsToNull = (value: Record<string, unknown>) => {
+    for (const field of UPDATE_ENUM_FIELDS) {
+        if (value[field] === "") value[field] = null;
+    }
+    return value;
+};
+
 export class OrderValidator {
     public static query = joi.object({
         pageSize: joi.number().min(1).default(25),
@@ -53,19 +67,19 @@ export class OrderValidator {
         status: joi
             .string()
             .valid(...Object.values(Status))
-            .allow(null),
+            .allow(null, ""),
         course: joi
             .string()
             .valid(...Object.values(Course))
-            .allow(null),
+            .allow(null, ""),
         course_type: joi
             .string()
             .valid(...Object.values(CourseType))
-            .allow(null),
+            .allow(null, ""),
         course_format: joi
             .string()
             .valid(...Object.values(CourseFormat))
-            .allow(null),
+            .allow(null, ""),
         group: joi.string().max(100).allow(null, ""),
         msg: joi.string().max(2000).allow(null, ""),
         disagree_reason: joi
@@ -78,7 +92,7 @@ export class OrderValidator {
                 otherwise: joi.allow(null, ""),
             }),
         disagree_reason_comment: joi.string().max(1000).allow(null, ""),
-    });
+    }).custom(emptyEnumsToNull);
 
     public static tags = joi.object({
         tags: joi.array().items(joi.string().trim().max(30)).max(20).required(),
