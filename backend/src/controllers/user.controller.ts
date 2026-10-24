@@ -1,3 +1,4 @@
+import fs from "fs";
 import { Request, Response, NextFunction } from "express";
 import StatusCodes from "../enums/status-codes.enum";
 import { userService } from "../services/user.service";
@@ -66,6 +67,7 @@ class UserController {
             const { userId, role } = res.locals.tokenPayload as ITokenPayload;
 
             if (role !== RoleEnum.Admin && id !== userId) {
+                if (req.file) fs.unlink(req.file.path, () => {});
                 throw new ApiError(
                     "You can only edit your own profile",
                     StatusCodes.FORBIDDEN,

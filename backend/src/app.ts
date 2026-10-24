@@ -5,7 +5,9 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import router from "./routes/api.router.js";
 import { Request, Response, NextFunction } from "express";
+import { MulterError } from "multer";
 import ApiError from "./errors/api.error";
+import StatusCodes from "./enums/status-codes.enum";
 import config from "./config/config";
 import createAdmin from "./seeds/admin.seed.js";
 import "./services/telegram.service";
@@ -18,12 +20,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use(
+    "/uploads",
+    express.static(path.join(process.cwd(), "uploads"), {
+        setHeaders: (res) => res.setHeader("X-Content-Type-Options", "nosniff"),
+    }),
+);
 
 app.use("/", router);
 
-app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || 500;
+app.use((err: ApiError | MulterError, req: Request, res: Response, next: NextFunction) => {
+    const status =
+        err instanceof MulterError
+            ? StatusCodes.BAD_REQUEST
+            : err.status || 500;
     const message = err.message || "Internal Server Error";
     if (status >= 500) {
         logger.error(`${req.method} ${req.originalUrl}`, err);

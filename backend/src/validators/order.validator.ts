@@ -53,7 +53,7 @@ export class OrderValidator {
             .allow(""),
         group: joi.string().trim().allow(""),
         start_date: joi.string().isoDate(),
-        end_date: joi.string().isoDate(),
+        end_date: joi.string().isoDate().prefs({ convert: false }),
     });
 
     public static update = joi.object({
@@ -104,7 +104,7 @@ export class OrderValidator {
 
     public static lossReportQuery = joi.object({
         start_date: joi.string().isoDate(),
-        end_date: joi.string().isoDate(),
+        end_date: joi.string().isoDate().prefs({ convert: false }),
     });
 
     public static create = joi.object({

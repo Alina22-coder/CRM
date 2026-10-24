@@ -134,7 +134,7 @@ class AuthService {
         if (!isValidPassword) {
             throw new ApiError(
                 "Current password is incorrect",
-                StatusCodes.UNAUTHORIZED,
+                StatusCodes.BAD_REQUEST,
             );
         }
 

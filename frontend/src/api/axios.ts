@@ -46,9 +46,11 @@ api.interceptors.response.use(
         const url = error.config?.url ?? "";
         if (
             error.response?.status === 401 &&
+            !error.config?._retry &&
             !url.includes("/auth/login") &&
             !url.includes("/auth/refresh")
         ) {
+            error.config._retry = true;
             try {
                 const data = await refreshTokens();
 

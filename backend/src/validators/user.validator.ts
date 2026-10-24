@@ -40,6 +40,11 @@ export class UserValidator {
         email: joi.string().email(),
     });
 
+    public static login = joi.object({
+        email: joi.string().trim().required(),
+        password: joi.string().required(),
+    });
+
     public static setPassword = joi.object({
         token: joi.string().required(),
         password: this.password.required(),

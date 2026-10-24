@@ -6,6 +6,7 @@ import { orderRepository } from "../repositories/order.repository";
 import { telegramService } from "./telegram.service";
 import { notificationService } from "./notification.service";
 import NotificationEvent from "../enums/notification-event.enum";
+import Status from "../enums/status.enum";
 
 class TaskService {
     public async createTask(
@@ -25,7 +26,7 @@ class TaskService {
             order: orderId,
             assignee: assigneeId,
             dueDate: new Date(dueDate),
-            statusAtCreation: order.status,
+            statusAtCreation: order.status || Status.NEW,
         });
     }
 
@@ -37,8 +38,14 @@ class TaskService {
         return taskRepository.getAllTasksByAssigneeId(userId);
     }
 
-    public markDone(taskId: string) {
-        return taskRepository.markDone(taskId);
+    public async markDone(taskId: string) {
+        const task = await taskRepository.markDone(taskId);
+
+        if (!task) {
+            throw new ApiError("Task not found", StatusCodes.NOT_FOUND);
+        }
+
+        return task;
     }
 
     public async checkDueReminders(now: Date): Promise<void> {

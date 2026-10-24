@@ -284,7 +284,8 @@ class OrderRepository {
 
         const data = await OrderModel.find(filter)
             .sort(sortField ? { [sortField]: sortDir } : { created_at: -1 })
-            .populate("manager", "name surname");
+            .populate("manager", "name surname")
+            .lean<IOrder[]>();
 
         return data;
     }

@@ -23,7 +23,7 @@ class CommonMiddleware {
     public validateBody(validator: ObjectSchema) {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
-                req.body = await validator.validateAsync(req.body);
+                req.body = await validator.validateAsync(req.body ?? {});
                 next();
             } catch (e: unknown) {
                 const err = e as { details?: { message: string }[] };

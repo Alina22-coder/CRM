@@ -1,3 +1,4 @@
+import fs from "fs";
 import multer from "multer";
 import path from "path";
 import crypto from "crypto";
@@ -5,8 +6,15 @@ import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
 
 const AVATAR_DIR = path.join(process.cwd(), "uploads", "avatars");
-const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const EXTENSION_BY_MIME_TYPE: Record<string, string> = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+};
+const ALLOWED_MIME_TYPES = Object.keys(EXTENSION_BY_MIME_TYPE);
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+fs.mkdirSync(AVATAR_DIR, { recursive: true });
 
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
@@ -14,7 +22,7 @@ const storage = multer.diskStorage({
     },
     filename: (_req, file, cb) => {
         const uniqueName = crypto.randomBytes(16).toString("hex");
-        cb(null, `${uniqueName}${path.extname(file.originalname)}`);
+        cb(null, `${uniqueName}${EXTENSION_BY_MIME_TYPE[file.mimetype]}`);
     },
 });
 

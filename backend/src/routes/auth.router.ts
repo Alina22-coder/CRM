@@ -12,7 +12,12 @@ import {
 } from "../middleware/rate-limit.middleware";
 const authRouter = express.Router();
 
-authRouter.post("/login", loginRateLimit, authController.login);
+authRouter.post(
+    "/login",
+    loginRateLimit,
+    commonMiddleware.validateBody(UserValidator.login),
+    authController.login,
+);
 
 authRouter.post(
     "/refresh",

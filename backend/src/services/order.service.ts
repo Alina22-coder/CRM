@@ -329,6 +329,7 @@ class OrderService {
                     | undefined;
                 return {
                     ...order,
+                    _id: String(order._id),
                     manager: manager?.surname
                         ? `${manager.name ?? ""} ${manager.surname}`.trim()
                         : "",

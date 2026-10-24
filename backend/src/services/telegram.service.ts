@@ -5,6 +5,7 @@ import { userRepository } from "../repositories/user.repository";
 import NotificationEvent from "../enums/notification-event.enum";
 import ApiError from "../errors/api.error";
 import StatusCodes from "../enums/status-codes.enum";
+import { logger } from "../config/logger";
 
 const LINK_CODE_LIFETIME_MS = 10 * 60 * 1000;
 
@@ -103,7 +104,11 @@ class TelegramService {
         if (!user?.telegram_chat_id) return;
         if (!user.telegram_notifications?.[event]) return;
 
-        await bot.sendMessage(user.telegram_chat_id, text);
+        try {
+            await bot.sendMessage(user.telegram_chat_id, text);
+        } catch (e) {
+            logger.warn(`telegram: failed to notify user ${userId}`, e);
+        }
     }
 
     public async notifyManagerById(
@@ -127,7 +132,7 @@ class TelegramService {
 
         await Promise.all(
             admins
-                .filter((admin) => admin._id !== excludeUserId)
+                .filter((admin) => String(admin._id) !== excludeUserId)
                 .map((admin) => this.notify(admin._id, event, text)),
         );
     }

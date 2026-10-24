@@ -54,7 +54,7 @@ class AuthMiddleware {
         next: NextFunction,
     ) {
         try {
-            const { refreshToken } = req.body as IRefresh;
+            const { refreshToken } = (req.body ?? {}) as IRefresh;
 
             if (!refreshToken) {
                 throw new ApiError(
