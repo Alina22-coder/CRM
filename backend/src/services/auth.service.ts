@@ -14,7 +14,14 @@ class AuthService {
     ): Promise<{ user: Omit<IUser, "password">; tokens: ITokenPair }> {
         const user = await userRepository.getUserByEmail(dto.email);
 
-        if (!user) {
+        const isValidPassword =
+            !!user?.password &&
+            (await passwordService.comparePassword(
+                dto.password,
+                user.password,
+            ));
+
+        if (!user || !isValidPassword) {
             throw new ApiError(
                 "Invalid email or password",
                 StatusCodes.UNAUTHORIZED,
@@ -26,18 +33,6 @@ class AuthService {
         }
         if (!user.is_active) {
             throw new ApiError("User is not activate", StatusCodes.FORBIDDEN);
-        }
-
-        const isValidPassword = await passwordService.comparePassword(
-            dto.password,
-            user.password,
-        );
-
-        if (!isValidPassword) {
-            throw new ApiError(
-                "Invalid email or password",
-                StatusCodes.UNAUTHORIZED,
-            );
         }
 
         const tokens = tokenService.generateToken({
