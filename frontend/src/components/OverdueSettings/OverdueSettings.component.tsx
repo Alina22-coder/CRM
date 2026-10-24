@@ -5,12 +5,11 @@ import { LogoLoader } from "../Logo/Logo";
 import styles from "./OverdueSettings.module.scss";
 
 export const OverdueSettings = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const [thresholdHours, setThresholdHours] = useState(24);
 
     useEffect(() => {
-        setLoading(true);
         overdueSettingsService
             .getSettings()
             .then((res) => {

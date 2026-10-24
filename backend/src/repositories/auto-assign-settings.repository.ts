@@ -1,4 +1,6 @@
-import IAutoAssignSettings from "../interfaces/IAutoAssignSettings";
+import IAutoAssignSettings, {
+    IAutoAssignSettingsUpdate,
+} from "../interfaces/IAutoAssignSettings";
 import { AutoAssignSettingsModel } from "../models/auto-assign-settings.model";
 import AutoAssignMode from "../enums/auto-assign-mode.enum";
 
@@ -21,9 +23,7 @@ class AutoAssignSettingsRepository {
     }
 
     public async updateSettings(
-        update: Partial<
-            Pick<IAutoAssignSettings, "enabled" | "mode" | "participantIds">
-        >,
+        update: IAutoAssignSettingsUpdate,
     ): Promise<IAutoAssignSettings> {
         await this.getSettings();
 

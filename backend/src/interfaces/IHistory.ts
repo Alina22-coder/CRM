@@ -17,4 +17,12 @@ export type IHistoryDto = Pick<
     "type" | "field" | "old_value" | "new_value"
 > & { order: string; author: string };
 
+export interface IHistoryQuery {
+    author?: string;
+    start_date?: string;
+    end_date?: string;
+    page: number;
+    pageSize: number;
+}
+
 export default IHistory;

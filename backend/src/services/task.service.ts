@@ -24,9 +24,9 @@ class TaskService {
             title,
             order: orderId,
             assignee: assigneeId,
-            dueDate: new Date(dueDate) as unknown as string,
+            dueDate: new Date(dueDate),
             statusAtCreation: order.status,
-        } as any);
+        });
     }
 
     public getAllTasksByOrderId(orderId: string) {

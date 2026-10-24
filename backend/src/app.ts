@@ -10,6 +10,7 @@ import config from "./config/config";
 import createAdmin from "./seeds/admin.seed.js";
 import "./services/telegram.service";
 import { startScheduler } from "./services/scheduler.service";
+import { logger } from "./config/logger";
 
 const app = express();
 
@@ -24,11 +25,14 @@ app.use("/", router);
 app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => {
     const status = err.status || 500;
     const message = err.message || "Internal Server Error";
+    if (status >= 500) {
+        logger.error(`${req.method} ${req.originalUrl}`, err);
+    }
     res.status(status).json({ status, message });
 });
 
 process.on("uncaughtException", (err) => {
-    console.log("uncaughtException", err);
+    logger.error("uncaughtException", err);
     process.exit(1);
 });
 
@@ -38,7 +42,7 @@ const bootstrap = async () => {
     startScheduler();
 
     app.listen(config.PORT, () => {
-        console.log(`Server is running on port ${config.PORT}`);
+        logger.info(`Server is running on port ${config.PORT}`);
     });
 };
 

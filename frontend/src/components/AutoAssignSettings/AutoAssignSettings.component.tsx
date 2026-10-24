@@ -14,14 +14,13 @@ import styles from "./AutoAssignSettings.module.scss";
 const MODES = Object.keys(AUTO_ASSIGN_MODE_LABELS) as AutoAssignMode[];
 
 export const AutoAssignSettings = () => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [enabled, setEnabled] = useState(false);
     const [mode, setMode] = useState<AutoAssignMode>("round_robin");
     const [participantIds, setParticipantIds] = useState<string[]>([]);
     const [managers, setManagers] = useState<IUser[]>([]);
 
     useEffect(() => {
-        setLoading(true);
         Promise.all([
             autoAssignService.getSettings(),
             userService.getAllUsers({ page: 1, pageSize: 100 }),

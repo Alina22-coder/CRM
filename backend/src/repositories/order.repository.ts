@@ -1,17 +1,28 @@
-import mongoose from "mongoose";
+import mongoose, { type QueryFilter, type Types } from "mongoose";
 import IOrder, { IOrderQuery } from "../interfaces/IOrder";
 import { OrderModel } from "../models/order.model";
 import Status from "../enums/status.enum";
 import { escapeRegex } from "../helpers/escapeRegex";
 import { buildDateRange } from "../helpers/buildDateRange";
 
-class OrderRepository {
-    private buildFilter(query: IOrderQuery, managerId?: string): object {
-        const filter: Record<string, any> = {};
+type StatusCountRow = { _id: string; count: number };
+type LossReportRow = { _id: string; count: number };
+type ManagerStatusCountRow = {
+    _id: { manager: Types.ObjectId; status: string };
+    count: number;
+};
+type ManagerCountRow = { _id: Types.ObjectId; count: number };
 
-        const textFields: Array<keyof IOrderQuery> = [
+class OrderRepository {
+    private buildFilter(
+        query: IOrderQuery,
+        managerId?: string,
+    ): QueryFilter<IOrder> {
+        const filter: QueryFilter<IOrder> = {};
+
+        const textFields = [
             "name", "surname", "email", "phone", "group",
-        ];
+        ] as const;
         for (const field of textFields) {
             if (query[field]) {
                 filter[field] = {
@@ -21,9 +32,9 @@ class OrderRepository {
             }
         }
 
-        const exactFields: Array<keyof IOrderQuery> = [
+        const exactFields = [
             "course", "course_format", "course_type",
-        ];
+        ] as const;
         for (const field of exactFields) {
             if (query[field]) {
                 filter[field] = query[field];
@@ -87,9 +98,9 @@ class OrderRepository {
 
     // Orders without a status are counted as New, same as the New filter.
     private async countByStatus(
-        match: Record<string, any> = {},
+        match: QueryFilter<IOrder> = {},
     ): Promise<Record<string, number>> {
-        const byStatus = await OrderModel.aggregate([
+        const byStatus = await OrderModel.aggregate<StatusCountRow>([
             { $match: match },
             {
                 $group: {
@@ -131,13 +142,13 @@ class OrderRepository {
         start_date?: string;
         end_date?: string;
     }): Promise<{ reason: string; count: number }[]> {
-        const match: Record<string, any> = { status: Status.DISAGREE };
+        const match: QueryFilter<IOrder> = { status: Status.DISAGREE };
 
         if (filter.start_date || filter.end_date) {
             match.disagree_at = buildDateRange(filter.start_date, filter.end_date);
         }
 
-        const result = await OrderModel.aggregate([
+        const result = await OrderModel.aggregate<LossReportRow>([
             { $match: match },
             {
                 $group: {
@@ -154,7 +165,7 @@ class OrderRepository {
     public async getStatisticByManagers(
         managerIds: string[],
     ): Promise<Record<string, Record<string, number>>> {
-        const rows = await OrderModel.aggregate([
+        const rows = await OrderModel.aggregate<ManagerStatusCountRow>([
             {
                 $match: {
                     manager: {
@@ -191,7 +202,7 @@ class OrderRepository {
     public async getActiveOrderCountsByManagers(
         managerIds: string[],
     ): Promise<Record<string, number>> {
-        const result = await OrderModel.aggregate([
+        const result = await OrderModel.aggregate<ManagerCountRow>([
             {
                 $match: {
                     manager: {

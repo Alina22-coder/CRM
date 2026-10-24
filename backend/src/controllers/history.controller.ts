@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { historyService } from "../services/history.service";
 import StatusCodes from "../enums/status-codes.enum";
+import { IHistoryQuery } from "../interfaces/IHistory";
 
 class HistoryController {
     public async getAllHistoryByOrderId(
@@ -18,12 +19,13 @@ class HistoryController {
     }
 
     public async getAllHistory(
-        req: Request,
+        _req: Request,
         res: Response,
         next: NextFunction,
     ) {
         try {
-            const data = await historyService.getAllHistory(req.query as any);
+            const query = res.locals.query as IHistoryQuery;
+            const data = await historyService.getAllHistory(query);
             res.status(StatusCodes.OK).json(data);
         } catch (e) {
             next(e);

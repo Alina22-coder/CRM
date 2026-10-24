@@ -7,7 +7,7 @@ import {
 import { STATUSES } from "../../constants/status.constant";
 import { DISAGREE_REASONS } from "../../constants/disagreeReason.constant";
 import type { IOrder } from "../../interfaces/IOrder";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { groupService } from "../../services/group.service";
 import type { IGroup } from "../../interfaces/IGroup";
@@ -43,6 +43,10 @@ type EditOrderForm = {
 };
 
 const DISAGREE_STATUS = "Disagree";
+
+const isCustomDisagreeReason = (reason: string | null | undefined) =>
+    !!reason &&
+    !DISAGREE_REASONS.includes(reason as (typeof DISAGREE_REASONS)[number]);
 
 const toNullable = (value: unknown) =>
     value === "" || value === undefined || Number.isNaN(value) ? null : value;
@@ -89,7 +93,7 @@ export const EditOrderModal = ({
         handleSubmit,
         reset,
         setValue,
-        watch,
+        control,
         formState: { errors },
     } = useForm<EditOrderForm>();
 
@@ -97,15 +101,29 @@ export const EditOrderModal = ({
 
     const [newGroupName, setNewGroupName] = useState("");
 
-    const selectedStatus = watch("status");
-    const [isCustomReason, setIsCustomReason] = useState(false);
+    const selectedStatus = useWatch({ control, name: "status" });
+    const [isCustomReason, setIsCustomReason] = useState(() =>
+        isCustomDisagreeReason(order.disagree_reason),
+    );
+    const [syncedOrderId, setSyncedOrderId] = useState(order._id);
+
+    if (order._id !== syncedOrderId) {
+        setSyncedOrderId(order._id);
+        setIsCustomReason(isCustomDisagreeReason(order.disagree_reason));
+    }
 
     const currentUser = useCurrentUser();
     const isAdmin = currentUser?.role === RoleEnum.Admin;
     const [managers, setManagers] = useState<IUser[]>([]);
-    const [selectedManager, setSelectedManager] = useState(
-        order.manager?._id ?? "",
-    );
+    const orderManagerId = order.manager?._id ?? "";
+    const [selectedManager, setSelectedManager] = useState(orderManagerId);
+    const [syncedManagerId, setSyncedManagerId] = useState(orderManagerId);
+
+    if (orderManagerId !== syncedManagerId) {
+        setSyncedManagerId(orderManagerId);
+        setSelectedManager(orderManagerId);
+    }
+
     const [isReassigning, setIsReassigning] = useState(false);
 
     useEffect(() => {
@@ -126,22 +144,12 @@ export const EditOrderModal = ({
             group: order.group ?? "",
             msg: order.msg ?? "",
         });
-        setIsCustomReason(
-            !!order.disagree_reason &&
-                !DISAGREE_REASONS.includes(
-                    order.disagree_reason as (typeof DISAGREE_REASONS)[number],
-                ),
-        );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [order._id]);
 
     useEffect(() => {
         groupService.getAllGroups().then((res) => setGroups(res.data));
     }, []);
-
-    useEffect(() => {
-        setSelectedManager(order.manager?._id ?? "");
-    }, [order._id, order.manager]);
 
     useEffect(() => {
         if (!isAdmin) return;

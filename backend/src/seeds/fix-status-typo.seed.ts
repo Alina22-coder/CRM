@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import connectDB from "../config/db";
 import { OrderModel } from "../models/order.model";
 import { HistoryModel } from "../models/history.model";
+import { logger } from "../config/logger";
 
 const RENAMES = [
     ["Aggre", "Agree"],
@@ -25,7 +26,7 @@ const fixStatusTypo = async () => {
             { $set: { new_value: to } },
         );
 
-        console.log(
+        logger.info(
             `fix-status-typo: ${from} → ${to}: orders ${orders.modifiedCount}, history ${oldValues.modifiedCount + newValues.modifiedCount}`,
         );
     }

@@ -3,6 +3,12 @@ import path from "path";
 import mongoose from "mongoose";
 import connectDB from "../config/db";
 import { OrderModel } from "../models/order.model";
+import { logger } from "../config/logger";
+
+type DumpOrder = Record<string, unknown> & {
+    email?: string | null;
+    created_at?: string | Date | null;
+};
 
 const seedOrders = async () => {
     await connectDB();
@@ -12,12 +18,12 @@ const seedOrders = async () => {
 
     const match = raw.match(/db\.orders\.insertMany\((\[[\s\S]*\])\)/);
     if (!match) {
-        console.error("orders.seed: could not parse dump file");
+        logger.error("orders.seed: could not parse dump file");
         process.exit(1);
     }
 
-    const dumpOrders: Record<string, any>[] = JSON.parse(match[1]).map(
-        (order: Record<string, any>) => ({
+    const dumpOrders: DumpOrder[] = (JSON.parse(match[1]) as DumpOrder[]).map(
+        (order) => ({
             ...order,
             created_at: order.created_at
                 ? new Date(order.created_at)
@@ -34,10 +40,10 @@ const seedOrders = async () => {
             : dumpOrders.filter((o) => o.email && !existingSet.has(o.email));
 
     if (toInsert.length === 0) {
-        console.log("orders.seed: nothing to insert, all orders already exist");
+        logger.info("orders.seed: nothing to insert, all orders already exist");
     } else {
         await OrderModel.insertMany(toInsert, { ordered: false });
-        console.log(`orders.seed: inserted ${toInsert.length} orders`);
+        logger.info(`orders.seed: inserted ${toInsert.length} orders`);
     }
 
     await mongoose.disconnect();

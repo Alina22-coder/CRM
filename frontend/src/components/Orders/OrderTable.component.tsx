@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect } from "react";
+import { type FC, useState, useEffect, useCallback } from "react";
 import type { IOrder } from "../../interfaces/IOrder";
 import type { IComment } from "../../interfaces/IComment";
 import type { IStatistic } from "../../interfaces/IStatistic";
@@ -110,17 +110,17 @@ export const OrderTable: FC<OrderPropType> = ({
     const [taskDueDate, setTaskDueDate] = useState("");
     const [isCreatingTask, setIsCreatingTask] = useState(false);
 
-    const loadHistory = () => {
+    const loadHistory = useCallback(() => {
         orderService.getHistoryByOrderId(order._id).then((res) => {
             setHistory(res.data ?? []);
         });
-    };
+    }, [order._id]);
 
-    const loadTasks = () => {
+    const loadTasks = useCallback(() => {
         taskService.getAllTasksByOrderId(order._id).then((res) => {
             setTasks(res.data ?? []);
         });
-    };
+    }, [order._id]);
 
     useEffect(() => {
         if (!expanded) return;
@@ -129,7 +129,7 @@ export const OrderTable: FC<OrderPropType> = ({
         });
         loadHistory();
         loadTasks();
-    }, [expanded, order]);
+    }, [expanded, order, loadHistory, loadTasks]);
 
     const isDisagreeSelected = statusDraft === "Disagree";
     const statusChanged = statusDraft !== (currentOrder.status ?? "");
@@ -376,7 +376,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <div
                                         className={styles.comment__info__value}
                                     >
-                                        {order.msg || "null"}
+                                        {currentOrder.msg || "—"}
                                     </div>
                                 </div>
 
@@ -389,7 +389,7 @@ export const OrderTable: FC<OrderPropType> = ({
                                     <div
                                         className={styles.comment__info__value}
                                     >
-                                        {order.utm || "null"}
+                                        {currentOrder.utm || "—"}
                                     </div>
                                 </div>
 

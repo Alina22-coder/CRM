@@ -34,6 +34,7 @@ export const orderService = {
         return api.get("/orders/excel", {
             params: query,
             responseType: "blob",
+            timeout: 60_000,
         });
     },
 

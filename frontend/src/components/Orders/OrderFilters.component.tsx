@@ -26,8 +26,6 @@ interface IOrderFiltersProps {
         group: string;
         start_date: string;
         end_date: string;
-        min_sum: string;
-        max_sum: string;
         my: boolean;
     };
     onChange: (key: string, value: string | boolean) => void;

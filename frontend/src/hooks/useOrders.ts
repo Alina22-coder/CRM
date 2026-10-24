@@ -19,8 +19,6 @@ const EMPTY_FILTERS = {
     group: "",
     start_date: "",
     end_date: "",
-    min_sum: "",
-    max_sum: "",
     my: false,
 };
 
@@ -41,8 +39,6 @@ const filtersFromSearchParams = (
     group: searchParams.get("group") ?? "",
     start_date: searchParams.get("start_date") ?? "",
     end_date: searchParams.get("end_date") ?? "",
-    min_sum: searchParams.get("min_sum") ?? "",
-    max_sum: searchParams.get("max_sum") ?? "",
     my: searchParams.get("my") === "true",
 });
 

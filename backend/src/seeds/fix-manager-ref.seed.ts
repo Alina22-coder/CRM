@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import connectDB from "../config/db";
 import { OrderModel } from "../models/order.model";
 import { UserModel } from "../models/user.model";
+import { logger } from "../config/logger";
 
 const fixManagerRef = async () => {
     await connectDB();
@@ -14,7 +15,7 @@ const fixManagerRef = async () => {
         const user = await UserModel.findOne({ surname });
 
         if (!user) {
-            console.log(`fix-manager-ref: user "${surname}" not found — skipped`);
+            logger.warn(`fix-manager-ref: user "${surname}" not found — skipped`);
             continue;
         }
 
@@ -23,7 +24,7 @@ const fixManagerRef = async () => {
             { $set: { manager: user._id } },
         );
 
-        console.log(
+        logger.info(
             `fix-manager-ref: ${surname} → ${user._id}: orders ${res.modifiedCount}`,
         );
     }

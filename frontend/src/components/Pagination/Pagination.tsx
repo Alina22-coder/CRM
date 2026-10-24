@@ -13,7 +13,7 @@ export const Pagination = ({
 }: PaginationType) => {
     if (totalPage === 0) return null;
 
-    let pages: number[] = [];
+    let pages: number[];
 
     const count = Math.min(7, totalPage);
 

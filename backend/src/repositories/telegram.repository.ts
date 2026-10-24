@@ -1,3 +1,4 @@
+import type { DeleteResult } from "mongoose";
 import ITelegramLinkToken from "../interfaces/ITelegramLinkToken";
 import { TelegramLinkTokenModel } from "../models/telegram-link-token.model";
 
@@ -25,7 +26,7 @@ class TelegramRepository {
         return TelegramLinkTokenModel.findByIdAndDelete(id);
     }
 
-    public deleteTokensByUserId(userId: string): Promise<unknown> {
+    public deleteTokensByUserId(userId: string): Promise<DeleteResult> {
         return TelegramLinkTokenModel.deleteMany({ user: userId });
     }
 }

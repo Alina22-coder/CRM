@@ -1,3 +1,4 @@
+import type { DeleteResult } from "mongoose";
 import ITask, { ITaskDto } from "../interfaces/ITask";
 import { TaskModel } from "../models/task.model";
 
@@ -43,7 +44,7 @@ class TaskRepository {
         ).then(() => undefined);
     }
 
-    public deleteOpenByAssignee(assigneeId: string): Promise<unknown> {
+    public deleteOpenByAssignee(assigneeId: string): Promise<DeleteResult> {
         return TaskModel.deleteMany({ assignee: assigneeId, isDone: false });
     }
 }

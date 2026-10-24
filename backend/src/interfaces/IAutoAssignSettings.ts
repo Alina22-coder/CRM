@@ -9,4 +9,10 @@ interface IAutoAssignSettings {
     lastAssignedUserId: Types.ObjectId | null;
 }
 
+export interface IAutoAssignSettingsUpdate {
+    enabled?: boolean;
+    mode?: AutoAssignMode;
+    participantIds?: string[];
+}
+
 export default IAutoAssignSettings;

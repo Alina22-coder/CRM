@@ -20,7 +20,6 @@ export const History = () => {
     const [entries, setEntries] = useState<IHistory[]>([]);
     const [total, setTotal] = useState(0);
     const [managers, setManagers] = useState<IUser[]>([]);
-    const [loading, setLoading] = useState(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -28,6 +27,10 @@ export const History = () => {
     const author = searchParams.get("author") || "";
     const startDate = searchParams.get("start_date") || "";
     const endDate = searchParams.get("end_date") || "";
+
+    const requestKey = [page, author, startDate, endDate].join("|");
+    const [loadedKey, setLoadedKey] = useState<string | null>(null);
+    const loading = loadedKey !== requestKey;
 
     const totalPages = Math.ceil(total / 25);
 
@@ -59,7 +62,7 @@ export const History = () => {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
+        let ignore = false;
         historyService
             .getAllHistory({
                 page,
@@ -69,11 +72,18 @@ export const History = () => {
                 end_date: endDate || undefined,
             })
             .then((res) => {
+                if (ignore) return;
                 setEntries(res.data.data ?? []);
                 setTotal(res.data.total ?? 0);
             })
-            .finally(() => setLoading(false));
-    }, [page, author, startDate, endDate]);
+            .finally(() => {
+                if (!ignore) setLoadedKey(requestKey);
+            });
+
+        return () => {
+            ignore = true;
+        };
+    }, [page, author, startDate, endDate, requestKey]);
 
     return (
         <div className={styles.history__page}>

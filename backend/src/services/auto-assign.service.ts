@@ -3,7 +3,9 @@ import { orderRepository } from "../repositories/order.repository";
 import { userRepository } from "../repositories/user.repository";
 import AutoAssignMode from "../enums/auto-assign-mode.enum";
 import RoleEnum from "../enums/role.enum";
-import IAutoAssignSettings from "../interfaces/IAutoAssignSettings";
+import IAutoAssignSettings, {
+    IAutoAssignSettingsUpdate,
+} from "../interfaces/IAutoAssignSettings";
 import IUser from "../interfaces/IUser";
 
 class AutoAssignService {
@@ -11,12 +13,8 @@ class AutoAssignService {
         return autoAssignSettingsRepository.getSettings();
     }
 
-    public updateSettings(update: {
-        enabled?: boolean;
-        mode?: AutoAssignMode;
-        participantIds?: string[];
-    }) {
-        return autoAssignSettingsRepository.updateSettings(update as any);
+    public updateSettings(update: IAutoAssignSettingsUpdate) {
+        return autoAssignSettingsRepository.updateSettings(update);
     }
 
     public async pickManager(): Promise<string | null> {

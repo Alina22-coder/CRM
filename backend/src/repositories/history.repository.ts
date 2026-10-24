@@ -1,4 +1,5 @@
-import IHistory, { IHistoryDto } from "../interfaces/IHistory";
+import type { QueryFilter } from "mongoose";
+import IHistory, { IHistoryDto, IHistoryQuery } from "../interfaces/IHistory";
 import { HistoryModel } from "../models/history.model";
 import { buildDateRange } from "../helpers/buildDateRange";
 
@@ -13,14 +14,8 @@ class HistoryRepository {
             .populate("author", "surname");
     }
 
-    public async getAllHistory(filter: {
-        author?: string;
-        start_date?: string;
-        end_date?: string;
-        page: number;
-        pageSize: number;
-    }) {
-        const query: Record<string, any> = {};
+    public async getAllHistory(filter: IHistoryQuery) {
+        const query: QueryFilter<IHistory> = {};
 
         if (filter.author) {
             query.author = filter.author;

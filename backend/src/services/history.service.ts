@@ -2,6 +2,7 @@ import { historyRepository } from "../repositories/history.repository";
 import { userRepository } from "../repositories/user.repository";
 import { getManagerId } from "../helpers/getManagerId";
 import IOrder from "../interfaces/IOrder";
+import { IHistoryQuery } from "../interfaces/IHistory";
 import HistoryType from "../enums/history-type.enum";
 
 const TRACKED_FIELD_TO_TYPE: Partial<Record<keyof IOrder, HistoryType>> = {
@@ -102,13 +103,7 @@ class HistoryService {
         return historyRepository.getAllHistoryByOrderId(orderId);
     }
 
-    public getAllHistory(filter: {
-        author?: string;
-        start_date?: string;
-        end_date?: string;
-        page: number;
-        pageSize: number;
-    }) {
+    public getAllHistory(filter: IHistoryQuery) {
         return historyRepository.getAllHistory(filter);
     }
 }

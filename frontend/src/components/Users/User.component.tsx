@@ -35,13 +35,23 @@ export const User: FC<UserPropType> = ({ user, statistic, onUpdate }) => {
         { label: "Dubbing", value: statistic?.Dubbing },
     ];
 
+    const copyLink = async (token: string, label: string) => {
+        const link = `${window.location.origin}/activate/${token}`;
+        try {
+            await navigator.clipboard.writeText(link);
+            toast.success(`${label} link copied to clipboard`);
+        } catch {
+            toast.warning(`${label} link generated, but couldn't be copied`, {
+                description: link,
+                duration: 30_000,
+            });
+        }
+    };
+
     const handleRecovery = async () => {
         try {
             const { data } = await authService.recovery(user._id);
-            await navigator.clipboard.writeText(
-                `${window.location.origin}/activate/${data.token}`,
-            );
-            toast.success("Recovery link copied to clipboard");
+            await copyLink(data.token, "Recovery");
         } catch {
             toast.error("Failed to generate recovery link");
         }
@@ -50,10 +60,7 @@ export const User: FC<UserPropType> = ({ user, statistic, onUpdate }) => {
     const handleActivate = async () => {
         try {
             const { data } = await authService.activate(user._id);
-            await navigator.clipboard.writeText(
-                `${window.location.origin}/activate/${data.token}`,
-            );
-            toast.success("Activation link copied to clipboard");
+            await copyLink(data.token, "Activation");
         } catch {
             toast.error("Failed to generate activation link");
         }

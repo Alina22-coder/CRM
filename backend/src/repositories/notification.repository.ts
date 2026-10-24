@@ -1,3 +1,4 @@
+import type { DeleteResult } from "mongoose";
 import INotification from "../interfaces/INotification";
 import { NotificationModel } from "../models/notification.model";
 import NotificationEvent from "../enums/notification-event.enum";
@@ -48,7 +49,7 @@ class NotificationRepository {
         );
     }
 
-    public deleteAllByUser(userId: string): Promise<unknown> {
+    public deleteAllByUser(userId: string): Promise<DeleteResult> {
         return NotificationModel.deleteMany({ user: userId });
     }
 }

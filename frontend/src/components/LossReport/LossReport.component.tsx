@@ -20,20 +20,31 @@ type LossReportRow = {
 
 export const LossReport = () => {
     const [data, setData] = useState<LossReportRow[]>([]);
-    const [loading, setLoading] = useState(false);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
+    const requestKey = `${startDate}|${endDate}`;
+    const [loadedKey, setLoadedKey] = useState<string | null>(null);
+    const loading = loadedKey !== requestKey;
+
     useEffect(() => {
-        setLoading(true);
+        let ignore = false;
         orderService
             .getLossReport({
                 start_date: startDate || undefined,
                 end_date: endDate || undefined,
             })
-            .then((res) => setData(res.data ?? []))
-            .finally(() => setLoading(false));
-    }, [startDate, endDate]);
+            .then((res) => {
+                if (!ignore) setData(res.data ?? []);
+            })
+            .finally(() => {
+                if (!ignore) setLoadedKey(requestKey);
+            });
+
+        return () => {
+            ignore = true;
+        };
+    }, [startDate, endDate, requestKey]);
 
     const total = data.reduce((sum, row) => sum + row.count, 0);
 

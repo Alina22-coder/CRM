@@ -1,3 +1,4 @@
+import type { QueryFilter } from "mongoose";
 import IUser, { IUserQuery } from "../interfaces/IUser";
 import { UserModel } from "../models/user.model";
 import RoleEnum from "../enums/role.enum";
@@ -8,7 +9,7 @@ class UserRepository {
         query: IUserQuery,
     ): Promise<{ data: IUser[]; total: number }> {
         const { page, pageSize, search, order } = query;
-        const filter: Record<string, any> = search
+        const filter: QueryFilter<IUser> = search
             ? {
                   $or: [
                       { name: { $regex: escapeRegex(search), $options: "i" } },

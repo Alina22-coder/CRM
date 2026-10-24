@@ -1,3 +1,4 @@
+import type { DeleteResult } from "mongoose";
 import { IToken } from "../interfaces/IToken";
 import { Token } from "../models/token.model";
 
@@ -12,11 +13,11 @@ class TokenRepository {
         return Token.findOne(params);
     }
 
-    public deleteByParams(params: Partial<IToken>): Promise<any> {
+    public deleteByParams(params: Partial<IToken>): Promise<DeleteResult> {
         return Token.deleteOne(params);
     }
 
-    public deleteAllByUserId(userId: string): Promise<any> {
+    public deleteAllByUserId(userId: string): Promise<DeleteResult> {
         return Token.deleteMany({ _userId: userId });
     }
 }

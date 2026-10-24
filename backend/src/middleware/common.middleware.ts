@@ -37,9 +37,10 @@ class CommonMiddleware {
             try {
                 res.locals.query = await validator.validateAsync(req.query);
                 next();
-            } catch (e: any) {
+            } catch (e: unknown) {
+                const err = e as { details?: { message: string }[]; message?: string };
                 const message =
-                    e.details?.[0]?.message ?? e.message ?? "Validation error";
+                    err.details?.[0]?.message ?? err.message ?? "Validation error";
 
                 next(new ApiError(message, StatusCodes.BAD_REQUEST));
             }
