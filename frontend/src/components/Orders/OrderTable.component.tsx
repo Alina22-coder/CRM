@@ -1,4 +1,5 @@
 import { type FC, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import type { IOrder } from "../../interfaces/IOrder";
 import type { IComment } from "../../interfaces/IComment";
 import type { IStatistic } from "../../interfaces/IStatistic";
@@ -801,19 +802,21 @@ export const OrderTable: FC<OrderPropType> = ({
                 </tr>
             )}
 
-            {isEditOpen && (
-                <EditOrderModal
-                    order={currentOrder}
-                    onClose={() => setIsEditOpen(false)}
-                    onSuccess={() => {
-                        orderService.getOrderById(order._id).then((res) => {
-                            setCurrentOrder(res.data);
-                        });
-                        loadHistory();
-                        setIsEditOpen(false);
-                    }}
-                />
-            )}
+            {isEditOpen &&
+                createPortal(
+                    <EditOrderModal
+                        order={currentOrder}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            orderService.getOrderById(order._id).then((res) => {
+                                setCurrentOrder(res.data);
+                            });
+                            loadHistory();
+                            setIsEditOpen(false);
+                        }}
+                    />,
+                    document.body,
+                )}
         </>
     );
 };
